@@ -1,0 +1,241 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+
+export async function getStaticPaths() {
+  const work = await getCollection("work");
+  return work.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const { title, kicker, accentVar, status, stack, link, linkLabel } = entry.data;
+---
+
+<Base title={`${title} — Hassan Khan`} description={entry.data.highlight}>
+  <Header showBack />
+  <main class="wrap case" style={`--accent: var(${accentVar})`}>
+    <p class="kicker">{kicker}</p>
+    <h1>{title}</h1>
+    <p class="status tabular-nums">{status}</p>
+    <div class="stack-tags">
+      {stack.map((s) => (
+        <span class="tag">{s}</span>
+      ))}
+    </div>
+    {link && (
+      <a class="external" href={link} target="_blank" rel="noopener noreferrer">
+        {linkLabel ?? "Visit"} ↗
+      </a>
+    )}
+
+    <div class="body">
+      <Content />
+    </div>
+
+    {entry.slug === "ara-assessment" && (
+      <div class="demo">
+        <div class="chat" id="ara-chat">
+          <div class="chat-line bot" data-step="0">Chat opens, empty.</div>
+          <div class="chat-line user" data-step="1">"Start an ARA assessment"</div>
+          <div class="chat-line bot" data-step="2">Bot thinks…</div>
+          <div class="chat-line bot" data-step="3">Which patient would you like to start the ARA assessment for?</div>
+          <div class="chat-line user" data-step="4">"Dev"</div>
+          <div class="chat-line bot" data-step="5">Got it — pulling up Dev and starting the ARA assessment.</div>
+          <div class="chat-line note" data-step="6">Rejoins the existing flow — nothing here was edited.</div>
+        </div>
+        <button type="button" id="ara-replay" class="replay">▸ replay the conversation</button>
+      </div>
+    )}
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .case {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-4);
+  }
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-size: var(--text-2xl);
+    line-height: 1.25;
+    margin: 0 0 10px;
+    color: var(--ink);
+  }
+  .status {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    margin: 0 0 var(--space-3);
+  }
+  .stack-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: var(--space-2);
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-secondary);
+    background: var(--bg-raised);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 3px 8px;
+  }
+  .external {
+    display: inline-block;
+    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .external:hover {
+    text-decoration: underline;
+  }
+  .body {
+    margin-top: var(--space-6);
+    max-width: 62ch;
+  }
+  .body :global(h2) {
+    font-size: var(--text-xl);
+    margin: var(--space-6) 0 var(--space-2);
+    color: var(--ink);
+    border-top: 1px solid var(--rule);
+    padding-top: var(--space-4);
+  }
+  .body :global(h2:first-child) {
+    border-top: none;
+    padding-top: 0;
+  }
+  .body :global(p) {
+    color: var(--ink-secondary);
+    margin: 0 0 var(--space-2);
+  }
+  .body :global(ul) {
+    color: var(--ink-secondary);
+    padding-left: 1.2em;
+  }
+  .body :global(li) {
+    margin-bottom: 8px;
+  }
+  .body :global(strong) {
+    color: var(--ink);
+  }
+  .body :global(a) {
+    color: var(--accent);
+  }
+  .body :global(img) {
+    border-radius: 10px;
+    border: 1px solid var(--rule);
+    margin: var(--space-3) 0;
+    max-width: 100%;
+  }
+
+  .demo {
+    margin-top: var(--space-6);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: var(--space-3);
+    background: var(--bg-raised);
+  }
+  .chat {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 190px;
+  }
+  .chat-line {
+    font-size: var(--text-sm);
+    padding: 8px 12px;
+    border-radius: 8px;
+    max-width: 80%;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .chat-line.visible {
+    opacity: 1;
+    transform: none;
+  }
+  .chat-line.bot {
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    align-self: flex-start;
+  }
+  .chat-line.user {
+    background: var(--accent);
+    color: #fff;
+    align-self: flex-end;
+  }
+  .chat-line.note {
+    align-self: center;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    background: none;
+    border: none;
+  }
+  .replay {
+    margin-top: var(--space-2);
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    cursor: pointer;
+    padding: 0;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var chat = document.getElementById("ara-chat");
+    var btn = document.getElementById("ara-replay");
+    if (!chat || !btn) return;
+    var lines = Array.prototype.slice.call(chat.querySelectorAll(".chat-line"));
+    var timers = [];
+
+    function play() {
+      timers.forEach(clearTimeout);
+      timers = [];
+      lines.forEach(function (el) {
+        el.classList.remove("visible");
+      });
+      lines.forEach(function (el, i) {
+        timers.push(
+          setTimeout(function () {
+            el.classList.add("visible");
+          }, i * 550)
+        );
+      });
+    }
+
+    btn.addEventListener("click", play);
+
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            play();
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.4 });
+      io.observe(chat);
+    } else {
+      play();
+    }
+  })();
+</script>

@@ -1,0 +1,61 @@
+---
+import { resume } from "../data/resume";
+---
+
+<section class="timeline wrap">
+  <p class="section-label">experiences</p>
+  <ul>
+    {resume.experience.map((job) => (
+      <li>
+        <span class="dates tabular-nums">{job.start} – {job.end}</span>
+        <span class="role-line">
+          <span class="role">{job.role}</span> <span class="company">{job.company}</span>
+        </span>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .timeline {
+    padding-top: var(--space-8);
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-top: 1px solid var(--rule);
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  li:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+  .dates {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    flex: 0 0 150px;
+  }
+  .role {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .company {
+    color: var(--ink-muted);
+  }
+  @media (max-width: 480px) {
+    li {
+      flex-direction: column;
+      gap: 4px;
+    }
+    .dates {
+      flex: none;
+    }
+  }
+</style>

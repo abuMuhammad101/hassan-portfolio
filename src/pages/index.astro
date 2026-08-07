@@ -1,0 +1,97 @@
+---
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import WorkScroller from "../components/WorkScroller.astro";
+import Timeline from "../components/Timeline.astro";
+import LinkList from "../components/LinkList.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Base title="Muhammad Hassan Khan — Senior Product Designer">
+  <Header />
+  <main class="wrap intro">
+    <p>
+      Hey, I'm <a href="/resume/">Hassan</a>, a senior product designer.
+    </p>
+    <p>
+      Over the past 5+ years I've designed SaaS and mobile products end to
+      end — research through developer handoff — across LMS, ERP, and CRM
+      platforms. I'm currently a <a href="https://github.com/abuMuhammad101" target="_blank" rel="noopener noreferrer">Senior Product Designer at AST</a>.
+    </p>
+    <p>
+      Design is shifting toward designers who can test and ship, not just
+      spec. This year that's meant building with <strong>Claude Code</strong> as
+      a real part of the process — planning in small verified steps, catching
+      regressions before they ship, and going from a Figma flow to a working
+      product in the same sitting. Five live builds below are the proof, not
+      the pitch.
+    </p>
+  </main>
+
+  <WorkScroller />
+  <Timeline />
+
+  <LinkList
+    label="services"
+    items={[
+      { label: "Product Design" },
+      { label: "Design Systems" },
+      { label: "UX Research" },
+      { label: "Prototyping" },
+      { label: "AI-Assisted Design Ops" },
+      { label: "Conversion Optimization" },
+    ]}
+  />
+
+  <LinkList
+    label="stack"
+    items={[
+      { label: "Claude Code" },
+      { label: "Figma" },
+      { label: "Framer" },
+      { label: "Webflow" },
+      { label: "GitHub" },
+    ]}
+  />
+
+  <LinkList
+    label="contact"
+    items={[
+      { label: "Resume", href: "/resume/" },
+      { label: "LinkedIn", href: "https://linkedin.com/in/muhammad-hassan-khan" },
+      { label: "GitHub", href: "https://github.com/abuMuhammad101" },
+      { label: "layers.to", href: "https://layers.to/hassankuiux" },
+      { label: "Email", href: "mailto:hassank.uiux@gmail.com" },
+    ]}
+  />
+
+  <Footer />
+</Base>
+
+<style>
+  .intro {
+    padding-bottom: var(--space-4);
+  }
+  .intro p {
+    font-size: var(--text-lg);
+    color: var(--ink-secondary);
+    margin: 0 0 var(--space-3);
+    max-width: 58ch;
+  }
+  .intro p:first-child {
+    color: var(--ink);
+  }
+  .intro a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 3px;
+  }
+  .intro a:hover {
+    text-decoration-color: var(--ink);
+  }
+  .intro strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+</style>

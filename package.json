@@ -1,0 +1,22 @@
+{
+  "name": "hassan-portfolio",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "resume:pdf": "node scripts/generate-resume-pdf.mjs"
+  },
+  "dependencies": {
+    "astro": "^4.16.0",
+    "@astrojs/vercel": "^7.8.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.6.3",
+    "playwright": "^1.48.0"
+  }
+}

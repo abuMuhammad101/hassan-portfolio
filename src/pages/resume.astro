@@ -1,0 +1,174 @@
+---
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { resume } from "../data/resume";
+---
+
+<Base title={`${resume.name} — Resume`} description={resume.summary}>
+  <Header showBack />
+  <main class="wrap resume">
+    <div class="print-only" id="print-target">
+      <header class="r-header">
+        <h1>{resume.name}</h1>
+        <p class="r-title">{resume.title}</p>
+        <p class="r-contact">
+          {resume.email} | {resume.phone} | {resume.location}
+          {resume.links.map((l) => <> | {l.url.replace(/^https?:\/\//, "")}</>)}
+        </p>
+      </header>
+
+      <section class="r-section">
+        <h2>Summary</h2>
+        <p>{resume.summary}</p>
+      </section>
+
+      <section class="r-section">
+        <h2>Experience</h2>
+        {resume.experience.map((job) => (
+          <article class="r-job">
+            <div class="r-job-head">
+              <span class="r-role">{job.role}, {job.company}</span>
+              <span class="r-dates tabular-nums">{job.start} – {job.end}</span>
+            </div>
+            <ul>
+              {job.bullets.map((b) => <li>{b}</li>)}
+            </ul>
+          </article>
+        ))}
+      </section>
+
+      <section class="r-section">
+        <h2>Skills</h2>
+        {Object.entries(resume.skills).map(([group, items]) => (
+          <p class="r-skill-group"><strong>{group}:</strong> {items.join(", ")}</p>
+        ))}
+      </section>
+
+      <section class="r-section">
+        <h2>Education</h2>
+        {resume.education.map((e) => (
+          <p>{e.degree}, {e.school} — {e.end}, {e.location}</p>
+        ))}
+      </section>
+
+      <section class="r-section">
+        <h2>Languages</h2>
+        <p>{resume.languages.map((l) => `${l.name} (${l.level})`).join(" | ")}</p>
+      </section>
+    </div>
+
+    <a class="download no-print" href="/resume.pdf" download>Download PDF</a>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .resume {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-8);
+    max-width: 720px;
+  }
+  .download {
+    display: inline-block;
+    margin-top: var(--space-6);
+    padding: 10px 20px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: var(--text-sm);
+  }
+  .download:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .r-header {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+  .r-header h1 {
+    font-size: var(--text-2xl);
+    margin: 0 0 4px;
+    color: var(--ink);
+  }
+  .r-title {
+    margin: 0 0 8px;
+    color: var(--ink-secondary);
+    font-size: var(--text-lg);
+  }
+  .r-contact {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+  }
+
+  .r-section {
+    margin-bottom: var(--space-4);
+  }
+  .r-section h2 {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    margin: 0 0 var(--space-2);
+  }
+  .r-section p {
+    color: var(--ink-secondary);
+    margin: 0 0 8px;
+  }
+
+  .r-job {
+    margin-bottom: var(--space-3);
+  }
+  .r-job-head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .r-role {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .r-dates {
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    white-space: nowrap;
+  }
+  .r-job ul {
+    margin: 0;
+    padding-left: 1.2em;
+    color: var(--ink-secondary);
+  }
+  .r-job li {
+    margin-bottom: 4px;
+  }
+  .r-skill-group {
+    line-height: 1.6;
+  }
+  .r-skill-group strong {
+    color: var(--ink);
+  }
+
+  @media print {
+    :global(header.header),
+    :global(footer.footer),
+    .no-print {
+      display: none !important;
+    }
+    .resume {
+      max-width: none;
+      padding: 0;
+    }
+    body {
+      background: #fff;
+      color: #000;
+    }
+  }
+</style>

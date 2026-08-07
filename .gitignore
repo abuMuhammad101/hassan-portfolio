@@ -1,0 +1,21 @@
+# build
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# env
+.env
+.env.production
+
+# logs
+npm-debug.log*
+
+# editor/os
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+
+# claude
+.claude/settings.local.json
