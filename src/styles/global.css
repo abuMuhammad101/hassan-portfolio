@@ -123,3 +123,23 @@ a {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* Scroll-reveal: a slow, unhurried slide-up-and-fade as content enters the
+   viewport. Deliberately gentle (long duration, small travel distance) —
+   this is the one motion the site allows beyond the theme toggle. */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

@@ -6,11 +6,12 @@ interface Item {
 interface Props {
   label: string;
   items: Item[];
+  class?: string;
 }
-const { label, items } = Astro.props;
+const { label, items, class: className } = Astro.props;
 ---
 
-<section class="link-list wrap">
+<section class:list={["link-list", "wrap", className]}>
   <p class="section-label">{label}</p>
   <ul>
     {items.map((item) => (

@@ -5,8 +5,8 @@ import { resume } from "../data/resume";
 <section class="timeline wrap">
   <p class="section-label">experiences</p>
   <ul>
-    {resume.experience.map((job) => (
-      <li>
+    {resume.experience.map((job, i) => (
+      <li class="reveal" style={`transition-delay: ${Math.min(i, 5) * 60}ms`}>
         <span class="dates tabular-nums">{job.start} – {job.end}</span>
         <span class="role-line">
           <span class="role">{job.role}</span> <span class="company">{job.company}</span>

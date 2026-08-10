@@ -64,7 +64,7 @@ Section labels (`selected work`, `experiences`, `services`, `stack`, `contact`) 
 
 ## Motion
 
-None beyond: the theme toggle's color transition (200ms), and the work scroller's native CSS scroll-snap. No entrance animations, no hover-lift cards — matches the reference's confidence in staying still.
+The theme toggle's color transition (200ms) and the work scroller's native CSS scroll-snap, plus one deliberate addition: a slow, staggered slide-up-and-fade as content enters the viewport (`.reveal` / `.reveal.is-visible` in `global.css`, driven by one shared `IntersectionObserver` in `Base.astro`). Above-the-fold content (the intro, each case study's header) stays static — reveal only applies to what you actually scroll to. Kept gentle on purpose: 700ms, 20px of travel, per-item stagger on cards and timeline rows. Respects `prefers-reduced-motion`.
 
 ## Voice
 

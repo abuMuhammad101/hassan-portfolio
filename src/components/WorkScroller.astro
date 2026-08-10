@@ -15,8 +15,12 @@ const work = (await getCollection("work"))
 <section class="work-section">
   <p class="section-label wrap">{label}</p>
   <div class="scroller">
-    {work.map((item) => (
-        <a href={`/work/${item.slug}/`} class="card" style={`--accent: var(${item.data.accentVar})`}>
+    {work.map((item, i) => (
+        <a
+          href={`/work/${item.slug}/`}
+          class="card reveal"
+          style={`--accent: var(${item.data.accentVar}); transition-delay: ${Math.min(i, 5) * 70}ms`}
+        >
           <div class="preview">
             {item.data.image ? (
               <img src={item.data.image} alt={item.data.imageAlt ?? item.data.title} loading="lazy" />
