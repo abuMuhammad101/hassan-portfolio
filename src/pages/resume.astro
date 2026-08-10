@@ -258,8 +258,12 @@ const initials = resume.name.split(" ").map((n) => n[0]).join("");
     }
   }
 
-  /* Print / PDF output: strip all visual styling back to plain,
-     single-column, black-on-white text for genuine ATS parseability. */
+  /* Print / PDF output: same design as on screen — accent color, avatar
+     mark, timeline dots, skill pills all carry through, since none of that
+     touches text extraction. The one thing genuinely worth flattening for
+     ATS parsers is the two-column Education/Languages grid below — reading
+     order across two real columns is the one layout pattern parsers
+     reliably get wrong, so that one goes single-column in print only. */
   @media print {
     :global(header.header),
     :global(footer.footer),
@@ -271,37 +275,13 @@ const initials = resume.name.split(" ").map((n) => n[0]).join("");
       padding: 0;
     }
     .paper {
-      background: #fff;
-      border: none;
       box-shadow: none;
-      padding: 0;
-      border-radius: 0;
     }
-    .r-mark {
-      display: none;
+    .r-two-col {
+      display: block;
     }
-    .r-title,
-    .r-job::before,
-    .r-section h2 {
-      color: #000 !important;
-    }
-    .r-section h2 {
-      border-bottom-color: #000;
-    }
-    .r-job {
-      border-left-color: #ccc;
-    }
-    .r-job::before {
-      background: #000;
-    }
-    .r-pill {
-      background: #fff;
-      border-color: #999;
-      color: #000;
-    }
-    body {
-      background: #fff;
-      color: #000;
+    .r-two-col .r-section {
+      margin-bottom: var(--space-3);
     }
   }
 </style>

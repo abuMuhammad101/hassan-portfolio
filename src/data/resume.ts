@@ -7,6 +7,7 @@ export const resume = {
   email: "hassank.uiux@gmail.com",
   phone: "+92 336 285 5573",
   links: [
+    { label: "Portfolio", url: "https://hassan-portfolio-bice.vercel.app" },
     { label: "LinkedIn", url: "https://linkedin.com/in/muhammad-hassan-khan" },
     { label: "GitHub", url: "https://github.com/abuMuhammad101" },
     { label: "layers.to", url: "https://layers.to/hassankuiux" },
