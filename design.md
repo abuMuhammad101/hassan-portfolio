@@ -21,7 +21,7 @@ Each case study carries its own accent, pulled from the project's real brand whe
 |---|---|
 | HH Global | `#9C6B1F` (their actual warm brass/gold token) |
 | Medexa | `#2C39FF` / `#010ED0` (their actual card-border and primary blue) |
-| ARA Assessment | `#1D5FBF` (clinical blue) — also the resume's signature accent |
+| ARA Assessment | `#1D5FBF` (clinical blue) |
 | Cookiya | `#6B5B95` (Fraunces-adjacent plum) |
 | motions | `#3A7D5C` (quiet green) |
 | Inventory Management Tool | `#2E8C96` (teal) |
@@ -69,3 +69,7 @@ The theme toggle's color transition (200ms) and the work scroller's native CSS s
 ## Voice
 
 Direct, factual, first person, short sentences. States what was built and what it did — no adjectives doing the work that a specific detail could do instead.
+
+## The resume page — an intentional exception
+
+`/resume` doesn't use the system above. It's built to match Hassan's own existing resume design instead: **Playfair Display** (italic, `--resume-accent` violet `#7C3AED`) for the name, **Lora** for everything else, a light violet-tinted contact band with inline icons (envelope, LinkedIn, pin, phone), and a two-column body with a dashed divider — Work Experience on the left, Education/Portfolio/Skills/Languages on the right, running paragraphs rather than bullet lists. The one deliberate override for print: the two-column layout flattens to one column in the generated PDF, since a genuine multi-column layout is the one pattern ATS parsers reliably get reading-order wrong on. Everything else (color, type, icons) carries through unchanged — none of it touches text extraction.

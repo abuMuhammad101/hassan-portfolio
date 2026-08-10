@@ -4,7 +4,8 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { resume } from "../data/resume";
 
-const initials = resume.name.split(" ").map((n) => n[0]).join("");
+const portfolioLinks = resume.links.filter((l) => l.label !== "LinkedIn");
+const linkedin = resume.links.find((l) => l.label === "LinkedIn");
 ---
 
 <Base title={`${resume.name} — Resume`} description={resume.summary}>
@@ -12,70 +13,73 @@ const initials = resume.name.split(" ").map((n) => n[0]).join("");
   <main class="wrap resume">
     <div class="paper" id="print-target">
       <header class="r-header">
-        <div class="r-mark">{initials}</div>
-        <div class="r-header-text">
-          <h1>{resume.name}</h1>
-          <span class="r-title-tag">{resume.title}</span>
-        </div>
+        <h1>{resume.name}</h1>
+        <p class="r-role-title">{resume.title}</p>
+        <p class="r-tagline">{resume.summary}</p>
       </header>
 
-      <div class="r-contact-row">
-        <span class="r-chip">{resume.email}</span>
-        <span class="r-chip">{resume.phone}</span>
-        <span class="r-chip">{resume.location}</span>
-        {resume.links.map((l) => (
-          <span class="r-chip">{l.url.replace(/^https?:\/\//, "")}</span>
-        ))}
+      <div class="r-contact-band">
+        <span class="r-contact-item">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M2 6l10 7 10-7" /></svg>
+          {resume.email}
+        </span>
+        {linkedin && (
+          <span class="r-contact-item">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M6.94 5a2 2 0 11-4-.002 2 2 0 014 .002zM7 8.48H3V21h4V8.48zm6.32 0H9.34V21h3.94v-6.57c0-3.66 4.77-4 4.77 0V21H22v-7.93c0-6.17-7.06-5.94-8.68-2.91V8.48z" /></svg>
+            {linkedin.url.replace(/^https?:\/\//, "")}
+          </span>
+        )}
+        <span class="r-contact-item">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" /></svg>
+          {resume.location}
+        </span>
+        <span class="r-contact-item">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z" /></svg>
+          {resume.phone}
+        </span>
       </div>
 
-      <section class="r-card">
-        <h2><span class="r-dot"></span>Summary</h2>
-        <p class="r-summary">{resume.summary}</p>
-      </section>
-
-      <section class="r-section">
-        <h2><span class="r-dot"></span>Experience</h2>
-        <div class="r-jobs">
-          {resume.experience.map((job, i) => (
-            <article class={`r-job-card${i === 0 ? " r-job-current" : ""}`}>
-              <div class="r-job-head">
-                <div>
-                  <p class="r-role">{job.role}</p>
-                  <p class="r-company">{job.company}</p>
-                </div>
-                <span class="r-date-pill tabular-nums">{job.start} – {job.end}</span>
-              </div>
-              <ul>
-                {job.bullets.map((b) => <li>{b}</li>)}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section class="r-card">
-        <h2><span class="r-dot"></span>Skills</h2>
-        {Object.entries(resume.skills).map(([group, items]) => (
-          <div class="r-skill-group">
-            <span class="r-skill-label">{group}</span>
-            <div class="r-pills">
-              {items.map((item) => <span class="r-pill">{item}</span>)}
-            </div>
+      <div class="r-columns">
+        <section class="r-col-left">
+          <h2>Work Experience</h2>
+          <div class="r-jobs">
+            {resume.experience.map((job) => (
+              <article class="r-job">
+                <p class="r-job-line"><span class="r-company">{job.company}</span> <span class="r-sep">|</span> <span class="r-role">{job.role}</span></p>
+                <p class="r-dates tabular-nums">{job.start} – {job.end}</p>
+                <p class="r-job-desc">{job.bullets.join(" ")}</p>
+              </article>
+            ))}
           </div>
-        ))}
-      </section>
-
-      <div class="r-two-col">
-        <section class="r-card r-card-sm">
-          <h2><span class="r-dot"></span>Education</h2>
-          {resume.education.map((e) => (
-            <p class="r-plain">{e.degree}, {e.school} — {e.end}, {e.location}</p>
-          ))}
         </section>
 
-        <section class="r-card r-card-sm">
-          <h2><span class="r-dot"></span>Languages</h2>
-          <p class="r-plain">{resume.languages.map((l) => `${l.name} (${l.level})`).join(" | ")}</p>
+        <section class="r-col-right">
+          <h2>Education</h2>
+          {resume.education.map((e) => (
+            <>
+              <p class="r-edu-degree">{e.degree}</p>
+              <p class="r-edu-school">at {e.school}</p>
+              <p class="r-edu-meta">Completed: {e.end} | {e.location}</p>
+            </>
+          ))}
+
+          <h2>Portfolio</h2>
+          <div class="r-links">
+            {portfolioLinks.map((l) => (
+              <a href={l.url} target="_blank" rel="noopener noreferrer">{l.label}</a>
+            ))}
+          </div>
+
+          <h2>Core Competencies</h2>
+          <p class="r-inline-list">{resume.skills["Core competencies"].join(", ")}.</p>
+
+          <h2>Tools &amp; Systems</h2>
+          <p class="r-inline-list">{resume.skills["Tools & systems"].join(" | ")}</p>
+
+          <h2>Languages</h2>
+          <div class="r-languages">
+            {resume.languages.map((l) => <p>{l.name} – {l.level}</p>)}
+          </div>
         </section>
       </div>
     </div>
@@ -89,7 +93,7 @@ const initials = resume.name.split(" ").map((n) => n[0]).join("");
   .resume {
     padding-top: var(--space-2);
     padding-bottom: var(--space-8);
-    max-width: 760px;
+    max-width: 900px;
   }
   .download {
     display: inline-block;
@@ -100,6 +104,7 @@ const initials = resume.name.split(" ").map((n) => n[0]).join("");
     color: var(--ink);
     text-decoration: none;
     font-size: var(--text-sm);
+    font-family: var(--font-sans);
   }
   .download:hover {
     background: var(--ink);
@@ -107,224 +112,180 @@ const initials = resume.name.split(" ").map((n) => n[0]).join("");
   }
 
   .paper {
-    background: color-mix(in srgb, var(--ara) 4%, var(--bg));
+    background: var(--bg-raised);
     border: 1px solid var(--rule);
-    border-radius: 24px;
-    padding: var(--space-4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
+    border-radius: 4px;
+    font-family: var(--font-serif-body);
   }
 
   /* ---- Header ---- */
   .r-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: 4px var(--space-2);
-  }
-  .r-mark {
-    flex-shrink: 0;
-    width: 72px;
-    height: 72px;
-    border-radius: 22px;
-    background: linear-gradient(135deg, var(--ara), color-mix(in srgb, var(--ara) 60%, var(--medexa)));
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-mono);
-    font-weight: 600;
-    font-size: var(--text-xl);
-    box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--ara) 55%, transparent);
-  }
-  .r-header-text {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    text-align: center;
+    padding: var(--space-6) var(--space-4) var(--space-3);
   }
   .r-header h1 {
-    font-size: var(--text-2xl);
-    margin: 0;
-    color: var(--ink);
-    line-height: 1.15;
+    font-family: var(--font-serif-display);
+    font-weight: 700;
+    font-style: italic;
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    color: var(--resume-accent);
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
   }
-  .r-title-tag {
-    align-self: flex-start;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--ara);
-    background: color-mix(in srgb, var(--ara) 12%, var(--bg-raised));
-    border-radius: 999px;
-    padding: 4px 12px;
+  .r-role-title {
+    font-family: var(--font-serif-body);
+    font-size: var(--text-xl);
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  .r-tagline {
+    font-family: var(--font-serif-body);
+    font-size: var(--text-base);
+    color: var(--ink-secondary);
+    max-width: 62ch;
+    margin: 0 auto;
+    line-height: 1.6;
   }
 
-  /* ---- Contact chips ---- */
-  .r-contact-row {
+  /* ---- Contact band ---- */
+  .r-contact-band {
+    background: color-mix(in srgb, var(--resume-accent) 6%, var(--bg-raised));
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: var(--space-3) var(--space-4);
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    padding: 0 var(--space-2);
+    justify-content: center;
+    gap: var(--space-2) var(--space-4);
   }
-  .r-chip {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--ink-secondary);
-    background: var(--bg-raised);
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    padding: 6px 12px;
-  }
-
-  /* ---- Cards ---- */
-  .r-card,
-  .r-job-card {
-    background: var(--bg-raised);
-    border: 1px solid var(--rule);
-    border-radius: 18px;
-    padding: var(--space-3) var(--space-3);
-  }
-  .r-card-sm {
-    padding: var(--space-2) var(--space-3);
-  }
-  .r-section {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-  .r-section > h2 {
-    padding: 0 var(--space-2);
-  }
-  h2 {
-    display: flex;
+  .r-contact-item {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
+    font-family: var(--font-serif-body);
     font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--ink);
-    margin: 0 0 var(--space-2);
+    color: var(--ink-secondary);
+    white-space: nowrap;
   }
-  .r-card > h2 {
-    margin-bottom: var(--space-2);
-  }
-  .r-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--ara);
+  .r-contact-item svg {
     flex-shrink: 0;
-  }
-  .r-summary {
-    color: var(--ink-secondary);
-    margin: 0;
-    font-size: var(--text-base);
-    line-height: 1.65;
-  }
-  .r-plain {
-    color: var(--ink-secondary);
-    margin: 0;
+    color: var(--resume-accent);
   }
 
-  /* ---- Job cards ---- */
+  /* ---- Two-column body ---- */
+  .r-columns {
+    display: grid;
+    grid-template-columns: 1.55fr 1fr;
+    gap: 0 var(--space-5);
+    padding: var(--space-4);
+  }
+  .r-col-right {
+    border-left: 1px dashed var(--rule-strong, var(--rule));
+    padding-left: var(--space-5);
+  }
+  .r-columns h2 {
+    font-family: var(--font-serif-display);
+    font-weight: 700;
+    font-size: var(--text-lg);
+    color: var(--ink);
+    margin: var(--space-4) 0 var(--space-2);
+  }
+  .r-col-left > h2:first-child,
+  .r-col-right > h2:first-child {
+    margin-top: 0;
+  }
+
   .r-jobs {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
-  }
-  .r-job-current {
-    border-color: color-mix(in srgb, var(--ara) 30%, var(--rule));
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ara) 12%, transparent) inset;
-  }
-  .r-job-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--space-2);
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-  }
-  .r-role {
-    font-weight: 600;
-    color: var(--ink);
-    margin: 0;
-    font-size: var(--text-base);
-  }
-  .r-company {
-    font-weight: 400;
-    color: var(--ink-muted);
-    margin: 2px 0 0;
-    font-size: var(--text-sm);
-  }
-  .r-date-pill {
-    flex-shrink: 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--ara);
-    background: color-mix(in srgb, var(--ara) 10%, var(--bg-raised));
-    border-radius: 999px;
-    padding: 5px 12px;
-    white-space: nowrap;
-  }
-  .r-job-card ul {
-    margin: 0;
-    padding-left: 1.1em;
-    color: var(--ink-secondary);
-  }
-  .r-job-card li {
-    margin-bottom: 5px;
-    line-height: 1.55;
-  }
-
-  /* ---- Skills ---- */
-  .r-skill-group {
-    margin-bottom: var(--space-2);
-  }
-  .r-skill-group:last-child {
-    margin-bottom: 0;
-  }
-  .r-skill-label {
-    display: block;
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 8px;
-  }
-  .r-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .r-pill {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--ara);
-    background: color-mix(in srgb, var(--ara) 10%, var(--bg-raised));
-    border-radius: 999px;
-    padding: 5px 12px;
-  }
-
-  .r-two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: var(--space-3);
   }
-  @media (max-width: 560px) {
-    .r-two-col {
+  .r-job-line {
+    margin: 0;
+    font-size: var(--text-base);
+    color: var(--ink);
+  }
+  .r-company {
+    font-weight: 600;
+  }
+  .r-sep {
+    color: var(--ink-muted);
+  }
+  .r-role {
+    color: var(--ink);
+  }
+  .r-dates {
+    margin: 2px 0 6px;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+  }
+  .r-job-desc {
+    margin: 0;
+    color: var(--ink-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.65;
+  }
+
+  .r-edu-degree {
+    margin: 0;
+    font-weight: 600;
+    color: var(--ink);
+    font-size: var(--text-base);
+  }
+  .r-edu-school {
+    margin: 2px 0 0;
+    color: var(--ink);
+  }
+  .r-edu-meta {
+    margin: 2px 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+  }
+
+  .r-links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .r-links a {
+    color: var(--resume-accent);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--resume-accent) 30%, transparent);
+    font-size: var(--text-sm);
+  }
+
+  .r-inline-list {
+    margin: 0;
+    color: var(--ink-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+  }
+
+  .r-languages p {
+    margin: 0 0 2px;
+    color: var(--ink-secondary);
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 640px) {
+    .r-columns {
       grid-template-columns: 1fr;
     }
-    .r-header {
-      flex-direction: column;
-      align-items: flex-start;
+    .r-col-right {
+      border-left: none;
+      padding-left: 0;
+      border-top: 1px dashed var(--rule-strong, var(--rule));
+      padding-top: var(--space-3);
+      margin-top: var(--space-2);
     }
   }
 
-  /* Print / PDF output: same card/pill design carries through — none of it
-     touches text extraction. Only the two-column Education/Languages grid
-     flattens for print, since a genuine multi-column layout is the one
-     pattern ATS parsers reliably get reading-order wrong on. */
+  /* Print / PDF: same typography and color carry through. Only the
+     two-column body flattens to one column, since a genuine multi-column
+     layout is the one pattern ATS parsers reliably get reading-order
+     wrong on — everything else here is just color/type, safe to keep. */
   @media print {
     :global(header.header),
     :global(footer.footer),
@@ -336,13 +297,35 @@ const initials = resume.name.split(" ").map((n) => n[0]).join("");
       padding: 0;
     }
     .paper {
-      border-radius: 0;
+      border: none;
     }
-    .r-two-col {
+    .r-columns {
       display: block;
+      padding: var(--space-3) 0 0;
     }
-    .r-two-col .r-card-sm {
-      margin-bottom: var(--space-2);
+    .r-col-right {
+      border-left: none;
+      padding-left: 0;
+      border-top: 1px dashed var(--rule);
+      padding-top: var(--space-2);
+      margin-top: var(--space-2);
+    }
+    .r-header {
+      padding: 0 0 var(--space-2);
+    }
+    .r-jobs {
+      gap: var(--space-2);
+    }
+    .r-job {
+      break-inside: avoid;
+    }
+    .r-columns h2 {
+      margin: var(--space-2) 0 6px;
+      break-after: avoid;
+    }
+    .r-col-left > h2:first-child,
+    .r-col-right > h2:first-child {
+      margin-top: 0;
     }
   }
 </style>
