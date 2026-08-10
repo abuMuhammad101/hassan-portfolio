@@ -10,11 +10,23 @@ const { label, category } = Astro.props;
 const work = (await getCollection("work"))
   .filter((item) => item.data.category === category)
   .sort((a, b) => a.data.order - b.data.order);
+
+const scrollerId = `scroller-${category}`;
 ---
 
 <section class="work-section">
-  <p class="section-label wrap">{label}</p>
-  <div class="scroller">
+  <div class="head wrap">
+    <p class="section-label">{label}</p>
+    <div class="nav-arrows">
+      <button type="button" class="arrow" data-scroll-dir="-1" data-target={scrollerId} aria-label="Scroll left" disabled>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6" /></svg>
+      </button>
+      <button type="button" class="arrow" data-scroll-dir="1" data-target={scrollerId} aria-label="Scroll right">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6" /></svg>
+      </button>
+    </div>
+  </div>
+  <div class="scroller" id={scrollerId}>
     {work.map((item, i) => (
         <a
           href={`/work/${item.slug}/`}
@@ -45,10 +57,47 @@ const work = (await getCollection("work"))
     padding-top: var(--space-8);
   }
 
+  .head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+  .head .section-label {
+    margin-bottom: 0;
+  }
+  .nav-arrows {
+    display: flex;
+    gap: 8px;
+    padding-bottom: var(--space-3);
+  }
+  .arrow {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--rule);
+    background: var(--bg-raised);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  }
+  .arrow:hover:not(:disabled) {
+    border-color: var(--ink);
+  }
+  .arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
   /* Full-bleed scroller inside a naturally full-width section (no vw units —
      100vw vs. the real layout viewport disagree by the scrollbar's width,
      which misaligns the whole row). Percentage of the section's own width
-     is exact, since .work-section has no max-width of its own. */
+     is exact, since .work-section has no max-width of its own. Native
+     scrollbar is hidden — the arrow buttons above are the navigation. */
   .scroller {
     display: flex;
     gap: var(--space-3);
@@ -58,7 +107,11 @@ const work = (await getCollection("work"))
     padding: 4px var(--space-6) var(--space-2)
       max(var(--space-3), calc((100% - var(--content-width)) / 2 + var(--space-3)));
     scroll-padding-left: max(var(--space-3), calc((100% - var(--content-width)) / 2 + var(--space-3)));
-    scrollbar-width: thin;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scroller::-webkit-scrollbar {
+    display: none;
   }
 
   .card {
@@ -131,3 +184,33 @@ const work = (await getCollection("work"))
     line-height: 1.5;
   }
 </style>
+
+<script>
+  function initScrollerArrows() {
+    document.querySelectorAll<HTMLButtonElement>(".arrow").forEach((btn) => {
+      if (btn.dataset.wired) return;
+      btn.dataset.wired = "true";
+      const targetId = btn.dataset.target!;
+      const scroller = document.getElementById(targetId);
+      if (!scroller) return;
+
+      btn.addEventListener("click", () => {
+        const card = scroller.querySelector<HTMLElement>(".card");
+        const step = card ? card.getBoundingClientRect().width + 12 : scroller.clientWidth * 0.8;
+        const dir = Number(btn.dataset.scrollDir);
+        scroller.scrollBy({ left: step * dir, behavior: "smooth" });
+      });
+
+      const updateState = () => {
+        const prev = scroller.parentElement?.querySelector<HTMLButtonElement>('[data-scroll-dir="-1"]');
+        const next = scroller.parentElement?.querySelector<HTMLButtonElement>('[data-scroll-dir="1"]');
+        const max = scroller.scrollWidth - scroller.clientWidth;
+        if (prev) prev.disabled = scroller.scrollLeft <= 2;
+        if (next) next.disabled = scroller.scrollLeft >= max - 2;
+      };
+      scroller.addEventListener("scroll", updateState, { passive: true });
+      updateState();
+    });
+  }
+  initScrollerArrows();
+</script>
