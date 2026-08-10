@@ -6,6 +6,7 @@ accentVar: "--cookiya"
 status: "Early-stage · in active build"
 stack: ["Expo 54", "React Native", "TypeScript", "React 19"]
 order: 4
+category: "ai-adapted"
 ---
 
 ## What it is

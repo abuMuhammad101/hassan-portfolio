@@ -6,6 +6,7 @@ accentVar: "--ara"
 status: "9 new frames · 0 edits to shipped work"
 stack: ["Figma", "Conversational UX"]
 order: 3
+category: "ai-adapted"
 ---
 
 ## The brief

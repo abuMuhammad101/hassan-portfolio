@@ -1,22 +1,38 @@
 ---
 import { getCollection } from "astro:content";
-const work = (await getCollection("work")).sort((a, b) => a.data.order - b.data.order);
+
+interface Props {
+  label: string;
+  category: "ai-adapted" | "product-design";
+}
+const { label, category } = Astro.props;
+
+const work = (await getCollection("work"))
+  .filter((item) => item.data.category === category)
+  .sort((a, b) => a.data.order - b.data.order);
 ---
 
 <section class="work-section">
-  <p class="section-label wrap">selected work</p>
+  <p class="section-label wrap">{label}</p>
   <div class="scroller">
     {work.map((item) => (
-      <a href={`/work/${item.slug}/`} class="card" style={`--accent: var(${item.data.accentVar})`}>
-        <div class="preview">
-          <span class="kicker">{item.data.kicker}</span>
-          <span class="title">{item.data.title}</span>
-          <span class="status">{item.data.status}</span>
-        </div>
-        <p class="highlight">{item.data.highlight}</p>
+        <a href={`/work/${item.slug}/`} class="card" style={`--accent: var(${item.data.accentVar})`}>
+          <div class="preview">
+            {item.data.image ? (
+              <img src={item.data.image} alt={item.data.imageAlt ?? item.data.title} loading="lazy" />
+            ) : (
+              <div class="placeholder">
+                <span class="ph-title">{item.data.title}</span>
+              </div>
+            )}
+          </div>
+          <div class="meta">
+            <span class="kicker">{item.data.kicker}</span>
+            <span class="title">{item.data.title}</span>
+            <p class="highlight">{item.data.highlight}</p>
+          </div>
       </a>
     ))}
-    <div class="scroller-pad" aria-hidden="true"></div>
   </div>
 </section>
 
@@ -24,18 +40,23 @@ const work = (await getCollection("work")).sort((a, b) => a.data.order - b.data.
   .work-section {
     padding-top: var(--space-8);
   }
+
+  /* Full-bleed scroller inside a naturally full-width section (no vw units —
+     100vw vs. the real layout viewport disagree by the scrollbar's width,
+     which misaligns the whole row). Percentage of the section's own width
+     is exact, since .work-section has no max-width of its own. */
   .scroller {
     display: flex;
     gap: var(--space-3);
     overflow-x: auto;
     scroll-snap-type: x proximity;
-    padding: 4px var(--space-3) var(--space-2);
-    margin: 0 calc(var(--space-3) * -1);
+    -webkit-overflow-scrolling: touch;
+    padding: 4px var(--space-6) var(--space-2)
+      max(var(--space-3), calc((100% - var(--content-width)) / 2 + var(--space-3)));
+    scroll-padding-left: max(var(--space-3), calc((100% - var(--content-width)) / 2 + var(--space-3)));
     scrollbar-width: thin;
   }
-  .scroller-pad {
-    flex: 0 0 1px;
-  }
+
   .card {
     flex: 0 0 300px;
     scroll-snap-align: start;
@@ -50,16 +71,41 @@ const work = (await getCollection("work")).sort((a, b) => a.data.order - b.data.
     border: 1px solid var(--rule);
     border-top: 3px solid var(--accent);
     border-radius: 10px;
-    padding: var(--space-4) var(--space-3);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    height: 210px;
+    overflow: hidden;
+    height: 190px;
     transition: transform 0.15s ease, border-color 0.15s ease;
   }
   .card:hover .preview {
     transform: translateY(-2px);
     border-color: var(--accent);
+  }
+  .preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    padding: var(--space-3);
+    background:
+      radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+      var(--bg-raised);
+  }
+  .ph-title {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
   .kicker {
     font-family: var(--font-mono);
@@ -69,19 +115,13 @@ const work = (await getCollection("work")).sort((a, b) => a.data.order - b.data.
     letter-spacing: 0.04em;
   }
   .title {
-    font-size: var(--text-xl);
+    font-size: var(--text-lg);
     font-weight: 600;
     line-height: 1.25;
     color: var(--ink);
   }
-  .status {
-    margin-top: auto;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--ink-muted);
-  }
   .highlight {
-    margin: 0;
+    margin: 2px 0 0;
     font-size: var(--text-sm);
     color: var(--ink-secondary);
     line-height: 1.5;

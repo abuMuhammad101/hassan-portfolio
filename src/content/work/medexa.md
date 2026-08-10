@@ -6,6 +6,9 @@ accentVar: "--medexa"
 status: "2 renders · 1 interactive prototype · 1 style guide"
 stack: ["Remotion", "TypeScript", "Figma"]
 order: 2
+category: "ai-adapted"
+image: "/media/medexa-logo-reveal.gif"
+imageAlt: "The actual rendered logo reveal — three bars, staggered spring, two twinkling stars"
 ---
 
 ## The brief

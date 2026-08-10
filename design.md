@@ -21,9 +21,15 @@ Each case study carries its own accent, pulled from the project's real brand whe
 |---|---|
 | HH Global | `#9C6B1F` (their actual warm brass/gold token) |
 | Medexa | `#2C39FF` / `#010ED0` (their actual card-border and primary blue) |
-| ARA Assessment | `#1D5FBF` (clinical blue) |
-| Cookiya | `#6B5B95` (Fraunces-adjacent plum, unused elsewhere) |
-| motions | `#3A7D5C` (a quiet green, distinct from every other accent) |
+| ARA Assessment | `#1D5FBF` (clinical blue) — also the resume's signature accent |
+| Cookiya | `#6B5B95` (Fraunces-adjacent plum) |
+| motions | `#3A7D5C` (quiet green) |
+| Inventory Management Tool | `#2E8C96` (teal) |
+| Online Exam Preparation | `#A23E6B` (berry) |
+| Landlord Mobile App | `#B5533C` (terracotta) |
+| Pure Prep (Meal Wallet) | `#7A8C2E` (olive) |
+
+Two work sections, same component: **selected work** (the AI-adapted proof-of-work — five products built this year with Claude Code as a real part of the process) and **product design** (earlier agency case studies, imported from the existing Notion portfolio). Same card system, same full-bleed horizontal scroller — the distinction is content, not treatment.
 
 ## Type
 

@@ -12,6 +12,9 @@ const work = defineCollection({
     link: z.string().url().optional(),
     linkLabel: z.string().optional(),
     order: z.number(),
+    category: z.enum(["ai-adapted", "product-design"]),
+    image: z.string().optional(),
+    imageAlt: z.string().optional(),
   }),
 });
 

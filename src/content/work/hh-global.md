@@ -8,9 +8,10 @@ stack: ["Next.js 16", "Tailwind v4", "Supabase", "Vercel"]
 link: "https://hhglobalcompany.com"
 linkLabel: "Visit the live site"
 order: 1
+category: "ai-adapted"
+image: "/media/hh-global-walkthrough.gif"
+imageAlt: "Real recording of the live site — hero, category browse, product detail with variants"
 ---
-
-![Real recording of the live site — hero, category browse, product detail with variants](/media/hh-global-walkthrough.gif)
 
 ## The brief
 

@@ -2,7 +2,7 @@ export const resume = {
   name: "Muhammad Hassan Khan",
   title: "Senior Product Designer",
   summary:
-    "Senior Product Designer with 5+ years shipping SaaS and mobile products end to end — research through developer handoff. Currently Senior Product Designer at AST, where AI-assisted workflows (Claude Code as a build partner, not a novelty) have become part of how the work actually gets shipped: five live products across healthcare, e-commerce, booking, and motion this year alone, each planned, built in small verified steps, and shipped.",
+    "Senior Product Designer with 5+ years shipping SaaS and mobile products end to end — research through developer handoff. Currently Senior Product Designer at AST, focused on healthcare: EMR compliance workflows and AI agent design for clinical products, built with Claude Code as a real part of the process — planned, built in small verified steps, and shipped, not just specced.",
   location: "Karachi, Pakistan",
   email: "hassank.uiux@gmail.com",
   phone: "+92 336 285 5573",
@@ -19,10 +19,10 @@ export const resume = {
       start: "Jun 2026",
       end: "Present",
       bullets: [
-        "Own product design across a multi-project portfolio spanning healthcare (EMR compliance flows, AI intake agent design), e-commerce (a live production storefront), booking platforms, and motion/brand work.",
-        "Established an AI-assisted design-to-ship workflow — Claude Code for Figma automation, full-stack builds, and interactive prototyping — cutting time from design decision to working, verified product.",
-        "Shipped a live production e-commerce storefront (Next.js + Supabase) including catalog, admin CMS, and a full multi-photo gallery system; caught and fixed systemic bugs before they became support tickets.",
-        "Designed and built a healthcare EMR's billing/claims data model and an 8-screen compliance flow enforcing clinical documentation standards, reusing and extending the product's existing design system.",
+        "Own product design for healthcare solutions — EMR workflows and AI agent design for clinical products — from research through developer handoff.",
+        "Designed a healthcare EMR's billing and claims data model and an 8-screen compliance flow enforcing clinical documentation standards, reusing and extending the product's existing design system rather than introducing one-off patterns.",
+        "Designed an AI intake agent's conversational flow for a clinical EMR, extending it to handle real edge cases (e.g. an unnamed patient) by reusing the product's own interaction patterns — additive only, nothing already shipped was touched.",
+        "Established an AI-assisted design-to-ship workflow for healthcare product work — Claude Code for Figma automation and interactive prototyping — cutting the time from design decision to a working, verified flow.",
       ],
     },
     {

@@ -6,6 +6,9 @@ accentVar: "--motions"
 status: "4 starter compositions · reused in production"
 stack: ["Remotion", "TypeScript", "React"]
 order: 5
+category: "ai-adapted"
+image: "/media/motions-kinetic-text.gif"
+imageAlt: "One of the starter kit's four example compositions, actually rendered"
 ---
 
 ## Why this exists
