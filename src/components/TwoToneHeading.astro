@@ -1,0 +1,47 @@
+---
+/* Two-tone headline: the lead line in ink, the continuation in a quieter tone. */
+interface Props {
+  lead: string;
+  rest?: string;
+  as?: "h1" | "h2" | "h3";
+  size?: "hero" | "3xl" | "2xl";
+}
+const { lead, rest, as: Tag = "h2", size = "3xl" } = Astro.props;
+---
+
+<Tag class={`two-tone size-${size}`}>
+  <span class="lead">{lead}</span>
+  {rest && <span class="rest">{rest}</span>}
+</Tag>
+
+<style>
+  .two-tone {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .lead,
+  .rest {
+    display: block;
+  }
+  .lead {
+    color: var(--ink);
+  }
+  .rest {
+    color: var(--ink-tone2);
+  }
+  .size-hero {
+    font-size: var(--text-hero);
+  }
+  .size-3xl {
+    font-size: var(--text-3xl);
+    line-height: 1.12;
+  }
+  .size-2xl {
+    font-size: var(--text-2xl);
+    line-height: 1.2;
+  }
+</style>
