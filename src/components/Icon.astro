@@ -1,0 +1,21 @@
+---
+/* Phosphor icon, inlined at build time from @phosphor-icons/core. */
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+interface Props {
+  name: string;
+  weight?: "regular" | "bold" | "fill" | "duotone" | "light";
+  size?: number;
+  class?: string;
+}
+const { name, weight = "regular", size = 18, class: className = "" } = Astro.props;
+const file = weight === "regular" ? `${name}.svg` : `${name}-${weight}.svg`;
+const raw = readFileSync(join(process.cwd(), "node_modules/@phosphor-icons/core/assets", weight, file), "utf8");
+const svg = raw.replace(
+  "<svg ",
+  `<svg width="${size}" height="${size}" aria-hidden="true" focusable="false" class="ph ${className}" `
+);
+---
+
+<Fragment set:html={svg} />

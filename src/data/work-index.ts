@@ -66,21 +66,25 @@ export const workIndex: WorkRow[] = [
 
 export const beliefs = [
   {
+    icon: "crosshair",
     text: "I solve the problem, not the tool.",
     note: "Tools, hype and skill boundaries don't decide the answer.",
     proof: ["pilgrim-transport", "quick-service-app"],
   },
   {
+    icon: "steering-wheel",
     text: "I ship with agents; people stay in charge.",
     note: "They draft and I decide, the way a lead works with a fast team.",
     proof: ["clinical-copilot", "claims-agent-console"],
   },
   {
+    icon: "compass",
     text: "I'm at home in ambiguity.",
     note: "Unclear briefs and new domains are where the work starts.",
     proof: ["clicker", "istyme"],
   },
   {
+    icon: "signature",
     text: "I own the consequences.",
     note: "Including what goes wrong after it ships.",
     proof: ["therapy-documentation", "hh-global"],

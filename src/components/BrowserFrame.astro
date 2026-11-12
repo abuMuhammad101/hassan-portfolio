@@ -1,5 +1,6 @@
 ---
-/* Minimal browser window for re-created web UI. */
+/* Browser window for re-created product UI. */
+import Icon from "./Icon.astro";
 interface Props {
   address?: string;
   label?: string;
@@ -10,25 +11,30 @@ const { address = "", label = "Browser window" } = Astro.props;
 <figure class="browser" role="group" aria-label={label}>
   <div class="bar">
     <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-    {address && <span class="address">{address}</span>}
+    {address && <span class="address"><Icon name="lock-simple" size={12} /> {address}</span>}
+    <span class="spacer" aria-hidden="true"></span>
   </div>
-  <div class="viewport"><slot /></div>
+  <div class="viewport" data-lenis-prevent><slot /></div>
 </figure>
 
 <style>
   .browser {
     margin: 0;
-    border: 1px solid var(--rule);
-    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+    border-radius: 14px;
     background: var(--bg-raised);
     overflow: hidden;
     max-width: 100%;
+    box-shadow:
+      0 30px 60px -30px rgb(0 0 0 / 0.3),
+      0 12px 24px -18px rgb(0 0 0 / 0.25);
   }
   .bar {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
+    padding: 9px 14px;
+    background: var(--bg-sunk);
     border-bottom: 1px solid var(--rule);
   }
   .dots {
@@ -36,26 +42,26 @@ const { address = "", label = "Browser window" } = Astro.props;
     gap: 6px;
   }
   .dots i {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: var(--rule);
+    background: color-mix(in srgb, var(--ink) 16%, transparent);
   }
   .address {
-    flex: 1;
-    min-width: 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--ink-muted);
-    background: var(--bg);
-    border-radius: 6px;
-    padding: 3px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--ink-secondary);
+    background: var(--bg-raised);
+    border-radius: 999px;
+    padding: 3px 14px;
+    max-width: 46vw;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   .viewport {
-    min-height: 120px;
     overflow: auto;
   }
 </style>

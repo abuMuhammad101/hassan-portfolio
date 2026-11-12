@@ -1,43 +1,86 @@
 ---
-/* A command-driven overlay: appears when asked, asks only for what's missing,
-   and leaves the clinician in control. Illustrative re-creation. */
+/* A command-driven copilot overlay on a clinical schedule. It appears when
+   asked, asks only for what's missing, and leaves the clinician in control.
+   Re-created with sample data. */
+import "../../styles/mock-app.css";
 import BrowserFrame from "../BrowserFrame.astro";
+import Icon from "../Icon.astro";
+const rows = [
+  { time: "09:00", name: "Patient A", kind: "Physical therapy", status: "Seen", cls: "ok" },
+  { time: "10:30", name: "Patient B", kind: "Respiratory therapy", status: "Waiting", cls: "wait" },
+  { time: "11:15", name: "Patient C", kind: "Occupational therapy", status: "Scheduled", cls: "" },
+  { time: "13:00", name: "Patient D", kind: "Speech therapy", status: "Scheduled", cls: "" },
+];
 ---
 
 <div data-copilot>
-  <BrowserFrame address="clinical-workspace.example" label="Re-created clinical screen with copilot overlay">
-    <div class="screen">
-      <div class="bg" aria-hidden="true">
-        <i style="width:38%"></i><i style="width:72%"></i><i style="width:64%"></i><i style="width:80%"></i><i style="width:46%"></i><i style="width:70%"></i>
-      </div>
-      <div class="cmds" data-cmds>
-        <p>Say or pick a command</p>
-        <button type="button" data-cmd="assess">Start an assessment</button>
-        <button type="button" data-cmd="note">Draft today's note</button>
-      </div>
-      <div class="overlay" data-overlay hidden role="status" aria-live="polite">
-        <p class="who">Copilot</p>
-        <div data-step="ask" hidden>
-          <p>Which patient is this assessment for?</p>
-          <div class="row">
-            <button type="button" data-pick="Patient A">Patient A</button>
-            <button type="button" data-pick="Patient B">Patient B</button>
-          </div>
+  <BrowserFrame address="app.clinicalworkspace.example" label="Re-created clinical schedule with a copilot overlay">
+    <div class="mk-app">
+      <aside class="mk-rail" aria-hidden="true">
+        <span class="mk-logo"><Icon name="first-aid-kit" weight="bold" size={18} /></span>
+        <span class="on"><Icon name="calendar-check" size={18} /></span>
+        <span><Icon name="users" size={18} /></span>
+        <span><Icon name="chart-line-up" size={18} /></span>
+        <span class="end"><Icon name="gear-six" size={18} /></span>
+      </aside>
+      <div class="mk-main">
+        <div class="mk-top">
+          <span class="mk-crumb"><b>Today's schedule</b> · Thursday</span>
+          <Icon name="magnifying-glass" size={16} />
+          <Icon name="bell" size={16} />
+          <span class="mk-avatar">HK</span>
         </div>
-        <div data-step="propose" hidden>
-          <p data-proposal></p>
-          <p class="hint" data-hint></p>
-          <div class="row">
-            <button type="button" class="primary" data-accept>Accept</button>
-            <button type="button" data-edit>Change</button>
-            <button type="button" data-cancel>Cancel</button>
+
+        <div class="content">
+          <div class="mk-card table" role="table" aria-label="Sample schedule">
+            {rows.map((r) => (
+              <div class="row" role="row" data-row={r.name}>
+                <span class="time" role="cell">{r.time}</span>
+                <span class="mk-avatar" aria-hidden="true">{r.name.slice(-1)}</span>
+                <span class="who" role="cell"><b>{r.name}</b><small>{r.kind}</small></span>
+                <span class="extra" role="cell" data-extra></span>
+                <span class={`mk-badge ${r.cls}`} role="cell">{r.status}</span>
+              </div>
+            ))}
           </div>
-        </div>
-        <div data-step="done" hidden>
-          <p data-done></p>
-          <div class="row">
-            <button type="button" data-undo>Undo</button>
-            <button type="button" data-close>Close</button>
+
+          <div class="dock">
+            <div class="overlay" data-overlay hidden>
+              <p class="who-line"><span class="spark"><Icon name="sparkle" weight="fill" size={13} /></span> Copilot</p>
+              <div role="status" aria-live="polite">
+                <p class="thinking" data-step="think" hidden><i></i><i></i><i></i><span>Working on it</span></p>
+                <div data-step="ask" hidden>
+                  <p>Which patient is this assessment for?</p>
+                  <div class="btns">
+                    <button type="button" class="mk-btn ghost" data-pick="Patient B">Patient B · waiting now</button>
+                    <button type="button" class="mk-btn ghost" data-pick="Patient C">Patient C · 11:15</button>
+                  </div>
+                </div>
+                <div data-step="propose" hidden>
+                  <p data-proposal></p>
+                  <p class="preview"><Icon name="clipboard-text" size={16} /> <span data-preview></span></p>
+                  <div class="btns">
+                    <button type="button" class="mk-btn" data-accept>Accept</button>
+                    <button type="button" class="mk-btn ghost" data-edit><Icon name="pencil-simple" size={14} /> Change</button>
+                    <button type="button" class="mk-btn ghost" data-cancel>Cancel</button>
+                  </div>
+                </div>
+                <div data-step="done" hidden>
+                  <p class="done-line"><Icon name="check-circle" weight="fill" size={16} /> <span data-done></span></p>
+                  <div class="btns">
+                    <button type="button" class="mk-btn ghost" data-undo><Icon name="arrow-counter-clockwise" size={14} /> Undo</button>
+                    <button type="button" class="mk-btn ghost" data-close>Done</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bar" data-bar>
+              <span class="prompt"><Icon name="sparkle" size={16} /> Tell the copilot what to do</span>
+              <button type="button" class="chip" data-cmd="assess">Start an assessment</button>
+              <button type="button" class="chip" data-cmd="note">Draft today's note</button>
+              <span class="mic" aria-hidden="true"><Icon name="microphone" size={16} /></span>
+            </div>
           </div>
         </div>
       </div>
@@ -48,52 +91,64 @@ import BrowserFrame from "../BrowserFrame.astro";
 <script>
   document.querySelectorAll<HTMLElement>("[data-copilot]").forEach((root) => {
     const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
-    const overlay = q("[data-overlay]"), cmds = q("[data-cmds]");
+    const overlay = q("[data-overlay]");
     const steps = [...root.querySelectorAll<HTMLElement>("[data-step]")];
-    let cmd = "", patient = "", session = "morning";
+    const quick = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let cmd = "", patient = "", session = "09:00 visit with Patient A", timer = 0;
+
+    const clearMarks = () => root.querySelectorAll<HTMLElement>("[data-extra]").forEach((e) => (e.textContent = ""));
     const show = (name: string) => {
       overlay.hidden = false;
-      cmds.hidden = true;
       steps.forEach((s) => (s.hidden = s.dataset.step !== name));
-      steps.find((s) => s.dataset.step === name)?.querySelector("button")?.focus();
+      if (name !== "think") steps.find((s) => s.dataset.step === name)?.querySelector("button")?.focus();
+    };
+    const think = (then: () => void) => {
+      show("think");
+      clearTimeout(timer);
+      timer = window.setTimeout(then, quick ? 0 : 650);
     };
     const propose = () => {
-      q("[data-proposal]").textContent =
-        cmd === "assess"
-          ? `I'll open a new assessment for ${patient}.`
-          : `I'll draft today's note from the ${session} session.`;
-      q("[data-hint]").textContent =
-        cmd === "note" ? "Not the right session? Choose Change." : "Nothing is saved until you accept.";
+      const assess = cmd === "assess";
+      q("[data-proposal]").textContent = assess
+        ? `I'll open a new assessment for ${patient}.`
+        : "I'll draft today's note from this visit.";
+      q("[data-preview]").textContent = assess ? `New assessment · ${patient}` : `Draft note · ${session}`;
       show("propose");
     };
     const close = () => {
       overlay.hidden = true;
-      cmds.hidden = false;
-      session = "morning";
-      cmds.querySelector("button")?.focus();
+      session = "09:00 visit with Patient A";
+      q<HTMLButtonElement>("[data-cmd]").focus();
     };
+
     root.querySelectorAll<HTMLElement>("[data-cmd]").forEach((b) =>
       b.addEventListener("click", () => {
         cmd = b.dataset.cmd!;
-        cmd === "assess" ? show("ask") : propose();
+        clearMarks();
+        think(() => (cmd === "assess" ? show("ask") : propose()));
       })
     );
     root.querySelectorAll<HTMLElement>("[data-pick]").forEach((b) =>
       b.addEventListener("click", () => {
         patient = b.dataset.pick!;
-        propose();
+        think(propose);
       })
     );
     q("[data-edit]").addEventListener("click", () => {
       if (cmd === "assess") return show("ask");
-      session = session === "morning" ? "afternoon" : "morning";
+      session = session.startsWith("09") ? "10:30 visit with Patient B" : "09:00 visit with Patient A";
       propose();
     });
     q("[data-accept]").addEventListener("click", () => {
-      q("[data-done]").textContent = cmd === "assess" ? `Assessment opened for ${patient}.` : "Draft note ready for your review.";
+      const assess = cmd === "assess";
+      q("[data-done]").textContent = assess ? `Assessment opened for ${patient}.` : "Draft note ready for your review.";
+      const who = assess ? patient : session.slice(-9);
+      const cell = root.querySelector<HTMLElement>(`[data-row="${who}"] [data-extra]`);
+      if (cell) cell.textContent = assess ? "Assessment open" : "Draft note";
       show("done");
     });
     q("[data-undo]").addEventListener("click", () => {
+      clearMarks();
       q("[data-done]").textContent = "Undone. Nothing was changed.";
     });
     q("[data-cancel]").addEventListener("click", close);
@@ -102,84 +157,175 @@ import BrowserFrame from "../BrowserFrame.astro";
 </script>
 
 <style>
-  .screen {
+  small {
+    font-size: 11.5px;
+    color: var(--ink-muted);
+  }
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+  }
+  .table {
+    padding: 4px 6px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 8px;
+  }
+  .row + .row {
+    border-top: 1px solid var(--rule);
+  }
+  .time {
+    width: 40px;
+    color: var(--ink-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+  .who {
+    display: grid;
+    min-width: 0;
+    margin-right: auto;
+  }
+  .who b {
+    font-weight: 500;
+  }
+  .extra:not(:empty) {
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 2px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--ink);
+    white-space: nowrap;
+  }
+  .dock {
     position: relative;
-    min-height: 320px;
-    padding: 20px;
-    font-size: var(--text-sm);
+    margin-top: auto;
   }
-  .bg i {
-    display: block;
-    height: 10px;
-    border-radius: 4px;
-    background: var(--rule);
-    margin-bottom: 14px;
-  }
-  .cmds {
-    position: absolute;
-    left: 20px;
-    right: 20px;
-    bottom: 20px;
+  .bar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
+    padding: 8px 10px 8px 14px;
+    border-radius: 14px;
+    background: var(--bg-raised);
+    border: 1px solid var(--rule);
+    box-shadow: 0 12px 28px -18px rgb(0 0 0 / 0.35);
   }
-  .cmds p {
-    margin: 0 4px 0 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
+  .prompt {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     color: var(--ink-muted);
+    margin-right: auto;
   }
-  button {
+  .chip {
     font: inherit;
-    font-size: var(--text-sm);
+    font-size: 12.5px;
+    font-weight: 500;
     padding: 6px 12px;
     border-radius: 999px;
     border: 1px solid var(--rule);
-    background: var(--bg-raised);
+    background: var(--bg-sunk);
     color: var(--ink);
     cursor: pointer;
   }
-  button:hover {
+  .chip:hover {
     border-color: var(--ink);
   }
-  button.primary {
+  .mic {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
     background: var(--ink);
-    border-color: var(--ink);
     color: var(--bg);
   }
-  /* Monochrome on purpose: ink, paper and one hairline. */
+  /* The overlay is monochrome on purpose: ink, paper and one hairline. */
   .overlay {
     position: absolute;
-    left: 20px;
-    right: 20px;
-    bottom: 20px;
-    max-width: 420px;
-    margin-left: auto;
+    right: 0;
+    bottom: calc(100% + 10px);
+    width: min(380px, 100%);
     background: var(--bg-raised);
     border: 1px solid var(--ink);
-    border-radius: 12px;
-    padding: 14px 16px;
-    box-shadow: 0 10px 30px rgb(0 0 0 / 0.12);
+    border-radius: 16px;
+    padding: 14px 16px 16px;
+    box-shadow: 0 24px 48px -20px rgb(0 0 0 / 0.45);
   }
-  .who {
-    margin: 0 0 6px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--ink-muted);
+  .who-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .spark {
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    border-radius: 7px;
+    background: var(--ink);
+    color: var(--bg);
   }
   .overlay p {
     margin: 0 0 10px;
-    color: var(--ink);
   }
-  .overlay .hint {
-    color: var(--ink-muted);
-    font-size: var(--text-xs);
+  .preview {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px dashed var(--ink-muted);
+    font-weight: 500;
   }
-  .row {
+  .btns {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+  }
+  .done-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+  }
+  .thinking {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--ink-muted);
+  }
+  .thinking i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--ink);
+    animation: blink 0.9s infinite ease-in-out;
+  }
+  .thinking i:nth-child(2) { animation-delay: 0.15s; }
+  .thinking i:nth-child(3) { animation-delay: 0.3s; }
+  .thinking span {
+    margin-left: 6px;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 0.25; }
+    50% { opacity: 1; }
+  }
+  @media (max-width: 560px) {
+    .time {
+      display: none;
+    }
+    .mic {
+      display: none;
+    }
   }
 </style>
