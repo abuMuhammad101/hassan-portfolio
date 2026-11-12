@@ -5,6 +5,15 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 
+// A belief link opens the work row it points to.
+function openTarget() {
+  const el = location.hash.startsWith("#work-") ? document.querySelector(location.hash) : null;
+  const d = el?.querySelector("details");
+  if (d) d.open = true;
+}
+window.addEventListener("hashchange", openTarget);
+openTarget();
+
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 if (!reduced) {

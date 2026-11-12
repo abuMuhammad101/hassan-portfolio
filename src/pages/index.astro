@@ -1,81 +1,112 @@
 ---
 import Base from "../layouts/Base.astro";
 import Header from "../components/Header.astro";
-import WorkScroller from "../components/WorkScroller.astro";
 import Timeline from "../components/Timeline.astro";
 import LinkList from "../components/LinkList.astro";
 import Footer from "../components/Footer.astro";
 import TwoToneHeading from "../components/TwoToneHeading.astro";
 import ConstructionLines from "../components/ConstructionLines.astro";
+import IndexList from "../components/IndexList.astro";
+import { beliefs, workIndex } from "../data/work-index";
+
+const nameOf = (id: string) => workIndex.find((w) => w.id === id)?.name ?? id;
+const proof = ["8 products", "5+ years", "PK · GCC · US", "healthcare · ERP · marketplaces"];
+const ways = [
+  "I start from the person using it and the rules they live under.",
+  "I map the states nobody asked for: empty, error, partial failure, edge cases.",
+  "I work with agents the way a lead works with a fast team: they draft, I decide.",
+  "I ship in small, reversible steps, and I sit in the architecture conversation.",
+  "I own what ships, including what goes wrong.",
+];
 ---
 
-<Base title="Muhammad Hassan Khan — Senior Product Designer">
+<Base
+  title="Muhammad Hassan Khan — Senior Product Designer"
+  description="Less noise. Real products. Owned end to end. Senior product designer in Karachi working on healthcare compliance, AI copilots, dense business software and local marketplaces."
+>
   <Header />
+
   <section class="hero">
     <div class="hero-inner wrap">
       <ConstructionLines />
       <TwoToneHeading as="h1" size="hero" lead="Less noise." rest="Real products. Owned end to end." />
     </div>
   </section>
-  <main class="wrap intro">
-    <p>
-      Hey, I'm <a href="/resume/">Hassan</a>, a senior product designer.
-    </p>
-    <p>
-      Over the past 5+ years I've designed SaaS and mobile products end to
-      end — research through developer handoff. I'm currently a <a href="https://github.com/abuMuhammad101" target="_blank" rel="noopener noreferrer">Senior Product Designer at AST</a>,
-      where I focus specifically on healthcare — EMR compliance flows and AI
-      agent design for clinical products.
-    </p>
-    <p>
-      Design is shifting toward designers who can test and ship, not just
-      spec. So my work doesn't stop at the handoff: I plan in small verified
-      steps, catch regressions before they reach users, and take a flow from
-      Figma to a working product myself. The live builds below are the proof,
-      not the pitch.
-    </p>
+
+  <main>
+    <section class="wrap intro">
+      <p>
+        I'm <a href="/resume/">Hassan</a>, a senior product designer in Karachi. Healthcare compliance, AI
+        copilots, dense business software and local marketplaces: I decide what's right for the people using
+        them, ship it, and own what happens next.
+      </p>
+      <ul class="proof" aria-label="At a glance">
+        {proof.map((p) => <li>{p}</li>)}
+      </ul>
+    </section>
+
+    <section class="wrap block" aria-labelledby="beliefs-label">
+      <p class="section-label" id="beliefs-label">what I believe</p>
+      <ul class="beliefs">
+        {beliefs.map((b) => (
+          <li class="reveal">
+            <p class="belief">{b.text}</p>
+            <p class="note">{b.note}</p>
+            <p class="proof-links">
+              {b.proof.map((id, i) => (
+                <>
+                  {i > 0 && <span aria-hidden="true"> · </span>}
+                  <a href={`#work-${id}`}>{nameOf(id)}</a>
+                </>
+              ))}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="wrap block" id="work" aria-labelledby="work-label">
+      <p class="section-label" id="work-label">selected work</p>
+      <IndexList />
+    </section>
+
+    <section class="wrap block" aria-labelledby="how-label">
+      <p class="section-label" id="how-label">how I work</p>
+      <ul class="ways">
+        {ways.map((w) => <li class="reveal">{w}</li>)}
+      </ul>
+      <p class="tools">tools: Figma · Claude Code · Framer · Webflow · GitHub</p>
+    </section>
+
+    <Timeline />
+
+    <LinkList
+      class="reveal"
+      label="earlier work"
+      items={[
+        { label: "Inventory Management Tool", href: "/work/inventory-management/" },
+        { label: "Online Exam Preparation Platform", href: "/work/online-exam-prep/" },
+        { label: "Landlord Mobile App", href: "/work/landlord-app/" },
+        { label: "Meal Purchase E-Wallet", href: "/work/meal-wallet/" },
+        { label: "Cookiya, mobile app scaffold", href: "/work/cookiya/" },
+        { label: "Motion starter kit", href: "/work/motions/" },
+      ]}
+    />
+
+    <div id="contact">
+      <LinkList
+        class="reveal"
+        label="contact"
+        items={[
+          { label: "Resume", href: "/resume/" },
+          { label: "LinkedIn", href: "https://linkedin.com/in/muhammad-hassan-khan" },
+          { label: "GitHub", href: "https://github.com/abuMuhammad101" },
+          { label: "layers.to", href: "https://layers.to/hassankuiux" },
+          { label: "Email", href: "mailto:hassank.uiux@gmail.com" },
+        ]}
+      />
+    </div>
   </main>
-
-  <WorkScroller label="selected work" category="ai-adapted" />
-  <WorkScroller label="product design" category="product-design" />
-  <Timeline />
-
-  <LinkList
-    class="reveal"
-    label="services"
-    items={[
-      { label: "Product Design" },
-      { label: "Design Systems" },
-      { label: "UX Research" },
-      { label: "Prototyping" },
-      { label: "AI-Assisted Design Ops" },
-      { label: "Conversion Optimization" },
-    ]}
-  />
-
-  <LinkList
-    class="reveal"
-    label="stack"
-    items={[
-      { label: "Claude Code" },
-      { label: "Figma" },
-      { label: "Framer" },
-      { label: "Webflow" },
-      { label: "GitHub" },
-    ]}
-  />
-
-  <LinkList
-    class="reveal"
-    label="contact"
-    items={[
-      { label: "Resume", href: "/resume/" },
-      { label: "LinkedIn", href: "https://linkedin.com/in/muhammad-hassan-khan" },
-      { label: "GitHub", href: "https://github.com/abuMuhammad101" },
-      { label: "layers.to", href: "https://layers.to/hassankuiux" },
-      { label: "Email", href: "mailto:hassank.uiux@gmail.com" },
-    ]}
-  />
 
   <Footer />
 </Base>
@@ -89,29 +120,92 @@ import ConstructionLines from "../components/ConstructionLines.astro";
     padding-top: var(--space-6);
     padding-bottom: var(--space-8);
   }
-  .intro {
-    padding-bottom: var(--space-4);
-  }
   .intro p {
     font-size: var(--text-lg);
     color: var(--ink-secondary);
     margin: 0 0 var(--space-3);
     max-width: 58ch;
   }
-  .intro p:first-child {
-    color: var(--ink);
-  }
-  .intro a {
+  .intro a,
+  .proof-links a {
     color: var(--ink);
     text-decoration: underline;
     text-decoration-color: var(--rule);
     text-underline-offset: 3px;
   }
-  .intro a:hover {
+  .intro a:hover,
+  .proof-links a:hover {
     text-decoration-color: var(--ink);
   }
-  .intro strong {
+  .proof {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+  }
+  .proof li {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-secondary);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 3px 8px;
+    background: var(--bg-raised);
+  }
+  .block {
+    padding-top: var(--space-8);
+  }
+  .beliefs,
+  .ways {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .beliefs li {
+    padding: var(--space-2) 0;
+    border-top: 1px solid var(--rule);
+  }
+  .beliefs li:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+  .belief {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    line-height: 1.3;
     color: var(--ink);
-    font-weight: 600;
+    margin: 0;
+  }
+  .note {
+    margin: 2px 0 6px;
+    color: var(--ink-secondary);
+  }
+  .proof-links {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+  .ways li {
+    position: relative;
+    padding: 6px 0 6px 22px;
+    color: var(--ink-secondary);
+    max-width: 58ch;
+  }
+  .ways li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1.05em;
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--ink-muted);
+    background: var(--bg);
+  }
+  .tools {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+    margin: var(--space-3) 0 0;
   }
 </style>
