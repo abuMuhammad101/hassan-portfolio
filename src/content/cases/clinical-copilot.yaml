@@ -1,0 +1,44 @@
+title: Clinical Copilot
+titleRest: Overlay
+angle: One canonical copilot that gives clinicians superpowers without adding noise.
+order: 3
+meta:
+  - { label: Role, value: Solo designer }
+  - { label: Effort, value: A few days }
+  - { label: Platform, value: Web and tablet }
+  - { label: Domain, value: Clinical workflows }
+ndaRecreated: true
+widget: copilot
+widgetIntro: Pick a command. The overlay appears, asks only for what's missing, and leaves you in control.
+stats:
+  - { value: "1", unit: component, label: The same overlay serves every flow }
+  - { value: "0", unit: colours, label: "Monochrome, so it sits on any product" }
+problem:
+  - Clinical software is dense. Adding an AI chat window gives clinicians one more place to look, at the moment they have the least attention to spare.
+  - They needed help inside the flow they were already in, something canonical that could give every clinician the same extra reach, whatever screen they were on.
+constraints:
+  - It has to work across different flows and product lines.
+  - It can't compete with the clinical content on screen.
+  - The clinician stays responsible for every action.
+decisions:
+  - title: One overlay, any flow
+    body: A single canonical component adapts to whatever the clinician is doing, so the behaviour is learned once.
+  - title: It appears when commanded
+    body: The overlay shows up after the clinician asks for an action and steps back when the action is done.
+  - title: Ask only for what's missing
+    body: If a command leaves something out, such as which patient, the overlay asks for that one thing and then rejoins the normal flow.
+  - title: Monochrome on purpose
+    body: With no colour of its own, the overlay can ship as one kit across product lines without clashing with any of them.
+states:
+  - { name: Wrong suggestion, note: The clinician can correct it }
+  - { name: Cut-off answer, note: Marked clearly, with a retry }
+  - { name: Low confidence, note: Shown, not hidden }
+  - { name: Changed my mind, note: Every action can be undone }
+evidence:
+  - One component covers every flow it has been placed in.
+  - It adds to existing screens without changing what was already shipped.
+  - Its monochrome design lets it move between product lines.
+measures:
+  - Suggestions accepted, edited or rejected
+  - Time to finish the task with and without it
+next: Tune when the overlay should stay quiet, since the best copilot interrupts least.

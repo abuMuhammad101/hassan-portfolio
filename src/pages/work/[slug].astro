@@ -4,42 +4,64 @@ import Base from "../../layouts/Base.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 
+import CaseStudy from "../../components/CaseStudy.astro";
+
 export async function getStaticPaths() {
   const work = await getCollection("work");
-  return work.map((entry) => ({
-    params: { slug: entry.slug },
-    props: { entry },
-  }));
+  const cases = (await getCollection("cases")).sort((x, y) => x.data.order - y.data.order);
+  return [
+    ...work.map((entry) => ({ params: { slug: entry.slug }, props: { entry, study: null, next: null } })),
+    ...cases.map((c, i) => {
+      const n = cases[(i + 1) % cases.length];
+      return {
+        params: { slug: c.id },
+        props: {
+          entry: null,
+          study: c.data,
+          next: { slug: n.id, title: [n.data.title, n.data.titleRest].filter(Boolean).join(" ") },
+        },
+      };
+    }),
+  ];
 }
 
-const { entry } = Astro.props;
-const { Content } = await entry.render();
-const { title, kicker, accentVar, status, stack, link, linkLabel } = entry.data;
+const { entry, study, next } = Astro.props as any;
+const rendered = entry ? await entry.render() : null;
+const Content = rendered?.Content;
+const { title, kicker, accentVar, status, stack, link, linkLabel } = entry?.data ?? {};
 ---
 
-<Base title={`${title} — Hassan Khan`} description={entry.data.highlight}>
-  <Header showBack />
-  <main class="wrap case" style={`--accent: var(${accentVar})`}>
-    <p class="kicker">{kicker}</p>
-    <h1>{title}</h1>
-    <p class="status tabular-nums">{status}</p>
-    <div class="stack-tags">
-      {stack.map((s) => (
-        <span class="tag">{s}</span>
-      ))}
-    </div>
-    {link && (
-      <a class="external" href={link} target="_blank" rel="noopener noreferrer">
-        {linkLabel ?? "Visit"} ↗
-      </a>
-    )}
-
-    <div class="body reveal">
-      <Content />
-    </div>
-  </main>
-  <Footer />
-</Base>
+{study ? (
+  <Base title={`${[study.title, study.titleRest].filter(Boolean).join(" ")} — Hassan Khan`} description={study.angle}>
+    <Header showBack wide />
+    <CaseStudy data={study} next={next} />
+    <Footer />
+  </Base>
+) : (
+  <Base title={`${title} — Hassan Khan`} description={entry.data.highlight}>
+    <Header showBack />
+    <main class="wrap case" style={`--accent: var(${accentVar})`}>
+      <p class="kicker">{kicker}</p>
+      <h1>{title}</h1>
+      <p class="status tabular-nums">{status}</p>
+      <div class="stack-tags">
+        {stack.map((s: string) => (
+          <span class="tag">{s}</span>
+        ))}
+      </div>
+      {link && (
+        <a class="external" href={link} target="_blank" rel="noopener noreferrer">
+          {linkLabel ?? "Visit"} ↗
+        </a>
+      )}
+  
+      <div class="body reveal">
+        <Content />
+      </div>
+    </main>
+    <Footer />
+  </Base>
+)}
 
 <style>
   .case {

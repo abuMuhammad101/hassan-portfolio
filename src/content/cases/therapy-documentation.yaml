@@ -1,0 +1,47 @@
+title: Therapy Documentation
+titleRest: Platform
+angle: A system-driven experience that still feels comfortable, built so the rules stop the slips that cause errors later.
+order: 2
+meta:
+  - { label: Role, value: Solo designer }
+  - { label: Effort, value: A few days per delivery }
+  - { label: Platform, value: Web and tablet }
+  - { label: Domain, value: "US therapy, Medicare" }
+ndaRecreated: true
+widget: record-chain
+widgetIntro: Try to start the session note. The system stops you, says why, and shows the way forward.
+stats:
+  - { value: "3", unit: structures, label: Explored for plan templates before choosing one }
+  - { value: "1", unit: thread, label: Every record ties back to the one before it }
+problem:
+  - In therapy documentation every record has to connect. The evaluation justifies the plan of care, the plan justifies each session, and each note shows progress. Clinicians call this the golden thread.
+  - When a link is missing, the record can be rejected at audit, long after the session happened. Clinicians document between patients and can't be expected to hold every rule in their heads.
+constraints:
+  - Medicare documentation rules are not negotiable.
+  - Clinicians have minutes, not hours, per note.
+  - Extend the product's existing design system instead of adding one-off patterns.
+decisionsIntro: Across several modules, the same few decisions kept coming back. In summary.
+decisions:
+  - title: Let the system carry the rules
+    body: The order of records is a property of the product, not something a clinician must remember. A later record opens only when the earlier ones are complete.
+  - title: Guide, don't just block
+    body: For plan templates I explored three structures before choosing a guided flow. When something is missing, the screen says what, why it matters, and how to fix it, next to where the clinician is working.
+  - title: Keep distinct records distinct
+    body: Records that look alike but mean different things at audit never share a form. It costs a little duplication and removes a whole class of mix-ups.
+  - title: Comfortable by default
+    body: Compliance stays strict underneath. On the surface the work is short steps, plain language and nothing to configure every session.
+states:
+  - { name: Unsigned note, note: Work saved but not yet signed }
+  - { name: Certification expired, note: The plan has lapsed }
+  - { name: Review due, note: A periodic re-certification is coming up }
+  - { name: Co-signature pending, note: Waiting on a second clinician }
+  - { name: Missing link, note: A record with nothing to tie back to }
+evidence:
+  - Out-of-order records are designed out. The product won't let them be created.
+  - Three template structures were explored and compared before one was chosen.
+  - Features were released with written release notes for the clinical teams.
+measures:
+  - Notes rejected at audit
+  - Time to complete a note
+  - Unsigned notes past their deadline
+next: Bring the same guard-and-guide pattern to the remaining modules, and measure where clinicians still slow down.

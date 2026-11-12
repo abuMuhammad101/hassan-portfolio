@@ -1,0 +1,185 @@
+---
+/* A command-driven overlay: appears when asked, asks only for what's missing,
+   and leaves the clinician in control. Illustrative re-creation. */
+import BrowserFrame from "../BrowserFrame.astro";
+---
+
+<div data-copilot>
+  <BrowserFrame address="clinical-workspace.example" label="Re-created clinical screen with copilot overlay">
+    <div class="screen">
+      <div class="bg" aria-hidden="true">
+        <i style="width:38%"></i><i style="width:72%"></i><i style="width:64%"></i><i style="width:80%"></i><i style="width:46%"></i><i style="width:70%"></i>
+      </div>
+      <div class="cmds" data-cmds>
+        <p>Say or pick a command</p>
+        <button type="button" data-cmd="assess">Start an assessment</button>
+        <button type="button" data-cmd="note">Draft today's note</button>
+      </div>
+      <div class="overlay" data-overlay hidden role="status" aria-live="polite">
+        <p class="who">Copilot</p>
+        <div data-step="ask" hidden>
+          <p>Which patient is this assessment for?</p>
+          <div class="row">
+            <button type="button" data-pick="Patient A">Patient A</button>
+            <button type="button" data-pick="Patient B">Patient B</button>
+          </div>
+        </div>
+        <div data-step="propose" hidden>
+          <p data-proposal></p>
+          <p class="hint" data-hint></p>
+          <div class="row">
+            <button type="button" class="primary" data-accept>Accept</button>
+            <button type="button" data-edit>Change</button>
+            <button type="button" data-cancel>Cancel</button>
+          </div>
+        </div>
+        <div data-step="done" hidden>
+          <p data-done></p>
+          <div class="row">
+            <button type="button" data-undo>Undo</button>
+            <button type="button" data-close>Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </BrowserFrame>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-copilot]").forEach((root) => {
+    const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const overlay = q("[data-overlay]"), cmds = q("[data-cmds]");
+    const steps = [...root.querySelectorAll<HTMLElement>("[data-step]")];
+    let cmd = "", patient = "", session = "morning";
+    const show = (name: string) => {
+      overlay.hidden = false;
+      cmds.hidden = true;
+      steps.forEach((s) => (s.hidden = s.dataset.step !== name));
+      steps.find((s) => s.dataset.step === name)?.querySelector("button")?.focus();
+    };
+    const propose = () => {
+      q("[data-proposal]").textContent =
+        cmd === "assess"
+          ? `I'll open a new assessment for ${patient}.`
+          : `I'll draft today's note from the ${session} session.`;
+      q("[data-hint]").textContent =
+        cmd === "note" ? "Not the right session? Choose Change." : "Nothing is saved until you accept.";
+      show("propose");
+    };
+    const close = () => {
+      overlay.hidden = true;
+      cmds.hidden = false;
+      session = "morning";
+      cmds.querySelector("button")?.focus();
+    };
+    root.querySelectorAll<HTMLElement>("[data-cmd]").forEach((b) =>
+      b.addEventListener("click", () => {
+        cmd = b.dataset.cmd!;
+        cmd === "assess" ? show("ask") : propose();
+      })
+    );
+    root.querySelectorAll<HTMLElement>("[data-pick]").forEach((b) =>
+      b.addEventListener("click", () => {
+        patient = b.dataset.pick!;
+        propose();
+      })
+    );
+    q("[data-edit]").addEventListener("click", () => {
+      if (cmd === "assess") return show("ask");
+      session = session === "morning" ? "afternoon" : "morning";
+      propose();
+    });
+    q("[data-accept]").addEventListener("click", () => {
+      q("[data-done]").textContent = cmd === "assess" ? `Assessment opened for ${patient}.` : "Draft note ready for your review.";
+      show("done");
+    });
+    q("[data-undo]").addEventListener("click", () => {
+      q("[data-done]").textContent = "Undone. Nothing was changed.";
+    });
+    q("[data-cancel]").addEventListener("click", close);
+    q("[data-close]").addEventListener("click", close);
+  });
+</script>
+
+<style>
+  .screen {
+    position: relative;
+    min-height: 320px;
+    padding: 20px;
+    font-size: var(--text-sm);
+  }
+  .bg i {
+    display: block;
+    height: 10px;
+    border-radius: 4px;
+    background: var(--rule);
+    margin-bottom: 14px;
+  }
+  .cmds {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .cmds p {
+    margin: 0 4px 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+  }
+  button {
+    font: inherit;
+    font-size: var(--text-sm);
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: var(--bg-raised);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  button:hover {
+    border-color: var(--ink);
+  }
+  button.primary {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--bg);
+  }
+  /* Monochrome on purpose: ink, paper and one hairline. */
+  .overlay {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    max-width: 420px;
+    margin-left: auto;
+    background: var(--bg-raised);
+    border: 1px solid var(--ink);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.12);
+  }
+  .who {
+    margin: 0 0 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+  }
+  .overlay p {
+    margin: 0 0 10px;
+    color: var(--ink);
+  }
+  .overlay .hint {
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+</style>

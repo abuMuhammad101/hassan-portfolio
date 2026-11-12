@@ -14,6 +14,7 @@ export const workIndex: WorkRow[] = [
     name: "Pilgrim Transport Booking",
     tags: ["Web", "Travel"],
     angle: "An agent built the site. I gave back what people need from it.",
+    page: "pilgrim-transport",
   },
   {
     id: "therapy-documentation",
@@ -21,12 +22,14 @@ export const workIndex: WorkRow[] = [
     tags: ["Healthcare", "Compliance"],
     angle:
       "A system-driven experience that still feels comfortable, built so the rules stop the slips that cause errors later.",
+    page: "therapy-documentation",
   },
   {
     id: "clinical-copilot",
     name: "Clinical Copilot Overlay",
     tags: ["Healthcare", "AI copilot"],
     angle: "A copilot that cuts the noise: it appears when asked, adapts to the flow, and stays out of the way.",
+    page: "clinical-copilot",
   },
   {
     id: "claims-agent-console",

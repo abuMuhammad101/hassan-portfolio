@@ -1,0 +1,42 @@
+title: Pilgrim Transport
+titleRest: Booking
+angle: An agent built the site. I gave back what people need from it.
+order: 1
+meta:
+  - { label: Role, value: Solo designer }
+  - { label: Effort, value: A few days }
+  - { label: Platform, value: Web }
+  - { label: Scope, value: "Front end only, backend unchanged" }
+ndaRecreated: true
+widget: before-after
+widgetIntro: Switch between before and after. Both hold the same content; only its shape changes.
+stats:
+  - { value: "0", unit: removed, label: Every section of the original site survives }
+  - { value: "1", unit: backend, label: "Left exactly as it was" }
+problem:
+  - A private driver service for pilgrims already had a working website, produced by an AI agent. Everything a traveller needed was technically on the page.
+  - What was missing was order. A traveller arranging transport needs three answers fast, where can you take me, in what vehicle, and can I trust you. The page gave every piece of content the same weight, so none of those answers stood out.
+constraints:
+  - The existing backend, routes and content stay as they are.
+  - Only the front end changes.
+  - Solo, in a few days.
+decisions:
+  - title: Keep everything, reshape it
+    body: I didn't remove what was already there. I moulded it into a better representation, with a clear order, browse by destination, browse by vehicle, why choose the service, testimonials, then questions and answers.
+  - title: One place to explore
+    body: Routes and vehicles lived on two separate list pages. I designed a single Explore page where a traveller browses both and opens details in a drawer without losing their place.
+  - title: Real content, not new copy
+    body: The content and logic come from the existing code. The redesign changes how things are presented, so nothing the business already relied on had to be rewritten.
+states:
+  - { name: Nothing available, note: No vehicle free on the chosen date }
+  - { name: Booking interrupted, note: The request fails part-way through }
+  - { name: Slow connection, note: A phone on weak signal }
+  - { name: Empty search, note: No route matches what was typed }
+evidence:
+  - Nothing was removed. The same content sits on the same backend in a clearer shape.
+  - The home page was rebuilt section by section from the existing code.
+  - An Explore page with a detail drawer replaces two separate lists.
+measures:
+  - Booking completion rate
+  - Enquiries that turn into bookings
+next: The booking flow, designed to the same rule, nothing the traveller needs gets lost and nothing competes with it.

@@ -1,0 +1,161 @@
+---
+/* The guard-and-guide pattern: a later record opens only when the earlier one
+   is complete. Illustrative re-creation, not the product's screens. */
+import BrowserFrame from "../BrowserFrame.astro";
+---
+
+<div data-chain>
+  <BrowserFrame address="therapy-documentation.example" label="Re-created record chain">
+    <div class="chain">
+      <ol>
+        <li class="done"><span class="dot"></span><b>Evaluation</b><em>Signed</em></li>
+        <li data-plan class="wait"><span class="dot"></span><b>Plan of care</b><em data-plan-status>Awaiting certification</em></li>
+        <li data-note class="locked"><span class="dot"></span><b>Session note</b><em data-note-status>Not started</em></li>
+      </ol>
+      <div class="actions">
+        <button type="button" data-start>Start session note</button>
+        <button type="button" class="quiet" data-reset hidden>Reset</button>
+      </div>
+      <div class="msg" role="status" aria-live="polite">
+        <div data-blocked hidden>
+          <p class="msg-title">Not yet. The plan of care isn't certified.</p>
+          <p>A session note has to tie back to a certified plan. Without that link, the note could be rejected at audit.</p>
+          <button type="button" data-certify>Send plan for certification</button>
+        </div>
+        <div data-ok hidden>
+          <p class="msg-title">Session note started.</p>
+          <p>The plan is certified, so the note opens with its link already in place.</p>
+        </div>
+      </div>
+    </div>
+  </BrowserFrame>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-chain]").forEach((root) => {
+    const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const plan = q("[data-plan]"), note = q("[data-note]");
+    const blocked = q("[data-blocked]"), ok = q("[data-ok]"), reset = q("[data-reset]");
+    let certified = false;
+    q("[data-start]").addEventListener("click", () => {
+      blocked.hidden = certified;
+      ok.hidden = !certified;
+      if (certified) {
+        note.className = "done";
+        q("[data-note-status]").textContent = "In progress";
+        reset.hidden = false;
+      }
+    });
+    q("[data-certify]").addEventListener("click", () => {
+      certified = true;
+      plan.className = "done";
+      q("[data-plan-status]").textContent = "Certified";
+      note.className = "";
+      blocked.hidden = true;
+      q<HTMLButtonElement>("[data-start]").focus();
+    });
+    reset.addEventListener("click", () => {
+      certified = false;
+      plan.className = "wait";
+      note.className = "locked";
+      q("[data-plan-status]").textContent = "Awaiting certification";
+      q("[data-note-status]").textContent = "Not started";
+      ok.hidden = true;
+      reset.hidden = true;
+    });
+  });
+</script>
+
+<style>
+  .chain {
+    padding: 20px;
+    font-size: var(--text-sm);
+  }
+  ol {
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+  }
+  li {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 9px 0 9px 22px;
+    color: var(--ink);
+  }
+  li + li::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: -12px;
+    height: 26px;
+    width: 1px;
+    background: var(--rule);
+  }
+  .dot {
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--ink-muted);
+    background: var(--bg-raised);
+  }
+  .done .dot {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .wait .dot {
+    border-color: var(--accent-site);
+  }
+  li b {
+    font-weight: 500;
+  }
+  li em {
+    font-style: normal;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+  }
+  .locked b {
+    color: var(--ink-muted);
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+  button {
+    font: inherit;
+    font-size: var(--text-sm);
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+    cursor: pointer;
+  }
+  button.quiet,
+  .msg button {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--rule);
+  }
+  .msg {
+    min-height: 118px;
+    margin-top: 14px;
+  }
+  .msg > div {
+    border-left: 2px solid var(--accent-site);
+    padding-left: 12px;
+  }
+  .msg p {
+    margin: 0 0 8px;
+    color: var(--ink-secondary);
+    max-width: 52ch;
+  }
+  .msg .msg-title {
+    color: var(--ink);
+    font-weight: 500;
+  }
+</style>
