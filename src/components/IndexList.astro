@@ -1,0 +1,146 @@
+---
+/* Numbered work index with dotted leaders. Each row expands to its angle. */
+import { workIndex } from "../data/work-index";
+---
+
+<ol class="index">
+  {workIndex.map((row, i) => (
+    <li class="reveal" id={`work-${row.id}`}>
+      <details>
+        <summary>
+          <span class="num tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+          <span class="name">{row.name}</span>
+          <span class="leader" aria-hidden="true"></span>
+          <span class="tags">{row.tags.join(" · ")}</span>
+          <span class="plus" aria-hidden="true"></span>
+        </summary>
+        <div class="more">
+          <p>{row.angle}</p>
+          {row.page ? (
+            <a href={`/work/${row.page}/`}>Read the case study →</a>
+          ) : (
+            <span class="soon">Case study in progress</span>
+          )}
+        </div>
+      </details>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .index {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  li {
+    border-bottom: 1px solid var(--rule);
+    scroll-margin-top: var(--space-4);
+  }
+  summary {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 14px 0;
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .num {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+  }
+  .name {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    color: var(--ink);
+  }
+  .leader {
+    flex: 1;
+    min-width: 16px;
+    border-bottom: 1px dotted var(--ink-muted);
+    opacity: 0.6;
+    transform: translateY(-4px);
+  }
+  .tags {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+  .plus {
+    position: relative;
+    width: 11px;
+    height: 11px;
+    flex: none;
+    align-self: center;
+  }
+  .plus::before,
+  .plus::after {
+    content: "";
+    position: absolute;
+    background: var(--ink);
+    transition: transform 0.2s ease;
+  }
+  .plus::before {
+    left: 0;
+    right: 0;
+    top: 5px;
+    height: 1px;
+  }
+  .plus::after {
+    top: 0;
+    bottom: 0;
+    left: 5px;
+    width: 1px;
+  }
+  details[open] .plus::after {
+    transform: scaleY(0);
+  }
+  summary:hover .name {
+    color: var(--accent-site);
+  }
+  .more {
+    padding: 0 0 var(--space-2) 30px;
+    max-width: 56ch;
+  }
+  .more p {
+    margin: 0 0 8px;
+    color: var(--ink-secondary);
+  }
+  .more a {
+    font-size: var(--text-sm);
+    color: var(--accent-site);
+    text-decoration: none;
+  }
+  .more a:hover {
+    text-decoration: underline;
+  }
+  .soon {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+  }
+  @media (max-width: 560px) {
+    summary {
+      flex-wrap: wrap;
+      row-gap: 2px;
+    }
+    .leader {
+      display: none;
+    }
+    .name {
+      flex: 1;
+    }
+    .tags {
+      order: 5;
+      flex-basis: 100%;
+      padding-left: 30px;
+      white-space: normal;
+    }
+  }
+</style>
