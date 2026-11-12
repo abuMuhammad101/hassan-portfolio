@@ -9,7 +9,7 @@ meta:
   - { label: Domain, value: Clinical workflows }
 ndaRecreated: true
 widget: copilot
-widgetIntro: Pick a command. The overlay appears, asks only for what's missing, and leaves you in control.
+widgetIntro: Give the copilot a command. It appears, asks only for what's missing, and leaves you in control.
 stats:
   - { value: "1", unit: component, label: The same overlay serves every flow }
   - { value: "0", unit: colours, label: "Monochrome, so it sits on any product" }

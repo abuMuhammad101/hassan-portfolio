@@ -8,6 +8,10 @@
   --ink-tone2: #8f8c82;
   --construct: #d9d6cc;
   --accent-site: #2f4bd8;
+  --accent-warm: #e4572e;
+  --ok: #1f8a4c;
+  --warn: #b7791f;
+  --bg-sunk: #f1efea;
 
   --hh-global: #9c6b1f;
   --cookiya: #6b5b95;
@@ -58,6 +62,10 @@
     --ink-tone2: #77756b;
     --construct: #2e2d28;
     --accent-site: #8fa2ff;
+    --accent-warm: #ff7a50;
+  --ok: #4ecb86;
+  --warn: #e3b341;
+    --bg-sunk: #0c0c0a;
     --resume-accent: #a78bfa;
     color-scheme: dark;
   }
@@ -72,6 +80,10 @@
   --ink-tone2: #77756b;
   --construct: #2e2d28;
   --accent-site: #8fa2ff;
+  --accent-warm: #ff7a50;
+  --ok: #4ecb86;
+  --warn: #e3b341;
+  --bg-sunk: #0c0c0a;
   --resume-accent: #a78bfa;
   color-scheme: dark;
 }
@@ -85,12 +97,19 @@
   --ink-tone2: #8f8c82;
   --construct: #d9d6cc;
   --accent-site: #2f4bd8;
+  --accent-warm: #e4572e;
+  --ok: #1f8a4c;
+  --warn: #b7791f;
+  --bg-sunk: #f1efea;
   --resume-accent: #7c3aed;
   color-scheme: light;
 }
 
 * {
   box-sizing: border-box;
+}
+[hidden] {
+  display: none !important;
 }
 html {
   -webkit-text-size-adjust: 100%;
@@ -142,10 +161,64 @@ a {
 }
 
 .section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: var(--text-sm);
-  color: var(--ink-muted);
+  font-weight: 500;
+  color: var(--ink-secondary);
   margin-top: 0;
   margin-bottom: var(--space-3);
+}
+.section-label::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-warm);
+  flex: none;
+}
+
+/* Shared layout and controls for the v2 pages. */
+.wrap-wide {
+  max-width: var(--wide-width);
+  margin: 0 auto;
+  padding: 0 var(--space-3);
+}
+.ph {
+  flex: none;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.btn.ghost:hover {
+  border-color: var(--ink);
+}
+.surface {
+  background: var(--bg-raised);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
 }
 
 .tabular-nums {

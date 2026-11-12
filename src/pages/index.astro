@@ -1,22 +1,36 @@
 ---
 import Base from "../layouts/Base.astro";
 import Header from "../components/Header.astro";
-import Timeline from "../components/Timeline.astro";
-import LinkList from "../components/LinkList.astro";
 import Footer from "../components/Footer.astro";
 import TwoToneHeading from "../components/TwoToneHeading.astro";
 import ConstructionLines from "../components/ConstructionLines.astro";
-import IndexList from "../components/IndexList.astro";
+import CaseThumb from "../components/CaseThumb.astro";
+import Icon from "../components/Icon.astro";
 import { beliefs, workIndex } from "../data/work-index";
+import { resume } from "../data/resume";
 
 const nameOf = (id: string) => workIndex.find((w) => w.id === id)?.name ?? id;
-const proof = ["8 products", "5+ years", "PK · GCC · US", "healthcare · ERP · marketplaces"];
+const featured = workIndex.filter((w) => w.page && w.id !== "hh-global");
+const rest = workIndex.filter((w) => !featured.includes(w));
+const stats = [
+  { value: "8", label: "products in this portfolio" },
+  { value: "5+", label: "years designing SaaS and mobile" },
+  { value: "3", label: "markets: Pakistan, the Gulf, the US" },
+];
 const ways = [
-  "I start from the person using it and the rules they live under.",
-  "I map the states nobody asked for: empty, error, partial failure, edge cases.",
-  "I work with agents the way a lead works with a fast team: they draft, I decide.",
-  "I ship in small, reversible steps, and I sit in the architecture conversation.",
-  "I own what ships, including what goes wrong.",
+  { icon: "user", title: "Start with the person", body: "And the rules they live under, before any screen." },
+  { icon: "list-checks", title: "Map what nobody asked for", body: "Empty, error, partial failure and the edge cases." },
+  { icon: "steering-wheel", title: "Direct the agents", body: "They draft at speed. I decide what's right." },
+  { icon: "rocket-launch", title: "Ship in small steps", body: "Reversible changes, and a seat in the architecture conversation." },
+  { icon: "signature", title: "Own what ships", body: "Including what goes wrong afterwards." },
+];
+const earlier = [
+  ["Inventory Management Tool", "/work/inventory-management/"],
+  ["Online Exam Preparation Platform", "/work/online-exam-prep/"],
+  ["Landlord Mobile App", "/work/landlord-app/"],
+  ["Meal Purchase E-Wallet", "/work/meal-wallet/"],
+  ["Cookiya", "/work/cookiya/"],
+  ["Motion starter kit", "/work/motions/"],
 ];
 ---
 
@@ -27,85 +41,143 @@ const ways = [
   <Header />
 
   <section class="hero">
-    <div class="hero-inner wrap">
-      <ConstructionLines />
-      <TwoToneHeading as="h1" size="hero" lead="Less noise." rest="Real products. Owned end to end." />
+    <div class="hero-inner wrap-wide">
+      <div class="headline">
+        <ConstructionLines />
+        <TwoToneHeading as="h1" size="hero" lead="Less noise." rest="Real products. Owned end to end." />
+      </div>
+      <div class="hero-grid">
+        <div class="intro">
+          <p>
+            I'm Hassan, a senior product designer in Karachi. Healthcare compliance, AI copilots, dense business
+            software and local marketplaces: I decide what's right for the people using them, ship it, and own
+            what happens next.
+          </p>
+          <div class="cta">
+            <a class="btn" href="#work">See the work <Icon name="arrow-right" size={16} /></a>
+            <a class="btn ghost" href="/resume/">Resume</a>
+          </div>
+        </div>
+        <ul class="stats">
+          {stats.map((s) => (
+            <li>
+              <span class="stat-value">{s.value}</span>
+              <span class="stat-label">{s.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </section>
 
   <main>
-    <section class="wrap intro">
-      <p>
-        I'm <a href="/resume/">Hassan</a>, a senior product designer in Karachi. Healthcare compliance, AI
-        copilots, dense business software and local marketplaces: I decide what's right for the people using
-        them, ship it, and own what happens next.
-      </p>
-      <ul class="proof" aria-label="At a glance">
-        {proof.map((p) => <li>{p}</li>)}
-      </ul>
-    </section>
-
-    <section class="wrap block" aria-labelledby="beliefs-label">
-      <p class="section-label" id="beliefs-label">what I believe</p>
+    <section class="wrap-wide band" aria-labelledby="beliefs-h">
+      <div class="band-head">
+        <p class="section-label">What I believe</p>
+        <h2 id="beliefs-h" class="band-title">Four things I don't trade away.</h2>
+      </div>
       <ul class="beliefs">
         {beliefs.map((b) => (
-          <li class="reveal">
+          <li class="surface reveal">
+            <span class="b-icon"><Icon name={b.icon} size={22} /></span>
             <p class="belief">{b.text}</p>
             <p class="note">{b.note}</p>
             <p class="proof-links">
-              {b.proof.map((id, i) => (
-                <>
-                  {i > 0 && <span aria-hidden="true"> · </span>}
-                  <a href={`#work-${id}`}>{nameOf(id)}</a>
-                </>
-              ))}
+              {b.proof.map((id) => <a href={`#work-${id}`}>{nameOf(id)}</a>)}
             </p>
           </li>
         ))}
       </ul>
     </section>
 
-    <section class="wrap block" id="work" aria-labelledby="work-label">
-      <p class="section-label" id="work-label">selected work</p>
-      <IndexList />
+    <section class="wrap-wide band" id="work" aria-labelledby="work-h">
+      <div class="band-head">
+        <p class="section-label">Selected work</p>
+        <h2 id="work-h" class="band-title">Eight products, one way of working.</h2>
+      </div>
+      <div class="cards">
+        {featured.map((w, i) => (
+          <a class="card surface reveal" href={`/work/${w.page}/`} id={`work-${w.id}`}>
+            <CaseThumb kind={w.id} />
+            <span class="card-top">
+              <span class="card-num">{String(i + 1).padStart(2, "0")}</span>
+              <span class="card-tags">{w.tags.join(" · ")}</span>
+            </span>
+            <span class="card-name">{w.name}</span>
+            <span class="card-angle">{w.angle}</span>
+            <span class="card-link">Read the case study <Icon name="arrow-up-right" size={15} /></span>
+          </a>
+        ))}
+      </div>
+      <ol class="rows" start={featured.length + 1}>
+        {rest.map((w, i) => (
+          <li class="reveal" id={`work-${w.id}`}>
+            <span class="row-num">{String(featured.length + i + 1).padStart(2, "0")}</span>
+            <span class="row-name">{w.name}</span>
+            <span class="row-leader" aria-hidden="true"></span>
+            <span class="row-tags">{w.tags.join(" · ")}</span>
+            {w.page ? (
+              <a class="row-status link" href={`/work/${w.page}/`}>Read <Icon name="arrow-up-right" size={14} /></a>
+            ) : (
+              <span class="row-status">Coming soon</span>
+            )}
+          </li>
+        ))}
+      </ol>
     </section>
 
-    <section class="wrap block" aria-labelledby="how-label">
-      <p class="section-label" id="how-label">how I work</p>
-      <ul class="ways">
-        {ways.map((w) => <li class="reveal">{w}</li>)}
+    <section class="wrap-wide band split" aria-labelledby="how-h">
+      <div class="band-head">
+        <p class="section-label">How I work</p>
+        <h2 id="how-h" class="band-title">The same five moves, every time.</h2>
+        <p class="tools">Tools change. Right now: Figma, Claude Code, Framer, Webflow and GitHub.</p>
+      </div>
+      <ol class="ways">
+        {ways.map((w, i) => (
+          <li class="reveal">
+            <span class="way-num">{i + 1}</span>
+            <span class="way-text"><b>{w.title}</b><span>{w.body}</span></span>
+            <Icon name={w.icon} size={20} />
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="wrap-wide band split" aria-labelledby="exp-h">
+      <div class="band-head">
+        <p class="section-label">Experience</p>
+        <h2 id="exp-h" class="band-title">Where I've worked.</h2>
+      </div>
+      <ul class="jobs">
+        {resume.experience.map((job) => (
+          <li class="reveal">
+            <span class="job-role">{job.role}</span>
+            <span class="job-co">{job.company}</span>
+            <span class="job-dates tabular-nums">{job.start} – {job.end}</span>
+          </li>
+        ))}
+        <li class="earlier">
+          <span>Earlier projects</span>
+          <span class="earlier-links">
+            {earlier.map(([label, href]) => <a href={href}>{label}</a>)}
+          </span>
+        </li>
       </ul>
-      <p class="tools">tools: Figma · Claude Code · Framer · Webflow · GitHub</p>
     </section>
 
-    <Timeline />
-
-    <LinkList
-      class="reveal"
-      label="earlier work"
-      items={[
-        { label: "Inventory Management Tool", href: "/work/inventory-management/" },
-        { label: "Online Exam Preparation Platform", href: "/work/online-exam-prep/" },
-        { label: "Landlord Mobile App", href: "/work/landlord-app/" },
-        { label: "Meal Purchase E-Wallet", href: "/work/meal-wallet/" },
-        { label: "Cookiya, mobile app scaffold", href: "/work/cookiya/" },
-        { label: "Motion starter kit", href: "/work/motions/" },
-      ]}
-    />
-
-    <div id="contact">
-      <LinkList
-        class="reveal"
-        label="contact"
-        items={[
-          { label: "Resume", href: "/resume/" },
-          { label: "LinkedIn", href: "https://linkedin.com/in/muhammad-hassan-khan" },
-          { label: "GitHub", href: "https://github.com/abuMuhammad101" },
-          { label: "layers.to", href: "https://layers.to/hassankuiux" },
-          { label: "Email", href: "mailto:hassank.uiux@gmail.com" },
-        ]}
-      />
-    </div>
+    <section class="wrap-wide band" id="contact" aria-labelledby="contact-h">
+      <div class="contact">
+        <p class="section-label">Contact</p>
+        <TwoToneHeading as="h2" size="3xl" lead="Have a product that needs an owner?" rest="Let's talk." />
+        <div class="cta">
+          <a class="btn" href="mailto:hassank.uiux@gmail.com"><Icon name="envelope-simple" size={16} /> hassank.uiux@gmail.com</a>
+          <a class="btn ghost" href="/resume/"><Icon name="read-cv-logo" size={16} /> Resume</a>
+          <a class="btn ghost" href="https://linkedin.com/in/muhammad-hassan-khan" target="_blank" rel="noopener noreferrer"><Icon name="linkedin-logo" size={16} /> LinkedIn</a>
+          <a class="btn ghost" href="https://github.com/abuMuhammad101" target="_blank" rel="noopener noreferrer"><Icon name="github-logo" size={16} /> GitHub</a>
+          <a class="btn ghost" href="https://layers.to/hassankuiux" target="_blank" rel="noopener noreferrer">layers.to <Icon name="arrow-up-right" size={14} /></a>
+        </div>
+      </div>
+    </section>
   </main>
 
   <Footer />
@@ -116,96 +188,360 @@ const ways = [
     overflow: clip;
   }
   .hero-inner {
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-6);
+  }
+  .headline {
     position: relative;
+    padding: var(--space-6) 0 var(--space-6);
+  }
+  .hero-grid {
+    display: grid;
+    gap: var(--space-6);
     padding-top: var(--space-6);
-    padding-bottom: var(--space-8);
   }
   .intro p {
     font-size: var(--text-lg);
     color: var(--ink-secondary);
     margin: 0 0 var(--space-3);
-    max-width: 58ch;
+    max-width: 52ch;
   }
-  .intro a,
-  .proof-links a {
-    color: var(--ink);
-    text-decoration: underline;
-    text-decoration-color: var(--rule);
-    text-underline-offset: 3px;
-  }
-  .intro a:hover,
-  .proof-links a:hover {
-    text-decoration-color: var(--ink);
-  }
-  .proof {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .cta {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 8px;
+    gap: 10px;
   }
-  .proof li {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--ink-secondary);
-    border: 1px solid var(--rule);
-    border-radius: 4px;
-    padding: 3px 8px;
-    background: var(--bg-raised);
-  }
-  .block {
-    padding-top: var(--space-8);
-  }
-  .beliefs,
-  .ways {
+  .stats {
     list-style: none;
     margin: 0;
     padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+    align-content: start;
+  }
+  .stats li {
+    border-top: 1px solid var(--ink);
+    padding-top: 12px;
+    display: grid;
+    gap: 4px;
+  }
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.25rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .stat-label {
+    font-size: var(--text-sm);
+    line-height: 1.4;
+    color: var(--ink-secondary);
+  }
+  @media (min-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 1.1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .band {
+    padding-top: var(--space-12);
+  }
+  .band-head {
+    margin-bottom: var(--space-4);
+  }
+  .band-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin: 0;
+    max-width: 18ch;
+    text-wrap: balance;
+  }
+  @media (min-width: 900px) {
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: var(--space-8);
+      align-items: start;
+    }
+    .split .band-head {
+      position: sticky;
+      top: 96px;
+    }
+  }
+
+  .beliefs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
   }
   .beliefs li {
-    padding: var(--space-2) 0;
-    border-top: 1px solid var(--rule);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
   }
-  .beliefs li:last-child {
-    border-bottom: 1px solid var(--rule);
+  .b-icon {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--bg-sunk);
+    color: var(--ink);
+    margin-bottom: var(--space-4);
   }
   .belief {
     font-family: var(--font-display);
     font-size: var(--text-xl);
-    line-height: 1.3;
+    line-height: 1.25;
     color: var(--ink);
-    margin: 0;
+    margin: 0 0 6px;
   }
   .note {
-    margin: 2px 0 6px;
+    margin: 0 0 var(--space-2);
     color: var(--ink-secondary);
+    font-size: var(--text-sm);
   }
   .proof-links {
-    margin: 0;
+    margin: auto 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .proof-links a {
+    font-size: 12px;
+    color: var(--ink-secondary);
+    text-decoration: none;
+    background: var(--bg-sunk);
+    border-radius: 8px;
+    padding: 3px 10px;
+  }
+  .proof-links a:hover {
+    color: var(--ink);
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 12px 18px;
+    text-decoration: none;
+    color: var(--ink);
+    scroll-margin-top: 96px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--ink) 25%, transparent);
+    box-shadow: 0 18px 40px -24px rgb(0 0 0 / 0.35);
+  }
+  .card > span {
+    padding: 0 8px;
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .card-name {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    line-height: 1.2;
+    margin-top: 6px;
+  }
+  .card-angle {
+    font-size: var(--text-sm);
+    color: var(--ink-secondary);
+    margin: 6px 0 var(--space-2);
+  }
+  .card-link {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+  .rows {
+    list-style: none;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .rows li {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    scroll-margin-top: 96px;
+  }
+  .row-num {
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .row-name {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+  }
+  .row-leader {
+    flex: 1;
+    min-width: 16px;
+    border-bottom: 1px dotted var(--ink-muted);
+    opacity: 0.6;
+    transform: translateY(-4px);
+  }
+  .row-tags {
     font-size: var(--text-sm);
     color: var(--ink-muted);
   }
-  .ways li {
-    position: relative;
-    padding: 6px 0 6px 22px;
+  .row-status {
+    font-size: 12px;
     color: var(--ink-secondary);
-    max-width: 58ch;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 2px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    white-space: nowrap;
   }
-  .ways li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 1.05em;
-    width: 7px;
-    height: 7px;
-    border: 1px solid var(--ink-muted);
-    background: var(--bg);
+  .row-status.link {
+    color: var(--ink);
+    border-color: var(--ink);
   }
+  @media (max-width: 620px) {
+    .rows li {
+      flex-wrap: wrap;
+      row-gap: 4px;
+    }
+    .row-leader {
+      display: none;
+    }
+    .row-name {
+      flex: 1;
+    }
+    .row-tags {
+      order: 5;
+      flex-basis: 100%;
+      padding-left: 30px;
+    }
+  }
+
   .tools {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-sm);
     color: var(--ink-muted);
-    margin: var(--space-3) 0 0;
+    max-width: 34ch;
+  }
+  .ways,
+  .jobs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .ways li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-muted);
+  }
+  .way-num {
+    width: 28px;
+    height: 28px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid var(--rule);
+    background: var(--bg-raised);
+    font-size: 12px;
+    color: var(--ink);
+  }
+  .way-text {
+    flex: 1;
+    display: grid;
+  }
+  .way-text b {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--text-lg);
+    color: var(--ink);
+  }
+  .way-text span {
+    font-size: var(--text-sm);
+    color: var(--ink-secondary);
+  }
+  .jobs li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .job-role {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .job-co {
+    grid-column: 1;
+    font-size: var(--text-sm);
+    color: var(--ink-secondary);
+  }
+  .job-dates {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+  .jobs .earlier {
+    grid-template-columns: 1fr;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    border-bottom: none;
+  }
+  .earlier-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+  }
+  .earlier-links a {
+    color: var(--ink-secondary);
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 3px;
+  }
+  .earlier-links a:hover {
+    color: var(--ink);
+  }
+
+  .contact {
+    background: var(--bg-sunk);
+    border-radius: 24px;
+    padding: clamp(24px, 6vw, 64px);
+    display: grid;
+    gap: var(--space-3);
+  }
+  .contact .section-label {
+    margin: 0;
   }
 </style>

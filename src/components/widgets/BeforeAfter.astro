@@ -1,52 +1,108 @@
 ---
-/* Before/after of one page: same content, different shape. Illustrative re-creation. */
+/* The same booking site before and after: identical content, reshaped.
+   Re-created with sample data and a stand-in brand. */
 import BrowserFrame from "../BrowserFrame.astro";
-const sections = ["Where to?", "Choose a vehicle", "Why travel with us", "What travellers say", "Questions"];
+import Icon from "../Icon.astro";
+const routes = [
+  { from: "Jeddah Airport", to: "Makkah", time: "about 1 h 15 min", icon: "airplane-takeoff", tone: "a" },
+  { from: "Makkah", to: "Madinah", time: "about 4 h 30 min", icon: "mosque", tone: "b" },
+  { from: "Madinah Airport", to: "Madinah", time: "about 25 min", icon: "airplane-takeoff", tone: "c" },
+];
+const fleet = [
+  { name: "Sedan", seats: "Up to 3 travellers", icon: "car-profile" },
+  { name: "Family SUV", seats: "Up to 6 travellers", icon: "car-profile" },
+  { name: "Van", seats: "Up to 12 travellers", icon: "van" },
+];
+const why = [
+  { icon: "seal-check", t: "Licensed drivers" },
+  { icon: "suitcase-rolling", t: "Help with luggage" },
+  { icon: "headset", t: "Support day and night" },
+];
 ---
 
 <div class="ba" data-ba>
-  <BrowserFrame address="pilgrim-transport.example" label="Re-created booking page, before and after">
-    <div class="stage">
-      <div class="pane after" aria-label="After">
-        <span class="badge">After</span>
-        <p class="a-kicker">Private drivers for your pilgrimage</p>
-        <p class="a-title">Where would you like to go?</p>
-        <div class="a-search">
-          <span>Destination</span><span>Date</span><span>Vehicle</span><b>Check availability</b>
-        </div>
-        <div class="a-grid">
-          <div><i></i>By destination</div>
-          <div><i></i>By vehicle</div>
-          <div><i></i>Why travel with us</div>
-        </div>
-        <p class="a-faq">What travellers say ›</p>
-        <p class="a-faq">Questions and answers ›</p>
-      </div>
-      <div class="pane before" aria-label="Before" data-before hidden>
-        <span class="badge">Before</span>
-        {sections.map((s) => (
-          <div class="b-block">
-            <p>{s}</p>
-            <i></i><i></i>
-          </div>
-        ))}
-      </div>
-    </div>
-  </BrowserFrame>
-  <div class="control" role="group" aria-label="Show before or after">
+  <div class="switch" role="group" aria-label="Show the site before or after the redesign">
     <button type="button" data-show="before" aria-pressed="false">Before</button>
     <button type="button" data-show="after" aria-pressed="true">After</button>
-    <span>Same content, different shape</span>
   </div>
+
+  <BrowserFrame address="pilgrimdrivers.example" label="Re-created booking site">
+    <div class="page after" data-after>
+      <header class="nav">
+        <span class="logo"><span class="logo-mark"><Icon name="mosque" weight="fill" size={16} /></span> Pilgrim Drivers</span>
+        <span class="links"><span>Routes</span><span>Fleet</span><span>Help</span></span>
+        <span class="book">Book a ride</span>
+      </header>
+
+      <section class="hero">
+        <span class="eyebrow"><Icon name="seal-check" weight="fill" size={14} /> Private drivers for Umrah and Hajj</span>
+        <h3>Your pilgrimage, driven with care.</h3>
+        <p>Private cars and vans between the airports, Makkah and Madinah.</p>
+        <div class="search">
+          <span class="field"><Icon name="airplane-takeoff" size={16} /><span><small>From</small>Jeddah Airport</span></span>
+          <span class="field"><Icon name="map-pin" size={16} /><span><small>To</small>Makkah</span></span>
+          <span class="field"><Icon name="calendar-blank" size={16} /><span><small>Date</small>Thu, 14 May</span></span>
+          <span class="field"><Icon name="users" size={16} /><span><small>Travellers</small>4</span></span>
+          <span class="go">Check availability <Icon name="arrow-right" size={15} /></span>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="block-head"><h4>Popular routes</h4><span>All routes <Icon name="arrow-right" size={13} /></span></div>
+        <div class="routes">
+          {routes.map((r) => (
+            <div class="route">
+              <span class={`art ${r.tone}`}><Icon name={r.icon} weight="duotone" size={30} /></span>
+              <b>{r.from} <Icon name="arrow-right" size={12} /> {r.to}</b>
+              <small><Icon name="clock" size={12} /> {r.time}</small>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="block-head"><h4>Choose your vehicle</h4></div>
+        <div class="fleet">
+          {fleet.map((f) => (
+            <div><Icon name={f.icon} weight="duotone" size={26} /><span><b>{f.name}</b><small>{f.seats}</small></span></div>
+          ))}
+        </div>
+      </section>
+
+      <section class="why">
+        {why.map((w) => <span><Icon name={w.icon} size={18} /> {w.t}</span>)}
+      </section>
+    </div>
+
+    <div class="page before" data-before hidden>
+      <p class="b-links">Home | Routes | Fleet | About | Testimonials | FAQ | Contact</p>
+      <h3>Welcome to Pilgrim Drivers</h3>
+      <p>We provide private cars and vans between the airports, Makkah and Madinah for Umrah and Hajj travellers. Book a ride with us today.</p>
+      <span class="b-btn">Get Started</span>
+      <h4>Our Routes</h4>
+      {routes.map((r) => <p>{r.from} to {r.to} ({r.time})</p>)}
+      <h4>Our Fleet</h4>
+      {fleet.map((f) => <p>{f.name}: {f.seats}</p>)}
+      <h4>Why Choose Us</h4>
+      <p>{why.map((w) => w.t).join(". ")}.</p>
+      <h4>Testimonials</h4>
+      <p>Read what travellers say about us.</p>
+      <h4>FAQ</h4>
+      <p>Find answers to common questions.</p>
+    </div>
+  </BrowserFrame>
 </div>
 
 <script>
   document.querySelectorAll<HTMLElement>("[data-ba]").forEach((root) => {
     const before = root.querySelector<HTMLElement>("[data-before]")!;
+    const after = root.querySelector<HTMLElement>("[data-after]")!;
     const buttons = [...root.querySelectorAll<HTMLButtonElement>("[data-show]")];
     buttons.forEach((b) =>
       b.addEventListener("click", () => {
-        before.hidden = b.dataset.show !== "before";
+        const showBefore = b.dataset.show === "before";
+        before.hidden = !showBefore;
+        after.hidden = showBefore;
         buttons.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
       })
     );
@@ -54,150 +110,304 @@ const sections = ["Where to?", "Choose a vehicle", "Why travel with us", "What t
 </script>
 
 <style>
-  .stage {
-    position: relative;
-    height: 340px;
-    overflow: hidden;
-    font-size: var(--text-sm);
-  }
-  .pane {
-    position: absolute;
-    inset: 0;
-    padding: 20px;
-    background: var(--bg-raised);
-  }
-  .before {
-    background: var(--bg-raised);
-    z-index: 1;
-  }
-  .badge {
-    position: absolute;
-    top: 10px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--ink-muted);
-    background: var(--bg-raised);
+  .switch {
+    display: inline-flex;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--bg-sunk);
     border: 1px solid var(--rule);
-    border-radius: 4px;
-    padding: 1px 6px;
-    z-index: 1;
+    margin-bottom: 14px;
   }
-  .badge { right: 10px; }
-  .b-block {
-    text-align: center;
-    margin: 14px auto 0;
-    max-width: 300px;
+  .switch button {
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    padding: 6px 18px;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: var(--ink-secondary);
+    cursor: pointer;
   }
-  .b-block p {
-    margin: 0 0 6px;
-    font-weight: 600;
+  .switch button[aria-pressed="true"] {
+    background: var(--bg-raised);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+  }
+  .page {
+    height: 520px;
+    font-size: 13px;
+    line-height: 1.45;
     color: var(--ink);
   }
-  .b-block i {
-    display: block;
-    height: 6px;
-    margin: 4px auto;
-    width: 80%;
-    border-radius: 3px;
-    background: var(--rule);
-  }
-  .a-kicker {
-    margin: 18px 0 2px;
-    font-family: var(--font-mono);
+  small {
     font-size: 11px;
     color: var(--ink-muted);
   }
-  .a-title {
-    margin: 0 0 12px;
-    font-family: var(--font-display);
-    font-size: var(--text-xl);
-    line-height: 1.2;
-    color: var(--ink);
+
+  /* After */
+  .after {
+    /* Mixing with ink keeps the brand colour legible in both themes. */
+    --brand: color-mix(in srgb, #17a58c 62%, var(--ink));
+    --brand-soft: color-mix(in srgb, #17a58c 13%, var(--bg-raised));
   }
-  .a-search {
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+  }
+  .logo-mark {
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--brand);
+    color: var(--bg-raised);
+  }
+  .links {
+    display: flex;
+    gap: 16px;
+    margin-left: auto;
+    color: var(--ink-secondary);
+  }
+  .book {
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-weight: 500;
+  }
+  .hero {
+    padding: 28px 20px 22px;
+    background:
+      radial-gradient(120% 140% at 100% 0%, var(--brand-soft), transparent 60%),
+      var(--bg-raised);
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--brand);
+    font-weight: 500;
+  }
+  .hero h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 8px 0 6px;
+  }
+  .hero p {
+    margin: 0 0 16px;
+    color: var(--ink-secondary);
+  }
+  .search {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-bottom: 14px;
-  }
-  .a-search span,
-  .a-search b {
+    padding: 6px;
+    background: var(--bg-raised);
     border: 1px solid var(--rule);
-    border-radius: 6px;
-    padding: 6px 10px;
-    color: var(--ink-secondary);
-    font-weight: 400;
+    border-radius: 14px;
+    box-shadow: 0 14px 30px -18px rgb(0 0 0 / 0.3);
   }
-  .a-search b {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--bg);
-  }
-  .a-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .a-grid div {
-    border: 1px solid var(--rule);
-    border-radius: 8px;
-    padding: 8px;
-    color: var(--ink);
-    font-size: 12px;
-  }
-  .a-grid i {
-    display: block;
-    height: 34px;
-    border-radius: 5px;
-    background: var(--rule);
-    margin-bottom: 6px;
-  }
-  .a-quote {
-    margin: 0 0 6px;
-    color: var(--ink);
-  }
-  .a-quote span,
-  .a-faq {
-    color: var(--ink-muted);
-    font-size: 12px;
-  }
-  .a-faq {
-    margin: 0;
-  }
-  .control {
+  .field {
+    flex: 1 1 110px;
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 12px;
-  }
-  .control button {
-    font: inherit;
-    font-size: var(--text-sm);
-    padding: 6px 14px;
-    border-radius: 999px;
-    border: 1px solid var(--rule);
-    background: var(--bg-raised);
-    color: var(--ink);
-    cursor: pointer;
-  }
-  .control button[aria-pressed="true"] {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--bg);
-  }
-  .control span {
-    margin-left: auto;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
+    padding: 6px 10px;
+    border-radius: 10px;
     color: var(--ink-muted);
   }
-  @media (max-width: 480px) {
-    .a-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-    .a-grid div:last-child {
+  .field + .field {
+    box-shadow: -1px 0 0 var(--rule);
+  }
+  .field span {
+    display: grid;
+    color: var(--ink);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .field small {
+    font-weight: 400;
+  }
+  .go {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex: 1 1 150px;
+    background: var(--brand);
+    color: var(--bg-raised);
+    font-weight: 500;
+    border-radius: 10px;
+    padding: 10px 14px;
+    white-space: nowrap;
+  }
+  .block {
+    padding: 18px 20px 0;
+  }
+  .block-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .block-head h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .block-head span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--ink-secondary);
+  }
+  .routes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .route {
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 8px 8px 10px;
+    display: grid;
+    gap: 4px;
+  }
+  .route b {
+    font-weight: 500;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 4px 0;
+  }
+  .route small {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px;
+  }
+  .art {
+    height: 74px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    color: var(--brand);
+    background: linear-gradient(135deg, var(--brand-soft), color-mix(in srgb, #e9b44c 22%, var(--bg-raised)));
+  }
+  .art.b {
+    background: linear-gradient(135deg, color-mix(in srgb, #e9b44c 26%, var(--bg-raised)), var(--brand-soft));
+  }
+  .art.c {
+    background: linear-gradient(200deg, var(--brand-soft), color-mix(in srgb, #7aa5ff 20%, var(--bg-raised)));
+  }
+  .fleet {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .fleet div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 10px 12px;
+    color: var(--brand);
+  }
+  .fleet span {
+    display: grid;
+    color: var(--ink);
+  }
+  .fleet b {
+    font-weight: 500;
+  }
+  .why {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin: 18px 20px 22px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: var(--bg-sunk);
+    color: var(--ink-secondary);
+  }
+  .why span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Before: everything present, nothing leading. */
+  .before {
+    padding: 14px 20px 24px;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 15px;
+    background: var(--bg-raised);
+  }
+  .before h3 {
+    font-size: 24px;
+    margin: 18px 0 8px;
+  }
+  .before h4 {
+    font-size: 18px;
+    margin: 20px 0 6px;
+  }
+  .before p {
+    margin: 4px auto;
+    max-width: 46ch;
+  }
+  .b-links {
+    color: color-mix(in srgb, #2f6bff 70%, var(--ink));
+    text-decoration: underline;
+    font-size: 13px;
+  }
+  .b-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 16px;
+    border: 1px solid var(--ink-muted);
+    border-radius: 4px;
+    background: var(--bg-sunk);
+  }
+  @media (max-width: 560px) {
+    .links {
       display: none;
+    }
+    .book {
+      margin-left: auto;
+    }
+    .routes,
+    .fleet {
+      grid-template-columns: 1fr;
+    }
+    .route {
+      grid-template-columns: 74px 1fr;
+      align-items: center;
+    }
+    .art {
+      grid-row: span 2;
+      height: 56px;
+    }
+    .field + .field {
+      box-shadow: none;
     }
   }
 </style>

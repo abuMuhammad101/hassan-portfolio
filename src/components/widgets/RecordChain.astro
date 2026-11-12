@@ -1,30 +1,79 @@
 ---
-/* The guard-and-guide pattern: a later record opens only when the earlier one
-   is complete. Illustrative re-creation, not the product's screens. */
+/* Guard and guide: a later record opens only when the earlier one is complete.
+   Re-created with sample data. */
+import "../../styles/mock-app.css";
 import BrowserFrame from "../BrowserFrame.astro";
+import Icon from "../Icon.astro";
 ---
 
 <div data-chain>
-  <BrowserFrame address="therapy-documentation.example" label="Re-created record chain">
-    <div class="chain">
-      <ol>
-        <li class="done"><span class="dot"></span><b>Evaluation</b><em>Signed</em></li>
-        <li data-plan class="wait"><span class="dot"></span><b>Plan of care</b><em data-plan-status>Awaiting certification</em></li>
-        <li data-note class="locked"><span class="dot"></span><b>Session note</b><em data-note-status>Not started</em></li>
-      </ol>
-      <div class="actions">
-        <button type="button" data-start>Start session note</button>
-        <button type="button" class="quiet" data-reset hidden>Reset</button>
-      </div>
-      <div class="msg" role="status" aria-live="polite">
-        <div data-blocked hidden>
-          <p class="msg-title">Not yet. The plan of care isn't certified.</p>
-          <p>A session note has to tie back to a certified plan. Without that link, the note could be rejected at audit.</p>
-          <button type="button" data-certify>Send plan for certification</button>
+  <BrowserFrame address="app.therapydocs.example" label="Re-created therapy documentation app">
+    <div class="mk-app">
+      <aside class="mk-rail" aria-hidden="true">
+        <span class="mk-logo"><Icon name="heartbeat" weight="bold" size={18} /></span>
+        <span><Icon name="squares-four" size={18} /></span>
+        <span class="on"><Icon name="users" size={18} /></span>
+        <span><Icon name="calendar-check" size={18} /></span>
+        <span><Icon name="chart-line-up" size={18} /></span>
+        <span class="end"><Icon name="gear-six" size={18} /></span>
+      </aside>
+      <div class="mk-main">
+        <div class="mk-top">
+          <span class="mk-crumb">Patients / <b>Sample Patient</b></span>
+          <Icon name="magnifying-glass" size={16} />
+          <Icon name="bell" size={16} />
+          <span class="mk-avatar">HK</span>
         </div>
-        <div data-ok hidden>
-          <p class="msg-title">Session note started.</p>
-          <p>The plan is certified, so the note opens with its link already in place.</p>
+
+        <div class="content">
+          <div class="patient">
+            <span class="mk-avatar lg">SP</span>
+            <span class="who"><b>Sample Patient</b><small>Physical therapy · Episode started 3 Mar</small></span>
+            <span class="mk-badge">Active case</span>
+          </div>
+
+          <div class="grid">
+            <div class="mk-card record">
+              <p class="card-title">Care record</p>
+              <ol>
+                <li>
+                  <span class="ic ok"><Icon name="clipboard-text" size={17} /></span>
+                  <span class="txt"><b>Evaluation</b><small>Signed by the treating therapist</small></span>
+                  <span class="mk-badge ok"><Icon name="check-circle" weight="fill" size={12} /> Signed</span>
+                </li>
+                <li data-plan>
+                  <span class="ic"><Icon name="file-text" size={17} /></span>
+                  <span class="txt"><b>Plan of care</b><small data-plan-sub>Sent to the physician for sign-off</small></span>
+                  <span class="mk-badge wait" data-plan-badge>Awaiting certification</span>
+                </li>
+                <li data-note class="locked">
+                  <span class="ic"><Icon name="note-pencil" size={17} /></span>
+                  <span class="txt"><b>Session note</b><small data-note-sub>Today's visit</small></span>
+                  <span class="mk-badge" data-note-badge><Icon name="lock-simple" size={12} /> Locked</span>
+                </li>
+              </ol>
+            </div>
+
+            <div class="mk-card today">
+              <p class="card-title">Today</p>
+              <p class="visit"><Icon name="clock" size={14} /> 10:30 · 45 min visit</p>
+              <button type="button" class="mk-btn" data-start><Icon name="note-pencil" size={15} /> Start session note</button>
+
+              <div class="msg" role="status" aria-live="polite">
+                <div class="alert" data-blocked hidden>
+                  <p class="alert-title"><Icon name="warning-circle" weight="fill" size={16} /> The plan of care isn't certified yet</p>
+                  <p>A session note has to tie back to a certified plan. Without that link the note could be rejected at audit.</p>
+                  <button type="button" class="mk-btn ghost" data-certify>Request certification</button>
+                </div>
+                <div class="alert okay" data-ok hidden>
+                  <p class="alert-title"><Icon name="check-circle" weight="fill" size={16} /> Session note started</p>
+                  <p>It opened already linked to the certified plan.</p>
+                  <button type="button" class="mk-btn ghost" data-reset><Icon name="arrow-counter-clockwise" size={14} /> Run it again</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="demo-note" data-demo hidden>Demo: the physician's sign-off is simulated.</p>
         </div>
       </div>
     </div>
@@ -34,128 +83,197 @@ import BrowserFrame from "../BrowserFrame.astro";
 <script>
   document.querySelectorAll<HTMLElement>("[data-chain]").forEach((root) => {
     const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
-    const plan = q("[data-plan]"), note = q("[data-note]");
-    const blocked = q("[data-blocked]"), ok = q("[data-ok]"), reset = q("[data-reset]");
+    const start = q<HTMLButtonElement>("[data-start]"), certify = q<HTMLButtonElement>("[data-certify]");
+    const blocked = q("[data-blocked]"), ok = q("[data-ok]"), demo = q("[data-demo]");
+    const planBadge = q("[data-plan-badge]"), noteBadge = q("[data-note-badge]"), note = q("[data-note]");
+    const lockHtml = noteBadge.innerHTML;
+    const quick = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let certified = false;
-    q("[data-start]").addEventListener("click", () => {
+
+    start.addEventListener("click", () => {
       blocked.hidden = certified;
       ok.hidden = !certified;
       if (certified) {
-        note.className = "done";
-        q("[data-note-status]").textContent = "In progress";
-        reset.hidden = false;
+        noteBadge.textContent = "In progress";
+        noteBadge.className = "mk-badge ok";
+        q("[data-note-sub]").textContent = "Linked to the certified plan";
+        start.disabled = true;
       }
     });
-    q("[data-certify]").addEventListener("click", () => {
-      certified = true;
-      plan.className = "done";
-      q("[data-plan-status]").textContent = "Certified";
-      note.className = "";
-      blocked.hidden = true;
-      q<HTMLButtonElement>("[data-start]").focus();
+    certify.addEventListener("click", () => {
+      certify.disabled = true;
+      certify.textContent = "Requesting…";
+      setTimeout(() => {
+        certified = true;
+        planBadge.textContent = "Certified";
+        planBadge.className = "mk-badge ok";
+        q("[data-plan-sub]").textContent = "Signed off by the physician";
+        noteBadge.textContent = "Ready";
+        note.classList.remove("locked");
+        blocked.hidden = true;
+        demo.hidden = false;
+        start.focus();
+      }, quick ? 0 : 900);
     });
-    reset.addEventListener("click", () => {
+    q("[data-reset]").addEventListener("click", () => {
       certified = false;
-      plan.className = "wait";
-      note.className = "locked";
-      q("[data-plan-status]").textContent = "Awaiting certification";
-      q("[data-note-status]").textContent = "Not started";
+      planBadge.textContent = "Awaiting certification";
+      planBadge.className = "mk-badge wait";
+      q("[data-plan-sub]").textContent = "Sent to the physician for sign-off";
+      noteBadge.innerHTML = lockHtml;
+      noteBadge.className = "mk-badge";
+      q("[data-note-sub]").textContent = "Today's visit";
+      note.classList.add("locked");
+      certify.disabled = false;
+      certify.textContent = "Request certification";
       ok.hidden = true;
-      reset.hidden = true;
+      demo.hidden = true;
+      start.disabled = false;
+      start.focus();
     });
   });
 </script>
 
 <style>
-  .chain {
-    padding: 20px;
-    font-size: var(--text-sm);
+  small {
+    font-size: 11.5px;
+    color: var(--ink-muted);
+  }
+  .content {
+    padding: 16px;
+    display: grid;
+    gap: 12px;
+  }
+  .patient {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .who {
+    display: grid;
+    margin-right: auto;
+  }
+  .who b {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+  .card-title {
+    margin: 0;
+    padding: 12px 14px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-secondary);
   }
   ol {
     list-style: none;
-    margin: 0 0 16px;
-    padding: 0;
+    margin: 0;
+    padding: 0 6px 6px;
   }
   li {
     position: relative;
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 10px;
-    padding: 9px 0 9px 22px;
-    color: var(--ink);
+    padding: 10px 8px;
+    border-radius: 10px;
   }
   li + li::before {
     content: "";
     position: absolute;
-    left: 4px;
-    top: -12px;
-    height: 26px;
-    width: 1px;
-    background: var(--rule);
+    left: 24px;
+    top: -10px;
+    height: 20px;
+    border-left: 1.5px dashed var(--rule);
   }
-  .dot {
-    position: absolute;
-    left: 0;
-    top: 14px;
-    width: 9px;
-    height: 9px;
-    border: 1px solid var(--ink-muted);
-    background: var(--bg-raised);
+  .ic {
+    position: relative;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: var(--bg-sunk);
+    color: var(--ink-secondary);
   }
-  .done .dot {
-    background: var(--ink);
-    border-color: var(--ink);
+  .txt {
+    display: grid;
+    min-width: 0;
+    margin-right: auto;
   }
-  .wait .dot {
-    border-color: var(--accent-site);
-  }
-  li b {
+  .txt b {
     font-weight: 500;
   }
-  li em {
-    font-style: normal;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
+  .locked .txt b,
+  .locked .ic {
     color: var(--ink-muted);
   }
-  .locked b {
-    color: var(--ink-muted);
+  .today {
+    padding-bottom: 14px;
   }
-  .actions {
+  .visit {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    gap: 6px;
+    margin: 0 14px 12px;
+    color: var(--ink-secondary);
   }
-  button {
-    font: inherit;
-    font-size: var(--text-sm);
-    padding: 7px 14px;
-    border-radius: 999px;
-    border: 1px solid var(--ink);
-    background: var(--ink);
-    color: var(--bg);
-    cursor: pointer;
-  }
-  button.quiet,
-  .msg button {
-    background: transparent;
-    color: var(--ink);
-    border-color: var(--rule);
+  .today > .mk-btn {
+    margin: 0 14px;
+    width: calc(100% - 28px);
   }
   .msg {
-    min-height: 118px;
-    margin-top: 14px;
+    min-height: 150px;
+    padding: 12px 14px 0;
   }
-  .msg > div {
-    border-left: 2px solid var(--accent-site);
-    padding-left: 12px;
+  .alert {
+    border-radius: 10px;
+    padding: 12px;
+    background: color-mix(in srgb, var(--warn) 10%, var(--bg-raised));
+    border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--bg-raised));
   }
-  .msg p {
-    margin: 0 0 8px;
+  .alert.okay {
+    background: color-mix(in srgb, var(--ok) 9%, var(--bg-raised));
+    border-color: color-mix(in srgb, var(--ok) 32%, var(--bg-raised));
+  }
+  .alert p {
+    margin: 0 0 10px;
     color: var(--ink-secondary);
-    max-width: 52ch;
   }
-  .msg .msg-title {
+  .alert .alert-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
     color: var(--ink);
-    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .alert-title :global(svg) {
+    color: color-mix(in srgb, var(--warn) 80%, var(--ink));
+  }
+  .okay .alert-title :global(svg) {
+    color: var(--ok);
+  }
+  .demo-note {
+    margin: 0;
+    font-size: 11.5px;
+    color: var(--ink-muted);
+  }
+  @media (max-width: 720px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    li {
+      flex-wrap: wrap;
+    }
+    .msg {
+      min-height: 0;
+    }
   }
 </style>
