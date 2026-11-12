@@ -1,5 +1,7 @@
 ---
-/* Small abstract preview for a case-study card. */
+/* Folder preview for a case-study card: two sheets (mini screens from the
+   project) tucked into a folder. They lift and fan out when the card is
+   hovered or focused. Decorative. */
 import Icon from "./Icon.astro";
 interface Props {
   kind: string;
@@ -7,115 +9,304 @@ interface Props {
 const { kind } = Astro.props;
 ---
 
-<div class={`thumb ${kind}`} aria-hidden="true">
-  {kind === "pilgrim-transport" && (
-    <div class="route">
-      <span class="stop"><Icon name="airplane-takeoff" size={16} /> Airport</span>
-      <span class="track"><i></i><span class="van"><Icon name="van" weight="fill" size={20} /></span></span>
-      <span class="stop"><Icon name="mosque" size={16} /> Haram</span>
-    </div>
-  )}
-  {kind === "therapy-documentation" && (
-    <div class="thread">
-      <span class="node ok"><Icon name="check-circle" weight="fill" size={16} /> Evaluation</span>
-      <span class="node ok"><Icon name="check-circle" weight="fill" size={16} /> Plan of care</span>
-      <span class="node"><Icon name="lock-simple" size={16} /> Session note</span>
-    </div>
-  )}
-  {kind === "clinical-copilot" && (
-    <div class="cop">
-      <i></i><i></i><i></i>
-      <div class="bubble"><Icon name="sparkle" weight="fill" size={14} /> Which patient is this for?</div>
-    </div>
-  )}
+<div class={`folder ${kind}`} aria-hidden="true">
+  <div class="back"><span class="tab"></span></div>
+
+  <div class="sheet s1">
+    {kind === "pilgrim-transport" && (
+      <div class="pad">
+        <span class="tag green"><Icon name="seal-check" weight="fill" size={9} /> Private drivers</span>
+        <span class="h">Your pilgrimage, driven with care.</span>
+        <span class="search"><i></i><i></i><b>Check</b></span>
+      </div>
+    )}
+    {kind === "therapy-documentation" && (
+      <div class="pad list">
+        <span class="row"><Icon name="clipboard-text" size={10} /> Evaluation <em class="ok">Signed</em></span>
+        <span class="row"><Icon name="file-text" size={10} /> Plan of care <em class="ok">Certified</em></span>
+        <span class="row dim"><Icon name="note-pencil" size={10} /> Session note <em>Ready</em></span>
+      </div>
+    )}
+    {kind === "clinical-copilot" && (
+      <div class="pad list">
+        <span class="row"><b class="av">A</b> Patient A <em class="ok">Seen</em></span>
+        <span class="row"><b class="av">B</b> Patient B <em class="wait">Waiting</em></span>
+        <span class="row"><b class="av">C</b> Patient C <em>11:15</em></span>
+      </div>
+    )}
+  </div>
+
+  <div class="sheet s2">
+    {kind === "pilgrim-transport" && (
+      <div class="pad">
+        <span class="art"><Icon name="mosque" weight="duotone" size={22} /></span>
+        <span class="cap">Makkah <Icon name="arrow-right" size={8} /> Madinah</span>
+      </div>
+    )}
+    {kind === "therapy-documentation" && (
+      <div class="pad">
+        <span class="alert"><Icon name="warning-circle" weight="fill" size={11} /> Plan isn't certified yet</span>
+        <span class="line"></span><span class="line short"></span>
+        <span class="s-btn">Request certification</span>
+      </div>
+    )}
+    {kind === "clinical-copilot" && (
+      <div class="pad">
+        <span class="cop"><span class="spark"><Icon name="sparkle" weight="fill" size={8} /></span> Copilot</span>
+        <span class="q">Which patient is this for?</span>
+        <span class="btns"><b>Patient B</b><i>Patient C</i></span>
+      </div>
+    )}
+  </div>
+
+  <div class="front"><span class="seam"></span></div>
 </div>
 
 <style>
-  .thumb {
-    height: 150px;
-    border-radius: 12px;
-    background: var(--bg-sunk);
-    display: grid;
-    place-items: center;
-    padding: 16px;
-    font-size: 12px;
-    color: var(--ink);
-    overflow: hidden;
-  }
-  .route {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-  }
-  .stop,
-  .node,
-  .bubble {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--bg-raised);
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    padding: 5px 10px;
-    white-space: nowrap;
-  }
-  .track {
+  .folder {
+    --f-back: #26272c;
+    --f-front: linear-gradient(180deg, #3b3d45 0%, #2b2d33 100%);
+    --paper: #ffffff;
+    --p-ink: #1a1a18;
+    --p-muted: #8c8a81;
+    --p-rule: #e7e5de;
+    --brand: #0f6b5c;
+    --ok: #1f8a4c;
+    --warn: #b7791f;
     position: relative;
-    flex: 1;
-    height: 20px;
+    height: 190px;
+    margin: 8px 6px 0;
   }
-  .track i {
+  .back {
+    position: absolute;
+    inset: 16px 0 0;
+    border-radius: 14px;
+    background: var(--f-back);
+  }
+  .tab {
+    position: absolute;
+    left: 0;
+    top: -12px;
+    width: 38%;
+    height: 26px;
+    border-radius: 12px 12px 0 0;
+    background: var(--f-back);
+  }
+  .sheet {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    width: 58%;
+    height: 112px;
+    border-radius: 9px;
+    background: var(--paper);
+    color: var(--p-ink);
+    box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.45);
+    overflow: hidden;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    font-size: 9.5px;
+    line-height: 1.3;
+  }
+  .s1 {
+    transform: translateX(-78%) rotate(-7deg);
+  }
+  .s2 {
+    transform: translateX(-24%) rotate(6deg);
+  }
+  :global(.card:hover) .s1,
+  :global(.card:focus-visible) .s1 {
+    transform: translateX(-86%) translateY(-18px) rotate(-11deg);
+  }
+  :global(.card:hover) .s2,
+  :global(.card:focus-visible) .s2 {
+    transform: translateX(-16%) translateY(-22px) rotate(9deg);
+  }
+  .front {
     position: absolute;
     left: 0;
     right: 0;
-    top: 50%;
-    border-top: 1.5px dashed var(--ink-muted);
+    bottom: 0;
+    height: 56%;
+    border-radius: 14px;
+    background: var(--f-front);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.12) inset,
+      0 -8px 18px -10px rgb(0 0 0 / 0.5);
   }
-  .van {
+  .seam {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--bg-sunk);
-    padding: 0 4px;
-    display: flex;
-    color: var(--accent-site);
+    left: 14px;
+    right: 14px;
+    top: 12px;
+    border-top: 1px solid rgb(255 255 255 / 0.08);
   }
-  .thread {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: flex-start;
+  @media (prefers-reduced-motion: reduce) {
+    .sheet {
+      transition: none;
+    }
   }
-  .node.ok :global(svg) {
+
+  /* Sheet faces */
+  .pad {
+    padding: 9px;
+    display: grid;
+    gap: 5px;
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: 600;
+  }
+  .green {
+    color: var(--brand);
+  }
+  .h {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .search {
+    display: flex;
+    gap: 3px;
+    padding: 3px;
+    border: 1px solid var(--p-rule);
+    border-radius: 6px;
+  }
+  .search i {
+    flex: 1;
+    height: 12px;
+    border-radius: 3px;
+    background: #f1efea;
+  }
+  .search b {
+    background: var(--brand);
+    color: #fff;
+    border-radius: 4px;
+    padding: 0 6px;
+    font-size: 8.5px;
+    line-height: 12px;
+  }
+  .art {
+    height: 62px;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    color: var(--brand);
+    background: linear-gradient(135deg, #f4e3bd, #d6ece6);
+  }
+  .cap {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: 600;
+  }
+  .list {
+    gap: 0;
+    padding: 5px 9px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--p-rule);
+    font-weight: 500;
+  }
+  .row:last-child {
+    border-bottom: none;
+  }
+  .row.dim {
+    color: var(--p-muted);
+  }
+  .row em {
+    margin-left: auto;
+    font-style: normal;
+    font-size: 8px;
+    padding: 1px 5px;
+    border-radius: 99px;
+    background: #f1efea;
+    color: var(--p-muted);
+  }
+  .row em.ok {
+    background: #dff1e6;
     color: var(--ok);
   }
-  .node:not(.ok) {
-    color: var(--ink-muted);
-    border-style: dashed;
+  .row em.wait {
+    background: #f6ead2;
+    color: var(--warn);
+  }
+  .av {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 7.5px;
+    background: #e3e8fb;
+  }
+  .alert {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    padding: 5px 6px;
+    border-radius: 5px;
+    background: #fbf1df;
+  }
+  .alert :global(svg) {
+    color: var(--warn);
+  }
+  .line {
+    height: 5px;
+    border-radius: 3px;
+    background: #ecebe6;
+  }
+  .line.short {
+    width: 60%;
+  }
+  .s-btn {
+    justify-self: start;
+    border: 1px solid var(--p-rule);
+    border-radius: 5px;
+    padding: 2px 6px;
+    font-weight: 500;
   }
   .cop {
-    position: relative;
-    width: 100%;
-    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
   }
-  .cop i {
-    display: block;
-    height: 8px;
+  .spark {
+    width: 13px;
+    height: 13px;
+    display: grid;
+    place-items: center;
     border-radius: 4px;
-    background: color-mix(in srgb, var(--ink) 10%, transparent);
-    margin-bottom: 10px;
-    width: 70%;
+    background: var(--p-ink);
+    color: #fff;
   }
-  .cop i:nth-child(2) { width: 90%; }
-  .cop i:nth-child(3) { width: 50%; }
-  .bubble {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    border-color: var(--ink);
-    border-radius: 12px;
-    box-shadow: 0 8px 20px -8px rgb(0 0 0 / 0.25);
+  .q {
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .btns {
+    display: flex;
+    gap: 4px;
+  }
+  .btns b,
+  .btns i {
+    font-style: normal;
+    border-radius: 5px;
+    padding: 2px 6px;
+    border: 1px solid var(--p-ink);
+  }
+  .btns b {
+    background: var(--p-ink);
+    color: #fff;
+  }
+  .btns i {
+    border-color: var(--p-rule);
   }
 </style>
