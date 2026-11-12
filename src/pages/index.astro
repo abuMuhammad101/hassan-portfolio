@@ -5,10 +5,18 @@ import WorkScroller from "../components/WorkScroller.astro";
 import Timeline from "../components/Timeline.astro";
 import LinkList from "../components/LinkList.astro";
 import Footer from "../components/Footer.astro";
+import TwoToneHeading from "../components/TwoToneHeading.astro";
+import ConstructionLines from "../components/ConstructionLines.astro";
 ---
 
 <Base title="Muhammad Hassan Khan — Senior Product Designer">
   <Header />
+  <section class="hero">
+    <div class="hero-inner wrap">
+      <ConstructionLines />
+      <TwoToneHeading as="h1" size="hero" lead="Less noise." rest="Real products. Owned end to end." />
+    </div>
+  </section>
   <main class="wrap intro">
     <p>
       Hey, I'm <a href="/resume/">Hassan</a>, a senior product designer.
@@ -74,6 +82,14 @@ import Footer from "../components/Footer.astro";
 </Base>
 
 <style>
+  .hero {
+    overflow: clip;
+  }
+  .hero-inner {
+    position: relative;
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-8);
+  }
   .intro {
     padding-bottom: var(--space-4);
   }

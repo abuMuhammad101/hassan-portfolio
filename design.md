@@ -20,8 +20,6 @@ Each case study carries its own accent, pulled from the project's real brand whe
 | Project | Accent |
 |---|---|
 | HH Global | `#9C6B1F` (their actual warm brass/gold token) |
-| Medexa | `#2C39FF` / `#010ED0` (their actual card-border and primary blue) |
-| ARA Assessment | `#1D5FBF` (clinical blue) |
 | Cookiya | `#6B5B95` (Fraunces-adjacent plum) |
 | motions | `#3A7D5C` (quiet green) |
 | Inventory Management Tool | `#2E8C96` (teal) |

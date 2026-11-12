@@ -1,0 +1,44 @@
+---
+/* Minimal phone body for re-created mobile UI. */
+interface Props {
+  label?: string;
+}
+const { label = "Phone screen" } = Astro.props;
+---
+
+<figure class="phone" role="group" aria-label={label}>
+  <span class="island" aria-hidden="true"></span>
+  <div class="screen"><slot /></div>
+</figure>
+
+<style>
+  .phone {
+    position: relative;
+    margin: 0 auto;
+    width: min(300px, 100%);
+    aspect-ratio: 9 / 19;
+    border: 1px solid var(--rule);
+    border-radius: 36px;
+    padding: 10px;
+    background: var(--bg-raised);
+  }
+  .island {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    width: 64px;
+    height: 16px;
+    transform: translateX(-50%);
+    border-radius: 10px;
+    background: var(--ink);
+    opacity: 0.85;
+    z-index: 2;
+  }
+  .screen {
+    height: 100%;
+    border-radius: 27px;
+    background: var(--bg);
+    overflow: hidden auto;
+    padding-top: 38px;
+  }
+</style>
