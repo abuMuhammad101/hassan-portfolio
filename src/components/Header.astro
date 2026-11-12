@@ -1,11 +1,12 @@
 ---
 interface Props {
   showBack?: boolean;
+  wide?: boolean;
 }
-const { showBack = false } = Astro.props;
+const { showBack = false, wide = false } = Astro.props;
 ---
 
-<header class="header wrap">
+<header class:list={["header", "wrap", { wide }]}>
   {showBack ? (
     <a href="/" class="back">← hassan khan</a>
   ) : (
@@ -33,6 +34,9 @@ const { showBack = false } = Astro.props;
 </header>
 
 <style>
+  .header.wide {
+    max-width: var(--wide-width);
+  }
   .header {
     display: flex;
     align-items: center;

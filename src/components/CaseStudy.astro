@@ -1,0 +1,439 @@
+---
+/* The v2 case-study page: exhibit header, sections with a side rail, one
+   interactive proof, and honest evidence in place of metrics. */
+import TwoToneHeading from "./TwoToneHeading.astro";
+import BeforeAfter from "./widgets/BeforeAfter.astro";
+import RecordChain from "./widgets/RecordChain.astro";
+import Copilot from "./widgets/Copilot.astro";
+
+interface Props {
+  data: any;
+  next?: { slug: string; title: string };
+}
+const { data, next } = Astro.props;
+const rail = [
+  ["problem", "Problem"],
+  ["constraints", "Constraints"],
+  ["decisions", "Decisions"],
+  ["proof", "Try it"],
+  ["states", "Edge states"],
+  ["evidence", "Evidence"],
+  ["measure", "Measure"],
+];
+---
+
+<article class="case">
+  <header class="wrap-wide head">
+    <TwoToneHeading as="h1" size="hero" lead={data.title} rest={data.titleRest} />
+    <p class="angle">{data.angle}</p>
+    <dl class="meta">
+      {data.meta.map((m: any) => (
+        <div><dt>{m.label}</dt><dd>{m.value}</dd></div>
+      ))}
+    </dl>
+    {data.ndaRecreated && <p class="nda">Re-created for NDA. Names and screens are stand-ins.</p>}
+  </header>
+
+  <div class="wrap-wide body">
+    <nav class="rail" aria-label="Sections">
+      <ol>
+        {rail.map(([id, label]) => (
+          <li><a href={`#${id}`} data-rail={id}>{label}</a></li>
+        ))}
+      </ol>
+    </nav>
+
+    <div class="col">
+      {data.stats && (
+        <ul class="stats">
+          {data.stats.map((s: any) => (
+            <li>
+              <p class="big tabular-nums">{s.value}<sup>{s.unit}</sup></p>
+              <p class="stat-label">{s.label}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <section id="problem">
+        <p class="section-label dot">the problem</p>
+        {data.problem.map((p: string) => <p class="lede">{p}</p>)}
+      </section>
+
+      <section id="constraints" class="reveal">
+        <p class="section-label dot">constraints</p>
+        <ul class="plain">
+          {data.constraints.map((c: string) => <li>{c}</li>)}
+        </ul>
+      </section>
+
+      <section id="decisions" class="reveal">
+        <p class="section-label dot">decisions</p>
+        {data.decisionsIntro && <p>{data.decisionsIntro}</p>}
+        <div class="decisions">
+          {data.decisions.map((d: any, i: number) => (
+            <details open={i === 0}>
+              <summary>
+                <span class="num tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                <span class="d-title">{d.title}</span>
+                <span class="plus" aria-hidden="true"></span>
+              </summary>
+              <p>{d.body}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section id="proof" class="reveal">
+        <p class="section-label dot">try it</p>
+        <p>{data.widgetIntro}</p>
+        <div class="widget">
+          {data.widget === "before-after" && <BeforeAfter />}
+          {data.widget === "record-chain" && <RecordChain />}
+          {data.widget === "copilot" && <Copilot />}
+        </div>
+        <p class="caption">An illustrative re-creation of the pattern, not the product's screens.</p>
+      </section>
+
+      <section id="states" class="reveal">
+        <p class="section-label dot">beyond the happy path</p>
+        <p>The states I check on work like this, because nobody asks for them until they break.</p>
+        <ul class="states">
+          {data.states.map((s: any) => (
+            <li><b>{s.name}</b><span>{s.note}</span></li>
+          ))}
+        </ul>
+      </section>
+
+      <section id="evidence" class="reveal">
+        <p class="section-label dot">evidence</p>
+        <ul class="plain">
+          {data.evidence.map((e: string) => <li>{e}</li>)}
+        </ul>
+      </section>
+
+      <section id="measure" class="reveal">
+        <p class="section-label dot">how I'd measure it</p>
+        <p>These results weren't tracked on this project. With access, these are the numbers I'd watch.</p>
+        <ul class="measures">
+          {data.measures.map((m: string) => <li>{m}</li>)}
+        </ul>
+        <p class="next-step"><b>Next:</b> {data.next}</p>
+      </section>
+
+      {next && (
+        <a class="next-case" href={`/work/${next.slug}/`}>
+          <span>Next case</span>
+          <b>{next.title} →</b>
+        </a>
+      )}
+    </div>
+  </div>
+</article>
+
+<script>
+  // Highlight the rail link for the section being read.
+  const links = [...document.querySelectorAll<HTMLAnchorElement>("[data-rail]")];
+  if (links.length && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          links.forEach((l) => l.toggleAttribute("data-active", l.dataset.rail === e.target.id));
+        });
+      },
+      { rootMargin: "-30% 0px -60% 0px" }
+    );
+    links.forEach((l) => {
+      const s = document.getElementById(l.dataset.rail!);
+      if (s) io.observe(s);
+    });
+  }
+</script>
+
+<style>
+  .wrap-wide {
+    max-width: var(--wide-width);
+    margin: 0 auto;
+    padding: 0 var(--space-3);
+  }
+  .head {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--rule);
+  }
+  .angle {
+    font-size: var(--text-lg);
+    color: var(--ink-secondary);
+    max-width: 52ch;
+    margin: var(--space-3) 0;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin: 0;
+  }
+  .meta dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+  }
+  .meta dd {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--ink);
+  }
+  .nda {
+    display: inline-block;
+    margin: var(--space-3) 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+    border: 1px dashed var(--construct);
+    border-radius: 4px;
+    padding: 2px 8px;
+  }
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-8);
+  }
+  .rail {
+    display: none;
+  }
+  .col {
+    min-width: 0;
+    max-width: 680px;
+  }
+  @media (min-width: 960px) {
+    .body {
+      grid-template-columns: 180px minmax(0, 1fr);
+    }
+    .rail {
+      display: block;
+    }
+    .rail ol {
+      position: sticky;
+      top: var(--space-6);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-left: 1px solid var(--rule);
+    }
+    .rail a {
+      display: block;
+      padding: 5px 0 5px 14px;
+      margin-left: -1px;
+      border-left: 1px solid transparent;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--ink-muted);
+      text-decoration: none;
+    }
+    .rail a:hover,
+    .rail a[data-active] {
+      color: var(--ink);
+      border-left-color: var(--ink);
+    }
+  }
+  section {
+    padding-bottom: var(--space-6);
+    scroll-margin-top: var(--space-4);
+  }
+  section p {
+    color: var(--ink-secondary);
+    margin: 0 0 var(--space-2);
+    max-width: 62ch;
+  }
+  .section-label.dot {
+    margin-bottom: var(--space-2);
+  }
+  .section-label.dot::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-site);
+    margin-right: 8px;
+    transform: translateY(-1px);
+  }
+  .lede {
+    font-size: var(--text-lg);
+  }
+  .stats {
+    list-style: none;
+    margin: 0 0 var(--space-6);
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-3);
+  }
+  .big {
+    font-family: var(--font-display);
+    font-size: 4rem;
+    line-height: 1;
+    color: var(--ink);
+    margin: 0 0 6px;
+  }
+  .big sup {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+    margin-left: 6px;
+    vertical-align: top;
+    position: relative;
+    top: 8px;
+  }
+  .stat-label {
+    font-size: var(--text-sm);
+    color: var(--ink-secondary);
+    margin: 0;
+  }
+  .plain,
+  .states,
+  .measures {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .plain li {
+    position: relative;
+    padding: 5px 0 5px 20px;
+    color: var(--ink-secondary);
+    max-width: 62ch;
+  }
+  .plain li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1em;
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--ink-muted);
+  }
+  .decisions {
+    border-top: 1px solid var(--rule);
+  }
+  details {
+    border-bottom: 1px solid var(--rule);
+  }
+  summary {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 12px 0;
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .num {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+  }
+  .d-title {
+    flex: 1;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    color: var(--ink);
+  }
+  .plus {
+    position: relative;
+    width: 11px;
+    height: 11px;
+    align-self: center;
+  }
+  .plus::before,
+  .plus::after {
+    content: "";
+    position: absolute;
+    background: var(--ink);
+  }
+  .plus::before { left: 0; right: 0; top: 5px; height: 1px; }
+  .plus::after { top: 0; bottom: 0; left: 5px; width: 1px; }
+  details[open] .plus::after {
+    display: none;
+  }
+  details p {
+    padding: 0 0 var(--space-2) 30px;
+    margin: 0;
+  }
+  .widget {
+    margin: var(--space-3) 0 var(--space-1);
+  }
+  .caption {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+  }
+  .states {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 8px;
+  }
+  .states li {
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--bg-raised);
+  }
+  .states b {
+    display: block;
+    font-weight: 500;
+    color: var(--ink);
+    font-size: var(--text-sm);
+  }
+  .states span {
+    font-size: var(--text-sm);
+    color: var(--ink-secondary);
+  }
+  .measures {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    margin-bottom: var(--space-3);
+  }
+  .measures li {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-secondary);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 3px 8px;
+    background: var(--bg-raised);
+  }
+  .next-step b {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .next-case {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .next-case span {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+  }
+  .next-case b {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--text-xl);
+  }
+  .next-case:hover b {
+    color: var(--accent-site);
+  }
+</style>
