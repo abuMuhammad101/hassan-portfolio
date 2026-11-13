@@ -41,6 +41,13 @@ const { kind } = Astro.props;
         <span class="row"><Icon name="arrows-counter-clockwise" size={10} /> Denials <em class="wait">Loop</em></span>
       </div>
     )}
+    {kind === "clicker" && (
+      <div class="pad list">
+        <span class="row">Al-Noor Apts <em>14,280</em></span>
+        <span class="row">Bilal Traders <em>9,912</em></span>
+        <span class="row">Crescent School <em>21,504</em></span>
+      </div>
+    )}
   </div>
 
   <div class="sheet s2">
@@ -69,6 +76,13 @@ const { kind } = Astro.props;
         <span class="qlbl">Priority queue</span>
         <span class="amt">AED 18,400</span>
         <span class="qsub">3h left · coding mismatch</span>
+      </div>
+    )}
+    {kind === "clicker" && (
+      <div class="pad">
+        <span class="alert vio"><Icon name="lightning" weight="fill" size={10} /> 12 selected</span>
+        <span class="line"></span><span class="line short"></span>
+        <span class="s-btn vio">Generate bills</span>
       </div>
     )}
   </div>
@@ -190,6 +204,8 @@ const { kind } = Astro.props;
     font-size: 8.5px;
     color: #fca5a5;
   }
+  .alert.vio { background: #eeedfb; color: #4a3fcf; }
+  .s-btn.vio { background: #4a3fcf; }
   .pad {
     padding: 9px;
     display: grid;

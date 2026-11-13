@@ -1,0 +1,239 @@
+---
+/* Clicker list view with sample data: Clicker's density rules next to a
+   typical ERP, and a bulk billing pass that sets aside what it can't bill. */
+import BrowserFrame from "../BrowserFrame.astro";
+import Icon from "../Icon.astro";
+const names = ["Al-Noor Apartments", "Bilal Traders", "Crescent School", "Dawood Textiles", "Eastgate Clinic", "Fazal Bakery", "Green Valley Flats", "Hilal Hardware", "Iqra Academy", "Jinnah Court", "Kausar Foods", "Lakeview Tower", "Madina Steel", "Noor Pharmacy"];
+const zones = ["North", "North", "Central", "East", "North", "Central", "East", "North", "Central", "North", "East", "Central", "North", "East"];
+const rows = names.map((n, i) => {
+  const units = 120 + ((i * 137) % 540);
+  const missing = i === 3 || i === 9;
+  return { n, acc: `WB-${(20410 + i * 7).toString()}`, z: zones[i], units, read: missing ? null : 4100 + i * 311, amt: (units * 42).toLocaleString("en-US"), missing };
+});
+---
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
+
+<div class="dt" data-dt data-mode="clicker" data-run="idle">
+  <div class="switch" role="group" aria-label="Density">
+    <button type="button" data-mode-btn="clicker" aria-pressed="true">Clicker</button>
+    <button type="button" data-mode-btn="erp" aria-pressed="false">Typical ERP</button>
+  </div>
+
+  <BrowserFrame address="clicker.app/billing/accounts" label="Re-created Clicker list view">
+    <div class="app">
+      <nav class="side" aria-hidden="true">
+        <span class="brand"><i></i>Clicker</span>
+        <span><Icon name="address-book" size={15} />Contacts</span>
+        <span class="on"><Icon name="receipt" size={15} />Billing</span>
+        <span><Icon name="package" size={15} />Inventory</span>
+        <span><Icon name="boat" size={15} />Clearance</span>
+        <span><Icon name="gear-six" size={15} />Settings</span>
+      </nav>
+      <main class="main">
+        <header class="head">
+          <div><small>Billing</small><b>Water accounts</b></div>
+          <span class="count tabular-nums">4,000 records</span>
+        </header>
+        <div class="tools">
+          <span class="search"><Icon name="magnifying-glass" size={13} />Search accounts</span>
+          <span class="chip"><Icon name="funnel" size={12} />Cycle: March</span>
+          <span class="fit tabular-nums" data-fit></span>
+        </div>
+
+        <div class="bulk" data-bulk>
+          <span class="b-sel"><b data-selcount>0</b> selected</span>
+          <span class="b-run sw-idle"><button type="button" class="btn" data-run-btn disabled><Icon name="lightning" size={13} weight="fill" />Generate bills</button></span>
+          <span class="b-prog sw-busy"><i></i>Drafting bills…</span>
+          <span class="b-done sw-done"><Icon name="check-circle" size={14} weight="fill" /><span data-summary></span><button type="button" class="link" data-review>Show set aside</button></span>
+        </div>
+
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="c"><input type="checkbox" data-all aria-label="Select all" /></th>
+                <th>Account</th>
+                <th class="hide-s">Number</th>
+                <th class="hide-s">Zone</th>
+                <th class="num">Reading</th>
+                <th class="num hide-s">Units</th>
+                <th class="num">Amount<span class="hide-s"> (Rs)</span></th>
+                <th class="st">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr data-row data-missing={r.missing ? "1" : undefined}>
+                  <td class="c"><input type="checkbox" data-pick aria-label={`Select ${r.n}`} /></td>
+                  <td class="name">{r.n}</td>
+                  <td class="hide-s mono">{r.acc}</td>
+                  <td class="hide-s">{r.z}</td>
+                  <td class="num">{r.read ? r.read.toLocaleString("en-US") : <span class="dash">–</span>}</td>
+                  <td class="num hide-s">{r.units}</td>
+                  <td class="num">{r.amt}</td>
+                  <td class="st"><span class="pill" data-status>Open</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </BrowserFrame>
+  <button type="button" class="reset" data-reset><Icon name="arrow-counter-clockwise" size={12} />Reset</button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-dt]").forEach((root) => {
+    const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const picks = [...root.querySelectorAll<HTMLInputElement>("[data-pick]")];
+    const all = q<HTMLInputElement>("[data-all]");
+    const runBtn = q<HTMLButtonElement>("[data-run-btn]");
+    const wrap = q(".tablewrap");
+    let timer: number | undefined;
+
+    const fit = () => {
+      const row = root.querySelector<HTMLElement>("tbody tr")!;
+      const n = Math.floor((wrap.clientHeight - 34) / row.getBoundingClientRect().height);
+      q("[data-fit]").textContent = `${n} rows on screen`;
+    };
+    const sync = () => {
+      const n = picks.filter((p) => p.checked).length;
+      q("[data-selcount]").textContent = String(n);
+      runBtn.disabled = n === 0 || root.dataset.run !== "idle";
+      all.checked = n === picks.length;
+      all.indeterminate = n > 0 && n < picks.length;
+      root.classList.toggle("has-sel", n > 0);
+    };
+    root.querySelectorAll<HTMLButtonElement>("[data-mode-btn]").forEach((b) => b.addEventListener("click", () => {
+      root.dataset.mode = b.dataset.modeBtn!;
+      root.querySelectorAll("[data-mode-btn]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      window.setTimeout(fit, 320);
+    }));
+    picks.forEach((p) => p.addEventListener("change", sync));
+    all.addEventListener("change", () => { picks.forEach((p) => (p.checked = all.checked)); sync(); });
+    runBtn.addEventListener("click", () => {
+      root.dataset.run = "busy"; sync();
+      timer = window.setTimeout(() => {
+        let ok = 0, aside = 0;
+        picks.forEach((p) => {
+          if (!p.checked) return;
+          const tr = p.closest("tr")!;
+          const pill = tr.querySelector<HTMLElement>("[data-status]")!;
+          if (tr.dataset.missing) { pill.textContent = "No reading"; pill.className = "pill warn"; aside++; }
+          else { pill.textContent = "Billed"; pill.className = "pill ok"; ok++; }
+        });
+        q("[data-summary]").textContent = `${ok} bills drafted. ${aside} set aside: no meter reading.`;
+        root.querySelector<HTMLElement>("[data-review]")!.hidden = aside === 0;
+        root.dataset.run = "done"; sync();
+      }, 1300);
+    });
+    q("[data-review]").addEventListener("click", () => root.classList.toggle("only-aside"));
+    q("[data-reset]").addEventListener("click", () => {
+      clearTimeout(timer);
+      root.dataset.run = "idle"; root.classList.remove("only-aside");
+      picks.forEach((p) => (p.checked = false));
+      root.querySelectorAll<HTMLElement>("[data-status]").forEach((s) => { s.textContent = "Open"; s.className = "pill"; });
+      sync();
+    });
+    new ResizeObserver(fit).observe(wrap);
+    sync(); fit();
+  });
+</script>
+
+<style>
+  .dt {
+    container-type: inline-size;
+    --acc: #4a3fcf;
+    --acc-soft: #eeedfb;
+    --ink: #17181c;
+    --ink2: #4d5059;
+    --mute: #8a8d96;
+    --line: #ebebef;
+  }
+  .switch { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--bg-sunk); border: 1px solid var(--rule); margin-bottom: 14px; }
+  .switch button { border: 0; background: none; font: inherit; font-weight: 600; font-size: var(--text-sm); padding: 6px 16px; border-radius: 999px; color: var(--ink-muted); cursor: pointer; }
+  .switch [aria-pressed="true"] { background: var(--bg-raised); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
+
+  .app { display: grid; grid-template-columns: 172px 1fr; background: #fff; color: var(--ink); font: 13px/1.4 "IBM Plex Sans", Inter, system-ui, sans-serif; }
+  .side { display: flex; flex-direction: column; gap: 2px; padding: 14px 10px; border-right: 1px solid var(--line); background: #fafafb; color: var(--ink2); }
+  .side > span { display: flex; align-items: center; gap: 9px; padding: 6px 8px; border-radius: 7px; }
+  .side .on { background: #fff; color: var(--ink); font-weight: 500; box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / 0.04); }
+  .side .on :global(svg) { color: var(--acc); }
+  .brand { font-weight: 600; color: var(--ink); margin-bottom: 10px; }
+  .brand i { width: 18px; height: 18px; border-radius: 5px; background: var(--acc); box-shadow: inset -6px -6px 0 rgb(255 255 255 / 0.25); }
+  .main { min-width: 0; padding: 14px 16px 16px; }
+  .head { display: flex; align-items: flex-end; gap: 10px; }
+  .head div { display: grid; } .head small { color: var(--mute); font-size: 11.5px; } .head b { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .count { margin-left: auto; color: var(--mute); font-size: 12px; }
+  .tools { display: flex; align-items: center; gap: 8px; margin: 12px 0 8px; }
+  .search, .chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 7px; box-shadow: 0 0 0 1px var(--line); color: var(--mute); font-size: 12px; }
+  .search { min-width: 180px; }
+  .chip { color: var(--ink2); }
+  .fit { margin-left: auto; padding: 3px 8px; border-radius: 999px; background: var(--acc-soft); color: var(--acc); font-size: 11.5px; font-weight: 500; }
+
+  .bulk { display: flex; align-items: center; gap: 12px; height: 38px; padding: 0 10px; margin-bottom: 8px; border-radius: 9px; background: #f6f6f9; color: var(--ink2); font-size: 12.5px; transition: background 0.2s; }
+  .dt.has-sel .bulk, .dt[data-run="done"] .bulk { background: var(--acc-soft); color: var(--ink); }
+  .b-sel b { font-variant-numeric: tabular-nums; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border: 0; border-radius: 7px; background: var(--acc); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+  .btn:disabled { background: #c9c7e8; cursor: not-allowed; }
+  .b-run, .b-prog, .b-done { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; }
+  .b-prog i { width: 90px; height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--acc) 40%, #d9d6f5 40%) 0 0 / 250% 100%; animation: prog 1.3s linear; }
+  @keyframes prog { from { background-position: 100% 0; } to { background-position: 0 0; } }
+  .b-done :global(svg) { color: #1f8a4c; }
+  .link { border: 0; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--acc); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .link[hidden] { display: none; }
+  .sw-busy, .sw-done { display: none !important; }
+  .dt[data-run="busy"] .sw-idle, .dt[data-run="done"] .sw-idle { display: none !important; }
+  .dt[data-run="busy"] .sw-busy, .dt[data-run="done"] .sw-done { display: inline-flex !important; }
+  :is(.btn, .link, .switch button, .reset, input):focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+
+  .tablewrap { height: 386px; overflow: auto; border-radius: 9px; box-shadow: 0 0 0 1px var(--line); }
+  table { width: 100%; border-collapse: collapse; }
+  th { position: sticky; top: 0; z-index: 1; height: 34px; padding: 0 10px; text-align: left; font-weight: 500; font-size: 12px; color: var(--mute); background: #fff; box-shadow: inset 0 -1px 0 var(--line); white-space: nowrap; }
+  td { height: 34px; padding: 0 10px; border-bottom: 1px solid #f3f3f6; white-space: nowrap; transition: height 0.25s, padding 0.25s; }
+  tr:hover td { background: #fafaff; }
+  .c { width: 34px; padding-right: 0; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .mono { font-variant-numeric: tabular-nums; color: var(--ink2); }
+  .name { font-weight: 500; }
+  .dash { color: #c0423a; font-weight: 600; }
+  .st { width: 104px; }
+  input[type="checkbox"] { accent-color: var(--acc); width: 14px; height: 14px; }
+  .pill { display: inline-block; padding: 1px 8px; border-radius: 999px; background: #f1f1f4; color: var(--ink2); font-size: 11.5px; font-weight: 500; }
+  .pill.ok { background: #e5f4ea; color: #1f7a45; }
+  .pill.warn { background: #fdf0e3; color: #a3550c; }
+  .dt.only-aside tbody tr:not([data-missing]) { display: none; }
+
+  /* Typical ERP: the same data, the usual way */
+  .dt[data-mode="erp"] .app { font-family: Arial, Helvetica, sans-serif; }
+  .dt[data-mode="erp"] th { height: 44px; text-transform: uppercase; letter-spacing: 0.04em; font-size: 11px; font-weight: 700; color: #fff; background: #5b6b7f; box-shadow: none; border-right: 1px solid #7a889a; }
+  .dt[data-mode="erp"] td { height: 48px; border: 1px solid #d5dae0; font-variant-numeric: normal; }
+  .dt[data-mode="erp"] tbody tr:nth-child(even) td { background: #eef2f6; }
+  .dt[data-mode="erp"] .num { text-align: left; }
+  .dt[data-mode="erp"] .name { color: #1a5fb4; text-decoration: underline; font-weight: 400; }
+  .dt[data-mode="erp"] .pill { border-radius: 2px; background: #dfe3e8; }
+  .dt[data-mode="erp"] .fit { background: #fdecec; color: #b23b3b; }
+
+  .reset { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; border: 0; background: none; color: var(--ink-muted); font-size: var(--text-sm); cursor: pointer; }
+
+  @container (max-width: 720px) {
+    .app { grid-template-columns: 1fr; }
+    .side { display: none; }
+    .main { padding: 12px 10px 12px; }
+    .hide-s { display: none; }
+    .search { min-width: 0; flex: 1; }
+    .chip { display: none; }
+    th, td { padding: 0 6px; }
+    .name { white-space: normal; line-height: 1.2; }
+    .pill { padding: 1px 6px; font-size: 10.5px; }
+    .main { padding-inline: 8px; }
+    .num:nth-of-type(n) { font-size: 12.5px; }
+    .st { width: auto; }
+    .bulk { height: auto; min-height: 38px; flex-wrap: wrap; padding: 6px 10px; }
+    .b-done { margin-left: 0; flex-wrap: wrap; }
+  }
+  @media (prefers-reduced-motion: reduce) { .b-prog i { animation: none; } td { transition: none; } }
+</style>

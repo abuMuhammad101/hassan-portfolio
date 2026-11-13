@@ -1,0 +1,46 @@
+title: Clicker
+titleRest: ERP
+angle: An ERP that makes sense. Dense data in its most digestible shape, owned solo from schema to screen.
+order: 5
+meta:
+  - { label: Role, value: "Solo: product, design and build" }
+  - { label: Platform, value: Web }
+  - { label: Stage, value: MVP for investor demos }
+  - { label: Domain, value: Business software for SMBs }
+ndaRecreated: false
+widget: density
+widgetIntro: "Switch between Clicker's density and a typical ERP, then select accounts and run a bulk billing pass. Watch what happens to the ones that can't be billed."
+stats:
+  - { value: "34", unit: px rows, label: "Dense enough for thousands of records, calm enough to scan" }
+  - { value: "1", unit: schema, label: Every list and form is drawn from the same definition }
+problem:
+  - Small businesses outgrow spreadsheets and land in ERPs built for someone else. The screens are crowded, every module looks different, and the work people came to do is buried.
+  - Clicker is my own product, a horizontal ERP for small businesses. I own it end to end, from the data schema to the last pixel.
+constraints:
+  - "Zero recurring cost for the MVP: it has to run on free tiers until someone pays for it."
+  - Built to be shown to investors through real journeys, not feature lists.
+  - Clean room. Other ERPs are inspiration for what to fix, never code to copy.
+decisionsIntro: The decisions that shape every screen.
+decisions:
+  - title: The schema draws the screen
+    body: Each module is defined once, with fields, groups and help text, and the same renderer draws its list and its form. A new module looks and behaves like every other on day one.
+  - title: Density with rules, not by feel
+    body: "34px rows with no zebra stripes, tabular figures in number columns, and form labels right-aligned in a fixed 168px column. Dense, but the eye always knows where to land."
+  - title: One contact, two types
+    body: "People and companies share one record with a type, company as parent and person as child, instead of two models that drift apart."
+  - title: Decisions written down
+    body: Every architectural call goes into a decision log, so the reasoning survives longer than any one working session.
+states:
+  - { name: "4,000 rows", note: Still scannable at full density }
+  - { name: Empty module, note: Says what goes here and how to add the first record }
+  - { name: Import errors, note: Rows that fail are kept aside with the reason }
+  - { name: Can't bill, note: Missing data is flagged instead of guessed }
+evidence:
+  - The schema engine and its live endpoints came first; screens are built on top of them.
+  - Two demo journeys drive the build, a water utility's bulk billing and a port's import clearance.
+  - A decision log and build log are kept alongside the code.
+measures:
+  - Time to the first useful record
+  - Tasks finished per session
+  - Records corrected after import
+next: Finish field grouping in the schema engine, then the form and list renderers for every module.

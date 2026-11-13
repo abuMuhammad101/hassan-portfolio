@@ -43,6 +43,7 @@ export const workIndex: WorkRow[] = [
     name: "Clicker",
     tags: ["ERP", "Own product"],
     angle: "An ERP that makes sense: dense data in its most digestible shape, owned solo from schema to screen.",
+    page: "clicker",
   },
   {
     id: "istyme",
