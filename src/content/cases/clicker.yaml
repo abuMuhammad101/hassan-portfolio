@@ -46,8 +46,3 @@ evidence:
   - A rehearsal script drives both journeys through a real browser from a fresh seed before every demo.
   - Light and dark, 1280 to 1920 wide, checked against the same screens.
   - Every permission rule has a test that proves it denies.
-measures:
-  - Time from a new model to its first working screen
-  - Records handled per session in each role
-  - Clicks to resolve an overdue account
-next: Rehearse both journeys on the demo laptop, then take the engine past the demo into its next modules.

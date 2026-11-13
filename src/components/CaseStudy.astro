@@ -23,7 +23,7 @@ const rail = [
   ["proof", "Try it"],
   ["states", "Edge states"],
   ["evidence", "Evidence"],
-  ["measure", "Measure"],
+  ...(data.measures?.length ? [["measure", "Measure"]] : []),
 ];
 ---
 
@@ -127,14 +127,16 @@ const rail = [
         </ul>
       </section>
 
-      <section id="measure" class="reveal">
-        <p class="section-label">How I'd measure it</p>
-        <p>These results weren't tracked on this project. With access, these are the numbers I'd watch.</p>
-        <ul class="measures">
-          {data.measures.map((m: string) => <li>{m}</li>)}
-        </ul>
-        <p class="next-step"><b>Next:</b> {data.next}</p>
-      </section>
+      {data.measures?.length && (
+        <section id="measure" class="reveal">
+          <p class="section-label">How I'd measure it</p>
+          <p>These results weren't tracked on this project. With access, these are the numbers I'd watch.</p>
+          <ul class="measures">
+            {data.measures.map((m: string) => <li>{m}</li>)}
+          </ul>
+          {data.next && <p class="next-step"><b>Next:</b> {data.next}</p>}
+        </section>
+      )}
 
       {next && (
         <a class="next-case" href={`/work/${next.slug}/`}>
