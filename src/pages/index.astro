@@ -13,9 +13,9 @@ const nameOf = (id: string) => workIndex.find((w) => w.id === id)?.name ?? id;
 const featured = workIndex.filter((w) => w.page && w.id !== "hh-global");
 const rest = workIndex.filter((w) => !featured.includes(w));
 const markets = [
-  { name: "United States", tz: "America/New_York", note: "Clients" },
-  { name: "GCC", tz: "Asia/Dubai", note: "Clients" },
-  { name: "Pakistan", tz: "Asia/Karachi", note: "Based here", home: true },
+  { name: "United States" },
+  { name: "GCC" },
+  { name: "Pakistan", home: true },
 ];
 const ways = [
   { icon: "user", title: "Start with the person", body: "And the rules they live under, before any screen." },
@@ -59,17 +59,15 @@ const earlier = [
           </div>
         </div>
         <aside class="ledger" aria-label="At a glance">
-          <p class="ledger-line"><b>8</b> products <i aria-hidden="true"></i> <b>5+</b> years in SaaS and mobile</p>
-          <ul class="markets">
+          <p class="figs">
+            <span><b>8</b> products featured here</span>
+            <span><b>5+</b> years in SaaS and mobile</span>
+          </p>
+          <ol class="route" aria-label="Markets: United States, GCC, Pakistan">
             {markets.map((m) => (
-              <li class={m.home ? "home" : ""}>
-                <span class="m-dot" aria-hidden="true"></span>
-                <span class="m-name">{m.name}</span>
-                <span class="m-note">{m.note}</span>
-                <time class="m-time tabular-nums" data-tz={m.tz}>--:--</time>
-              </li>
+              <li class={m.home ? "home" : ""}><i aria-hidden="true"></i><span>{m.name}</span>{m.home && <em>Based here</em>}</li>
             ))}
-          </ul>
+          </ol>
         </aside>
       </div>
     </div>
@@ -81,18 +79,21 @@ const earlier = [
         <p class="section-label">What I believe</p>
         <h2 id="beliefs-h" class="band-title">Four things I don't trade away.</h2>
       </div>
-      <ul class="beliefs">
-        {beliefs.map((b) => (
-          <li class="surface reveal">
-            <span class="b-icon"><Icon name={b.icon} size={22} /></span>
+      <ol class="beliefs">
+        {beliefs.map((b, i) => (
+          <li class="reveal">
+            <span class="b-top">
+              <span class="b-num tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+              <span class="b-art"><Icon name={b.icon} weight="duotone" size={26} /></span>
+            </span>
             <p class="belief">{b.text}</p>
             <p class="note">{b.note}</p>
-            <p class="proof-links">
+            <p class="proof-links"><span>Seen in</span>
               {b.proof.map((id) => <a href={`#work-${id}`}>{nameOf(id)}</a>)}
             </p>
           </li>
         ))}
-      </ul>
+      </ol>
     </section>
 
     <section class="wrap-wide band" id="work" aria-labelledby="work-h">
@@ -102,7 +103,7 @@ const earlier = [
       </div>
       <div class="cards">
         {featured.map((w, i) => (
-          <a class="card surface reveal" href={`/work/${w.page}/`} id={`work-${w.id}`}>
+          <a class="card reveal" href={`/work/${w.page}/`} id={`work-${w.id}`}>
             <CaseThumb kind={w.id} />
             <span class="card-top">
               <span class="card-num">{String(i + 1).padStart(2, "0")}</span>
@@ -186,12 +187,6 @@ const earlier = [
   </main>
 
   <Footer />
-<script>
-  const fmt = (tz: string) => new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(new Date());
-  const tick = () => document.querySelectorAll<HTMLElement>("[data-tz]").forEach((el) => (el.textContent = fmt(el.dataset.tz!)));
-  tick();
-  setInterval(tick, 30000);
-</script>
 </Base>
 
 <style>
@@ -224,72 +219,71 @@ const earlier = [
   }
   .ledger {
     display: grid;
-    gap: 18px;
+    gap: 26px;
     align-content: start;
   }
-  .ledger-line {
+  .figs {
     margin: 0;
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
-    gap: 6px;
+    gap: 10px 36px;
     color: var(--ink-secondary);
     font-size: var(--text-sm);
   }
-  .ledger-line b {
+  .figs span {
+    display: grid;
+    gap: 2px;
+  }
+  .figs b {
     font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 1.6rem;
+    font-weight: 400;
+    font-size: clamp(2.6rem, 5vw, 3.4rem);
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
     color: var(--ink);
   }
-  .ledger-line i {
-    width: 4px;
-    height: 4px;
-    margin: 0 8px;
-    border-radius: 50%;
-    background: var(--ink-muted);
-    align-self: center;
-  }
-  .markets {
+  .route {
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 1px solid var(--rule);
-  }
-  .markets li {
     display: grid;
-    grid-template-columns: 10px 1fr auto auto;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--rule);
+    grid-template-columns: repeat(3, 1fr);
+    position: relative;
   }
-  .m-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    box-shadow: inset 0 0 0 1.5px var(--ink-muted);
+  .route::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    right: calc(33.333% - 4px);
+    top: 4px;
+    border-top: 1px dashed color-mix(in srgb, var(--ink) 35%, transparent);
   }
-  .home .m-dot {
-    background: var(--accent-warm);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-warm) 18%, transparent);
-  }
-  .m-name {
-    color: var(--ink);
-    font-weight: 500;
-  }
-  .m-note {
+  .route li {
+    position: relative;
+    display: grid;
+    gap: 2px;
+    padding-top: 20px;
     font-size: var(--text-sm);
-    color: var(--ink-muted);
-  }
-  .m-time {
-    min-width: 5.5ch;
-    text-align: right;
-    font-family: var(--font-display);
-    font-size: 1.15rem;
     color: var(--ink);
+  }
+  .route i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bg);
+    box-shadow: inset 0 0 0 1.5px var(--ink);
+  }
+  .route .home i {
+    background: var(--accent-warm);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent-warm) 16%, transparent);
+  }
+  .route em {
+    font-style: normal;
+    font-size: 12px;
+    color: var(--ink-muted);
   }
   @media (min-width: 900px) {
     .hero-grid {
@@ -332,75 +326,116 @@ const earlier = [
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
   }
   .beliefs li {
-    padding: 20px;
+    position: relative;
     display: flex;
     flex-direction: column;
+    min-height: 300px;
+    padding: 22px 22px 20px;
+    border-radius: 22px;
+    background:
+      radial-gradient(120% 70% at 100% 0%, color-mix(in srgb, var(--accent-warm) 7%, transparent), transparent 60%),
+      var(--bg-raised);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 6%, transparent), 0 1px 2px rgb(0 0 0 / 0.04);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
   }
-  .b-icon {
-    width: 44px;
-    height: 44px;
+  .beliefs li:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 9%, transparent), 0 24px 44px -28px rgb(0 0 0 / 0.35);
+  }
+  .b-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: auto;
+  }
+  .b-num {
+    font-family: var(--font-display);
+    font-size: 15px;
+    color: var(--ink-muted);
+  }
+  .b-art {
     display: grid;
     place-items: center;
-    border-radius: 12px;
-    background: var(--bg-sunk);
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
     color: var(--ink);
-    margin-bottom: var(--space-4);
+    background: linear-gradient(160deg, var(--bg-raised), var(--bg-sunk));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.7),
+      0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent),
+      0 8px 18px -12px rgb(0 0 0 / 0.35);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s;
+  }
+  .beliefs li:hover .b-art {
+    transform: rotate(-6deg) scale(1.04);
+    color: var(--accent-warm);
   }
   .belief {
     font-family: var(--font-display);
     font-size: var(--text-xl);
-    line-height: 1.25;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
     color: var(--ink);
-    margin: 0 0 6px;
+    margin: 28px 0 8px;
   }
   .note {
-    margin: 0 0 var(--space-2);
+    margin: 0 0 18px;
     color: var(--ink-secondary);
     font-size: var(--text-sm);
   }
   .proof-links {
-    margin: auto 0 0;
+    margin: 0;
+    padding-top: 14px;
+    border-top: 1px dashed color-mix(in srgb, var(--ink) 14%, transparent);
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    align-items: baseline;
+    gap: 4px 12px;
+    font-size: 12.5px;
+  }
+  .proof-links span {
+    color: var(--ink-muted);
+    width: 100%;
+    font-size: 11.5px;
   }
   .proof-links a {
-    font-size: 12px;
-    color: var(--ink-secondary);
-    text-decoration: none;
-    background: var(--bg-sunk);
-    border-radius: 8px;
-    padding: 3px 10px;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--ink) 25%, transparent);
+    text-underline-offset: 3px;
   }
   .proof-links a:hover {
-    color: var(--ink);
+    text-decoration-color: var(--accent-warm);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .beliefs li, .beliefs li:hover { transition: none; transform: none; }
+    .beliefs li:hover .b-art { transform: none; }
   }
 
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 36px 28px;
   }
   .card {
     display: flex;
     flex-direction: column;
-    padding: 14px 12px 18px;
+    padding: 0;
     text-decoration: none;
     color: var(--ink);
     scroll-margin-top: 96px;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
   .card:hover {
-    transform: translateY(-3px);
-    border-color: color-mix(in srgb, var(--ink) 25%, transparent);
-    box-shadow: 0 18px 40px -24px rgb(0 0 0 / 0.35);
+    transform: none;
   }
   .card > span {
-    padding: 0 8px;
+    padding: 0 2px;
   }
   .card-top {
     display: flex;
