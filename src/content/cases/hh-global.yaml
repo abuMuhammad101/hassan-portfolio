@@ -1,0 +1,46 @@
+title: HH Global
+titleRest: Store
+angle: A wholesale storefront the owner runs alone. Sketch to ship, solo, live in production.
+order: 6
+meta:
+  - { label: Role, value: "Solo: design, build and launch" }
+  - { label: Platform, value: "Web, mobile first" }
+  - { label: Status, value: "Live at hhglobalcompany.com" }
+  - { label: Stack, value: "Next.js, Supabase, Vercel" }
+ndaRecreated: false
+widget: site-tour
+widgetIntro: These are screens from the live site. Step through them, or open the site itself.
+stats:
+  - { value: "5", unit: admin tabs, label: "Quotes, products, categories, media and content, run by a non-technical owner" }
+  - { value: "1", unit: request, label: Several products in one quote, each with its own spec and photo }
+problem:
+  - A garments and leather goods manufacturer needed to sell wholesale online. Buyers don't add to cart at this scale; they describe what they want and wait for a price.
+  - Phase one is a quote store, browse the catalogue and request a quote, built so the owner can run every part of it without a developer.
+constraints:
+  - No cart or payments yet; that's phase two.
+  - The owner isn't technical and updates everything himself.
+  - The catalogue has to stay up even when the database doesn't.
+decisionsIntro: What shaped it.
+decisions:
+  - title: Quote, not cart
+    body: "The main action everywhere is a request for a quote. One form takes several products, each with category, type, colour, quantity and a reference photo, because that's how a wholesale order is actually described."
+  - title: The owner runs it alone
+    body: "A five-tab admin: a quotes CRM with a status pipeline and notes, products with variant swatches, categories, a media library with reorderable galleries, and the page content itself."
+  - title: Read like a trade catalogue
+    body: "Monochrome warm white and near-black, numbered catalogues, a deep leather-green panel and pill buttons with a round arrow. Quiet enough that the products do the selling."
+  - title: Never go dark
+    body: "If the database is unreachable, the storefront reads from a static copy of the catalogue, so buyers still see everything."
+states:
+  - { name: Database down, note: Catalogue served from a static copy }
+  - { name: Failed save, note: "Every admin form now says so, instead of 'Saved'" }
+  - { name: Missing photo input, note: Found in review and fixed before launch }
+  - { name: Several products, note: One quote holds them all }
+evidence:
+  - Live in production at hhglobalcompany.com.
+  - A quote form that looked finished did nothing on upload; the file input was missing. Found, fixed, then the same class of bug fixed across every admin form at once.
+  - The admin replaced a raw browser password popup with a proper sign-in and dashboard.
+measures:
+  - Quotes per week
+  - Quote to order rate
+  - Time from quote to first reply
+next: Phase two, cart, checkout, payments and delivery tracking, on the same catalogue.
