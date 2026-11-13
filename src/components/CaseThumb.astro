@@ -42,6 +42,13 @@ const { kind } = Astro.props;
       </div>
     )}
     {kind === "clicker" && <img class="real" src="/media/clicker/w-aging-light.webp" alt="" loading="lazy" />}
+    {kind === "quick-service-app" && (
+      <div class="pad list">
+        <span class="row"><b class="av">D</b> Delivery <em>Off</em></span>
+        <span class="row"><b class="av">P</b> Pickup <em class="ok">1.8 km</em></span>
+        <span class="row dim">Outside the delivery zone</span>
+      </div>
+    )}
   </div>
 
   <div class="sheet s2">
@@ -73,6 +80,13 @@ const { kind } = Astro.props;
       </div>
     )}
     {kind === "clicker" && <img class="real" src="/media/clicker/c-stages-dark.webp" alt="" loading="lazy" />}
+    {kind === "quick-service-app" && (
+      <div class="pad">
+        <span class="alert vio"><Icon name="storefront" weight="fill" size={10} /> Pick up at Gate Branch</span>
+        <span class="line"></span><span class="line short"></span>
+        <span class="s-btn vio">Recommended</span>
+      </div>
+    )}
   </div>
 
   <div class="front"><span class="seam"></span></div>
