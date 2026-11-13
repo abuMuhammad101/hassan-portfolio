@@ -1,279 +1,362 @@
 ---
-/* Guard and guide: a later record opens only when the earlier one is complete.
-   Re-created with sample data. */
-import "../../styles/mock-app.css";
+/* Therapy case record, re-created with stand-in brand, names and data.
+   The record chain is the page: each record ties to the one before it, and a
+   daily note opens only once the plan of care is certified. */
 import BrowserFrame from "../BrowserFrame.astro";
 import Icon from "../Icon.astro";
 ---
 
-<div data-chain>
-  <BrowserFrame address="app.therapydocs.example" label="Re-created therapy documentation app">
-    <div class="mk-app">
-      <aside class="mk-rail" aria-hidden="true">
-        <span class="mk-logo"><Icon name="heartbeat" weight="bold" size={18} /></span>
-        <span><Icon name="squares-four" size={18} /></span>
-        <span class="on"><Icon name="users" size={18} /></span>
-        <span><Icon name="calendar-check" size={18} /></span>
-        <span><Icon name="chart-line-up" size={18} /></span>
-        <span class="end"><Icon name="gear-six" size={18} /></span>
+<div class="tc" data-chain data-state="pending">
+  <BrowserFrame address="app.strandhealth.example/patients/arthur-bell/pt" label="Re-created therapy case record">
+    <div class="app">
+      <aside class="side" aria-hidden="true">
+        <div class="ws"><i class="mark"></i><span><b>Northside Care</b><small>Strand</small></span><Icon name="caret-up-down" size={13} /></div>
+        <div class="search"><Icon name="magnifying-glass" size={14} />Search<kbd>⌘K</kbd></div>
+        <nav>
+          <span><Icon name="house" size={16} />Today</span>
+          <span class="on"><Icon name="users" size={16} />Patients</span>
+          <span><Icon name="calendar-blank" size={16} />Schedule</span>
+          <span><Icon name="tray" size={16} />Documents<em>6</em></span>
+          <span><Icon name="currency-circle-dollar" size={16} />Billing</span>
+        </nav>
+        <p class="group">Recent</p>
+        <nav>
+          <span class="dot"><i style="--d:#4b4fd6"></i>Arthur Bell</span>
+          <span class="dot"><i style="--d:#c9952b"></i>Rosa Lind</span>
+          <span class="dot"><i style="--d:#2f8a4c"></i>Omar Haddad</span>
+        </nav>
+        <div class="me"><span class="av warm">KR</span><span><b>Kira Ross</b><small>Physical therapist</small></span></div>
       </aside>
-      <div class="mk-main">
-        <div class="mk-top">
-          <span class="mk-crumb">Patients / <b>Sample Patient</b></span>
-          <Icon name="magnifying-glass" size={16} />
-          <Icon name="bell" size={16} />
-          <span class="mk-avatar">HK</span>
+
+      <section class="main">
+        <div class="crumbs">
+          <span>Patients</span><Icon name="caret-right" size={11} /><span>Arthur Bell</span><Icon name="caret-right" size={11} /><b>PT case</b>
+          <span class="acts">
+            <span class="ghost"><Icon name="share-network" size={14} />Share</span>
+            <span class="new-wrap">
+              <button type="button" class="primary" data-new aria-expanded="false"><Icon name="plus" size={13} weight="bold" />New document</button>
+              <span class="menu" data-menu hidden>
+                <button type="button" data-pick><Icon name="note-pencil" size={16} /><span><b>Daily note</b><small class="lock-why">Needs a certified plan of care</small><small class="open-why">Visit 1 of 12</small></span><span class="lk"><Icon name="lock-simple" size={13} /></span></button>
+                <button type="button" disabled><Icon name="chart-line-up" size={16} /><span><b>Progress note</b><small>Due by visit 10</small></span><Icon name="lock-simple" size={13} /></button>
+                <button type="button" disabled><Icon name="arrows-clockwise" size={16} /><span><b>Re-evaluation</b><small>After three re-certifications</small></span><Icon name="lock-simple" size={13} /></button>
+              </span>
+            </span>
+          </span>
         </div>
 
-        <div class="content">
-          <div class="patient">
-            <span class="mk-avatar lg">SP</span>
-            <span class="who"><b>Sample Patient</b><small>Physical therapy · Episode started 3 Mar</small></span>
-            <span class="mk-badge">Active case</span>
+        <header class="head">
+          <span class="av lg">AB</span>
+          <div>
+            <h4>Arthur Bell <span class="pill live">Active</span></h4>
+            <p>78 · Male · Room 214 · Admitted 3 March</p>
           </div>
+          <span class="seg" aria-hidden="true"><b>PT</b><span>OT</span><span>ST</span><span>RT</span></span>
+        </header>
 
-          <div class="grid">
-            <div class="mk-card record">
-              <p class="card-title">Care record</p>
-              <ol>
-                <li>
-                  <span class="ic ok"><Icon name="clipboard-text" size={17} /></span>
-                  <span class="txt"><b>Evaluation</b><small>Signed by the treating therapist</small></span>
-                  <span class="mk-badge ok"><Icon name="check-circle" weight="fill" size={12} /> Signed</span>
-                </li>
-                <li data-plan>
-                  <span class="ic"><Icon name="file-text" size={17} /></span>
-                  <span class="txt"><b>Plan of care</b><small data-plan-sub>Sent to the physician for sign-off</small></span>
-                  <span class="mk-badge wait" data-plan-badge>Awaiting certification</span>
-                </li>
-                <li data-note class="locked">
-                  <span class="ic"><Icon name="note-pencil" size={17} /></span>
-                  <span class="txt"><b>Session note</b><small data-note-sub>Today's visit</small></span>
-                  <span class="mk-badge" data-note-badge><Icon name="lock-simple" size={12} /> Locked</span>
-                </li>
-              </ol>
-            </div>
+        <div class="tabs" aria-hidden="true"><b>Record chain</b><span>Sessions <em>0</em></span><span>Goals <em>3</em></span><span>Files</span></div>
 
-            <div class="mk-card today">
-              <p class="card-title">Today</p>
-              <p class="visit"><Icon name="clock" size={14} /> 10:30 · 45 min visit</p>
-              <button type="button" class="mk-btn" data-start><Icon name="note-pencil" size={15} /> Start session note</button>
+        <div class="grid">
+          <ol class="chain">
+            <li class="node done">
+              <span class="pin"><Icon name="check" size={12} weight="bold" /></span>
+              <div class="card">
+                <div class="row"><b>Initial evaluation</b><span class="pill ok">Signed</span><time>4 Mar</time></div>
+                <p>M. Chen, PT · 3 impairments, 3 long-term goals</p>
+              </div>
+            </li>
 
-              <div class="msg" role="status" aria-live="polite">
-                <div class="alert" data-blocked hidden>
-                  <p class="alert-title"><Icon name="warning-circle" weight="fill" size={16} /> The plan of care isn't certified yet</p>
-                  <p>A session note has to tie back to a certified plan. Without that link the note could be rejected at audit.</p>
-                  <button type="button" class="mk-btn ghost" data-certify>Request certification</button>
-                </div>
-                <div class="alert okay" data-ok hidden>
-                  <p class="alert-title"><Icon name="check-circle" weight="fill" size={16} /> Session note started</p>
-                  <p>It opened already linked to the certified plan.</p>
-                  <button type="button" class="mk-btn ghost" data-reset><Icon name="arrow-counter-clockwise" size={14} /> Run it again</button>
+            <li class="node poc">
+              <span class="pin"><Icon name="check" size={12} weight="bold" /></span>
+              <div class="card">
+                <div class="row"><b>Plan of care</b>
+                  <span class="pill wait sw-pending">Needs physician certification</span>
+                  <span class="pill wait sw-sent"><Icon name="hourglass-medium" size={11} />Sent to Dr. A. Rahman</span>
+                  <span class="pill ok sw-done">Certified</span>
+                  <time>5 Mar</time></div>
+                <p>3× a week for 4 weeks · 12 visits · until 1 April</p>
+                <div class="ask sw-pending">
+                  <Icon name="stethoscope" size={16} />
+                  <span>Dr. A. Rahman hasn't certified this plan yet.</span>
+                  <button type="button" class="soft" data-cert>Request certification</button>
                 </div>
               </div>
-            </div>
-          </div>
-          <p class="demo-note" data-demo hidden>Demo: the physician's sign-off is simulated.</p>
+            </li>
+
+            <li class="node notes">
+              <span class="pin"><Icon name="lock-simple" size={11} weight="bold" /></span>
+              <div class="card">
+                <div class="row"><b>Daily notes</b><span class="pill mute sw-pending">Locked</span><span class="pill mute sw-sent">Locked</span><span class="pill acc sw-done">Open</span></div>
+                <p class="sw-pending">Opens when the plan of care is certified, so every note ties back to a signed plan.</p>
+                <p class="sw-sent">Waiting on certification.</p>
+                <div class="draft" data-draft hidden>
+                  <Icon name="note-pencil" size={15} /><span><b>Visit 1 of 12</b> · Draft · today</span><span class="cont">Continue <Icon name="arrow-right" size={12} /></span>
+                </div>
+                <p class="sw-done no-draft">12 visits planned. Start today's note from New document.</p>
+              </div>
+            </li>
+
+            <li class="node later">
+              <span class="pin"></span>
+              <div class="card flat">
+                <div class="row"><b>Progress note</b><time>by visit 10</time></div>
+              </div>
+            </li>
+          </ol>
+
+          <aside class="details">
+            <p class="h">Case details</p>
+            <dl>
+              <div><dt><Icon name="hash" size={14} />Case</dt><dd>TC-2041</dd></div>
+              <div><dt><Icon name="calendar-blank" size={14} />Start of care</dt><dd>3 Mar</dd></div>
+              <div><dt><Icon name="flag" size={14} />Discharge</dt><dd>1 Apr</dd></div>
+              <div><dt><Icon name="users" size={14} />Supervising</dt><dd><span class="av xs">MC</span>M. Chen</dd></div>
+              <div><dt><Icon name="first-aid-kit" size={14} />Payer</dt><dd>Medicare A</dd></div>
+              <div><dt><Icon name="seal-check" size={14} />Plan</dt><dd class="st"><span class="sw-pending">Uncertified</span><span class="sw-sent">Pending</span><span class="sw-done">Certified</span></dd></div>
+            </dl>
+            <p class="h">Goals</p>
+            <ul class="goals">
+              <li><span>Walk 150 ft with a cane</span><i style="--p:27%"></i><small>40 → 150 ft</small></li>
+              <li><span>Ankle flexion to 20°</span><i style="--p:40%"></i><small>8° → 20°</small></li>
+              <li><span>Strength 3/5</span><i style="--p:66%"></i><small>2/5 → 3/5</small></li>
+            </ul>
+          </aside>
         </div>
-      </div>
+
+        <div class="toast" data-toast hidden role="status"></div>
+        <button type="button" class="reset" data-reset><Icon name="arrow-counter-clockwise" size={12} />Reset</button>
+      </section>
     </div>
   </BrowserFrame>
 </div>
 
 <script>
   document.querySelectorAll<HTMLElement>("[data-chain]").forEach((root) => {
-    const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
-    const start = q<HTMLButtonElement>("[data-start]"), certify = q<HTMLButtonElement>("[data-certify]");
-    const blocked = q("[data-blocked]"), ok = q("[data-ok]"), demo = q("[data-demo]");
-    const planBadge = q("[data-plan-badge]"), noteBadge = q("[data-note-badge]"), note = q("[data-note]");
-    const lockHtml = noteBadge.innerHTML;
-    const quick = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let certified = false;
+    const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const menu = $("[data-menu]");
+    const newBtn = $("[data-new]");
+    const draft = $("[data-draft]");
+    const toast = $("[data-toast]");
+    const app = $(".app");
+    let t1: number | undefined, t2: number | undefined;
 
-    start.addEventListener("click", () => {
-      blocked.hidden = certified;
-      ok.hidden = !certified;
-      if (certified) {
-        noteBadge.textContent = "In progress";
-        noteBadge.className = "mk-badge ok";
-        q("[data-note-sub]").textContent = "Linked to the certified plan";
-        start.disabled = true;
+    const say = (html: string, tone: "warn" | "ok") => {
+      toast.className = `toast ${tone}`;
+      toast.innerHTML = html;
+      toast.hidden = false;
+      clearTimeout(t2);
+      t2 = window.setTimeout(() => (toast.hidden = true), 4200);
+    };
+    const closeMenu = () => { menu.hidden = true; newBtn.setAttribute("aria-expanded", "false"); };
+
+    newBtn.addEventListener("click", () => {
+      menu.hidden = !menu.hidden;
+      newBtn.setAttribute("aria-expanded", String(!menu.hidden));
+    });
+    $("[data-pick]").addEventListener("click", () => {
+      closeMenu();
+      const s = root.dataset.state;
+      if (s === "done") {
+        draft.hidden = false;
+        root.dataset.state = "draft";
+        say("<b>Visit 1 of 12 started.</b> It's linked to the certified plan of care.", "ok");
+      } else if (s === "draft") {
+        say("<b>Visit 1 is already open.</b> Finish and sign it first.", "warn");
+      } else {
+        const n = $(".node.poc");
+        n.classList.remove("nudge"); void n.offsetWidth; n.classList.add("nudge");
+        say("<b>A daily note can't start yet.</b> The plan of care isn't certified, so the note would have nothing to tie back to at audit.", "warn");
       }
     });
-    certify.addEventListener("click", () => {
-      certify.disabled = true;
-      certify.textContent = "Requesting…";
-      setTimeout(() => {
-        certified = true;
-        planBadge.textContent = "Certified";
-        planBadge.className = "mk-badge ok";
-        q("[data-plan-sub]").textContent = "Signed off by the physician";
-        noteBadge.textContent = "Ready";
-        note.classList.remove("locked");
-        blocked.hidden = true;
-        demo.hidden = false;
-        start.focus();
-      }, quick ? 0 : 900);
+    $("[data-cert]").addEventListener("click", () => {
+      root.dataset.state = "sent";
+      t1 = window.setTimeout(() => {
+        root.dataset.state = "done";
+        say("<b>Plan of care certified</b> by Dr. A. Rahman. Daily notes are open.", "ok");
+      }, 1600);
     });
-    q("[data-reset]").addEventListener("click", () => {
-      certified = false;
-      planBadge.textContent = "Awaiting certification";
-      planBadge.className = "mk-badge wait";
-      q("[data-plan-sub]").textContent = "Sent to the physician for sign-off";
-      noteBadge.innerHTML = lockHtml;
-      noteBadge.className = "mk-badge";
-      q("[data-note-sub]").textContent = "Today's visit";
-      note.classList.add("locked");
-      certify.disabled = false;
-      certify.textContent = "Request certification";
-      ok.hidden = true;
-      demo.hidden = true;
-      start.disabled = false;
-      start.focus();
+    $("[data-reset]").addEventListener("click", () => {
+      clearTimeout(t1); clearTimeout(t2);
+      root.dataset.state = "pending";
+      [draft, toast, menu].forEach((el) => (el.hidden = true));
     });
+    document.addEventListener("click", (e) => {
+      if (!root.querySelector(".new-wrap")!.contains(e.target as Node)) closeMenu();
+    });
+    const fit = () => app.style.setProperty("zoom", String(Math.max(0.6, Math.min(1, app.parentElement!.clientWidth / 1000))));
+    new ResizeObserver(fit).observe(app.parentElement!);
+    fit();
   });
 </script>
 
 <style>
-  small {
-    font-size: 11.5px;
-    color: var(--ink-muted);
+  .tc {
+    --bg: #fbfbfa;
+    --panel: #fff;
+    --ink: #18191b;
+    --ink2: #55585e;
+    --mute: #8b8e94;
+    --line: #ececea;
+    --line2: #e2e2df;
+    --acc: #4b4fd6;
+    --acc-soft: #eef0fe;
+    --gold: #c9952b;
+    --gold-soft: #faf1de;
+    --ok: #23824a;
+    --ok-soft: #e9f6ee;
+    --warn: #a95a0c;
+    --warn-soft: #fdf4e7;
   }
-  .content {
-    padding: 16px;
-    display: grid;
-    gap: 12px;
-  }
-  .patient {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .who {
-    display: grid;
-    margin-right: auto;
-  }
-  .who b {
-    font-size: 15px;
-    font-weight: 600;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-    gap: 12px;
-    align-items: start;
-  }
-  .card-title {
-    margin: 0;
-    padding: 12px 14px 8px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ink-secondary);
-  }
-  ol {
-    list-style: none;
-    margin: 0;
-    padding: 0 6px 6px;
-  }
-  li {
+  .app {
     position: relative;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 8px;
-    border-radius: 10px;
-  }
-  li + li::before {
-    content: "";
-    position: absolute;
-    left: 24px;
-    top: -10px;
-    height: 20px;
-    border-left: 1.5px dashed var(--rule);
-  }
-  .ic {
-    position: relative;
-    width: 34px;
-    height: 34px;
-    flex: none;
+    width: 1000px;
     display: grid;
-    place-items: center;
-    border-radius: 10px;
-    background: var(--bg-sunk);
-    color: var(--ink-secondary);
-  }
-  .txt {
-    display: grid;
-    min-width: 0;
-    margin-right: auto;
-  }
-  .txt b {
-    font-weight: 500;
-  }
-  .locked .txt b,
-  .locked .ic {
-    color: var(--ink-muted);
-  }
-  .today {
-    padding-bottom: 14px;
-  }
-  .visit {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin: 0 14px 12px;
-    color: var(--ink-secondary);
-  }
-  .today > .mk-btn {
-    margin: 0 14px;
-    width: calc(100% - 28px);
-  }
-  .msg {
-    min-height: 150px;
-    padding: 12px 14px 0;
-  }
-  .alert {
-    border-radius: 10px;
-    padding: 12px;
-    background: color-mix(in srgb, var(--warn) 10%, var(--bg-raised));
-    border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--bg-raised));
-  }
-  .alert.okay {
-    background: color-mix(in srgb, var(--ok) 9%, var(--bg-raised));
-    border-color: color-mix(in srgb, var(--ok) 32%, var(--bg-raised));
-  }
-  .alert p {
-    margin: 0 0 10px;
-    color: var(--ink-secondary);
-  }
-  .alert .alert-title {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 600;
+    grid-template-columns: 196px 1fr;
+    background: var(--bg);
     color: var(--ink);
-    margin-bottom: 4px;
+    font: 13px/1.4 Inter, var(--font-body, system-ui), sans-serif;
+    letter-spacing: -0.003em;
   }
-  .alert-title :global(svg) {
-    color: color-mix(in srgb, var(--warn) 80%, var(--ink));
-  }
-  .okay .alert-title :global(svg) {
-    color: var(--ok);
-  }
-  .demo-note {
-    margin: 0;
-    font-size: 11.5px;
-    color: var(--ink-muted);
-  }
-  @media (max-width: 720px) {
-    .grid {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    li {
-      flex-wrap: wrap;
-    }
-    .msg {
-      min-height: 0;
-    }
+
+  /* Sidebar */
+  .side { display: flex; flex-direction: column; gap: 4px; padding: 12px 10px; border-right: 1px solid var(--line); background: #f6f6f4; }
+  .ws { display: flex; align-items: center; gap: 8px; padding: 4px 6px 8px; color: var(--ink2); }
+  .ws span { display: grid; flex: 1; line-height: 1.2; }
+  .ws b { color: var(--ink); font-weight: 600; }
+  .ws small { color: var(--mute); font-size: 11px; }
+  .mark { width: 22px; height: 22px; border-radius: 7px; background: radial-gradient(circle at 30% 30%, #8f93f2, var(--acc) 60%); position: relative; }
+  .mark::after { content: ""; position: absolute; inset: 9px 3px auto; height: 2px; border-radius: 2px; background: var(--gold); transform: rotate(-18deg); }
+  .search { display: flex; align-items: center; gap: 7px; padding: 6px 8px; margin-bottom: 6px; border-radius: 8px; background: var(--panel); box-shadow: 0 0 0 1px var(--line2); color: var(--mute); }
+  .search kbd { margin-left: auto; font: 500 10px/1 inherit; padding: 3px 5px; border-radius: 4px; background: #f2f2f0; color: var(--mute); }
+  .side nav { display: grid; gap: 1px; }
+  .side nav span { display: flex; align-items: center; gap: 9px; padding: 6px 8px; border-radius: 7px; color: var(--ink2); font-weight: 500; }
+  .side nav .on { background: var(--panel); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 0 0 1px var(--line); }
+  .side nav em { margin-left: auto; font-style: normal; font-size: 11px; color: var(--mute); }
+  .side .dot i { width: 8px; height: 8px; border-radius: 3px; background: var(--d); margin: 0 4px; }
+  .group { margin: 14px 8px 2px; font-size: 11px; font-weight: 600; color: var(--mute); }
+  .me { margin-top: auto; display: flex; align-items: center; gap: 9px; padding: 8px 6px 0; border-top: 1px solid var(--line); }
+  .me span:last-child { display: grid; line-height: 1.2; }
+  .me small { color: var(--mute); font-size: 11px; }
+
+  .av { display: inline-grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; background: #e3e5fb; color: #3a3ea8; font-weight: 650; font-size: 10px; }
+  .av.warm { background: #f5e7c8; color: #7a5410; }
+  .av.xs { width: 18px; height: 18px; font-size: 8px; margin-right: 6px; }
+  .av.lg { width: 44px; height: 44px; font-size: 15px; background: linear-gradient(140deg, #e8e9fc, #d9dbf8); }
+
+  /* Main */
+  .main { position: relative; padding: 12px 22px 40px; min-width: 0; }
+  .crumbs { display: flex; align-items: center; gap: 6px; color: var(--mute); font-size: 12.5px; }
+  .crumbs b { color: var(--ink); font-weight: 600; }
+  .acts { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .ghost { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; color: var(--ink2); box-shadow: 0 0 0 1px var(--line2); background: var(--panel); font-weight: 500; }
+  .primary { display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border: 0; border-radius: 8px; background: var(--ink); color: #fff; font: inherit; font-weight: 600; cursor: pointer; box-shadow: 0 1px 0 rgb(255 255 255 / 0.15) inset, 0 4px 10px -4px rgb(0 0 0 / 0.4); }
+  .new-wrap { position: relative; }
+  .menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 6; width: 268px; padding: 5px; display: grid; gap: 1px; background: var(--panel); border-radius: 12px; box-shadow: 0 0 0 1px var(--line2), 0 20px 40px -18px rgb(10 12 30 / 0.35); }
+  .menu button { display: grid; grid-template-columns: 18px 1fr 14px; align-items: center; gap: 10px; padding: 8px 9px; border: 0; border-radius: 8px; background: none; text-align: left; font: inherit; color: var(--ink); cursor: pointer; }
+  .menu button:hover:not(:disabled) { background: #f4f4f2; }
+  .menu button:disabled { color: #a9abb0; cursor: not-allowed; }
+  .menu span { display: grid; }
+  .menu small { color: var(--mute); font-size: 11.5px; }
+  .open-why { display: none; }
+  .tc:is([data-state="done"], [data-state="draft"]) .open-why { display: inline; color: var(--ok); }
+  .tc:is([data-state="done"], [data-state="draft"]) .lock-why, .tc:is([data-state="done"], [data-state="draft"]) .lk { display: none; }
+
+  .head { display: flex; align-items: center; gap: 14px; margin: 18px 0 14px; }
+  .head h4 { margin: 0; font-size: 20px; font-weight: 650; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }
+  .head p { margin: 2px 0 0; color: var(--mute); }
+  .seg { margin-left: auto; display: inline-flex; padding: 3px; border-radius: 9px; background: #f0f0ee; font-size: 12px; font-weight: 600; color: var(--mute); }
+  .seg > * { padding: 4px 10px; border-radius: 6px; }
+  .seg b { background: var(--panel); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.08); }
+
+  .tabs { display: flex; gap: 18px; border-bottom: 1px solid var(--line); color: var(--mute); font-weight: 500; }
+  .tabs > * { padding: 0 0 9px; margin-bottom: -1px; }
+  .tabs b { color: var(--ink); font-weight: 600; border-bottom: 2px solid var(--ink); }
+  .tabs em { font-style: normal; font-size: 11px; margin-left: 3px; color: #b0b2b6; }
+
+  .grid { display: grid; grid-template-columns: 1fr 236px; gap: 22px; padding-top: 18px; }
+
+  /* The chain */
+  .chain { list-style: none; margin: 0; padding: 0; }
+  .node { position: relative; display: grid; grid-template-columns: 22px 1fr; gap: 12px; padding-bottom: 12px; }
+  .node::before { content: ""; position: absolute; left: 10px; top: 22px; bottom: -2px; width: 2px; background: var(--line2); }
+  .node:last-child::before { display: none; }
+  .node.done::before { background: var(--gold); }
+  .pin { position: relative; z-index: 1; display: grid; place-items: center; width: 22px; height: 22px; margin-top: 10px; border-radius: 50%; background: var(--panel); box-shadow: inset 0 0 0 1.5px #cfd0cd; color: var(--mute); transition: all 0.35s; }
+  .done .pin { background: var(--gold); color: #fff; box-shadow: 0 0 0 4px var(--gold-soft); }
+  .poc .pin :global(svg), .notes .pin :global(svg) { opacity: 0.8; }
+  .poc .pin :global(svg) { opacity: 0; }
+  .poc .pin { box-shadow: inset 0 0 0 2px var(--warn), 0 0 0 4px var(--warn-soft); }
+  .tc[data-state="sent"] .poc .pin { animation: ring 1.1s ease-in-out infinite; }
+  .tc:is([data-state="done"], [data-state="draft"]) .poc::before { background: var(--gold); }
+  .tc:is([data-state="done"], [data-state="draft"]) .poc .pin { background: var(--gold); color: #fff; box-shadow: 0 0 0 4px var(--gold-soft); }
+  .tc:is([data-state="done"], [data-state="draft"]) .poc .pin :global(svg) { opacity: 1; }
+  .tc:is([data-state="done"], [data-state="draft"]) .notes .pin { box-shadow: inset 0 0 0 2px var(--acc), 0 0 0 4px var(--acc-soft); color: var(--acc); }
+  .tc:is([data-state="done"], [data-state="draft"]) .notes .pin :global(svg) { opacity: 0; }
+  @keyframes ring { 50% { box-shadow: inset 0 0 0 2px var(--warn), 0 0 0 8px var(--warn-soft); } }
+
+  .card { padding: 11px 14px; border-radius: 12px; background: var(--panel); box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / 0.04); }
+  .card.flat { background: none; box-shadow: 0 0 0 1px var(--line) inset; border: 0; padding: 9px 14px; color: var(--mute); }
+  .card.flat b { color: var(--ink2); font-weight: 500; }
+  .notes .card { background: repeating-linear-gradient(-45deg, #fafaf9 0 6px, #f6f6f4 6px 12px); box-shadow: 0 0 0 1px var(--line2) inset; }
+  .tc:is([data-state="done"], [data-state="draft"]) .notes .card { background: var(--panel); box-shadow: 0 0 0 1px #d9dbf8, 0 0 0 4px var(--acc-soft); }
+  .row { display: flex; align-items: center; gap: 8px; }
+  .row b { font-weight: 600; }
+  .row time { margin-left: auto; color: var(--mute); font-size: 12px; }
+  .card p { margin: 3px 0 0; color: var(--ink2); }
+  .notes .card p { color: var(--mute); }
+
+  .pill { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); }
+  .pill.wait { background: var(--warn-soft); color: var(--warn); }
+  .pill.mute { background: #efefed; color: var(--mute); }
+  .pill.acc { background: var(--acc-soft); color: var(--acc); }
+  .pill.live { background: var(--ok-soft); color: var(--ok); font-size: 11px; letter-spacing: 0; }
+
+  .ask { display: flex; align-items: center; gap: 9px; margin-top: 10px; padding: 8px 8px 8px 11px; border-radius: 9px; background: var(--warn-soft); color: #7a4208; }
+  .ask span { flex: 1; }
+  .soft { border: 0; cursor: pointer; font: inherit; font-weight: 600; padding: 5px 10px; border-radius: 7px; background: var(--panel); color: var(--ink); box-shadow: 0 0 0 1px #efd9b8, 0 1px 2px rgb(0 0 0 / 0.06); }
+  .primary:focus-visible, .soft:focus-visible, .menu button:focus-visible, .reset:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+  .nudge .card { animation: nudge 0.5s ease; }
+  @keyframes nudge { 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
+
+  .draft { display: flex; align-items: center; gap: 9px; margin-top: 9px; padding: 9px 11px; border-radius: 9px; background: var(--acc-soft); color: var(--acc); animation: rise 0.4s ease-out; }
+  .draft span:first-of-type { color: var(--ink2); flex: 1; }
+  .draft b { color: var(--ink); }
+  .cont { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+  .tc[data-state="draft"] p.no-draft.sw-done { display: none !important; }
+  @keyframes rise { from { opacity: 0; transform: translateY(4px); } }
+
+  /* Switches by state */
+  .sw-sent, .sw-done { display: none !important; }
+  .tc:not([data-state="pending"]) .sw-pending { display: none !important; }
+  .tc[data-state="sent"] .sw-sent { display: revert !important; }
+  .tc:is([data-state="done"], [data-state="draft"]) .sw-done { display: revert !important; }
+  .row .sw-sent, .row .sw-done { display: none; }
+  .tc[data-state="sent"] .row .sw-sent, .tc:is([data-state="done"], [data-state="draft"]) .row .sw-done { display: inline-flex !important; }
+
+  /* Details */
+  .details { padding-left: 18px; border-left: 1px solid var(--line); }
+  .h { margin: 0 0 8px; font-size: 11.5px; font-weight: 600; color: var(--mute); }
+  .h + dl, .h + ul { margin-top: 0; }
+  dl { margin: 0 0 18px; display: grid; gap: 7px; }
+  dl div { display: grid; grid-template-columns: 104px 1fr; align-items: center; }
+  dt { display: flex; align-items: center; gap: 7px; color: var(--mute); }
+  dd { margin: 0; font-weight: 500; display: flex; align-items: center; }
+  .st { color: var(--warn); }
+  .tc:is([data-state="done"], [data-state="draft"]) .st { color: var(--ok); }
+  .goals { list-style: none; padding: 0; display: grid; gap: 11px; }
+  .goals li { display: grid; grid-template-columns: 1fr auto; row-gap: 5px; }
+  .goals span { font-weight: 500; }
+  .goals small { color: var(--mute); font-size: 11.5px; }
+  .goals i { grid-column: 1 / -1; grid-row: 2; height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--gold) var(--p), #ecebe7 var(--p)); }
+  .goals small { grid-row: 1; grid-column: 2; }
+
+  .toast { position: absolute; z-index: 7; left: 50%; top: 52px; transform: translateX(-50%); max-width: 520px; padding: 10px 14px; border-radius: 11px; background: var(--ink); color: #e9e9ea; box-shadow: 0 16px 36px -14px rgb(0 0 0 / 0.5); animation: rise 0.3s ease-out; }
+  .toast :global(b) { color: #fff; }
+  .toast.warn { border-left: 3px solid #e8a04a; }
+  .toast.ok { border-left: 3px solid #5cc489; }
+  .reset { position: absolute; right: 22px; bottom: 14px; display: inline-flex; align-items: center; gap: 5px; border: 0; background: none; font: inherit; font-size: 12px; color: var(--mute); cursor: pointer; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nudge .card, .draft, .toast, .tc[data-state="sent"] .poc .pin { animation: none; }
   }
 </style>
