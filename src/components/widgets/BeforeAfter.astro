@@ -65,7 +65,7 @@ const reasons = [
       <!-- AFTER: pilgrim transport -->
       <div class="pg after" data-after>
         <nav class="a-nav">
-          <span class="a-logo"><i></i>Pilgrim Drivers</span>
+          <span class="a-menu" aria-hidden="true"><Icon name="list" size={20} /></span><span class="a-logo"><i></i>Pilgrim Drivers</span>
           <span class="a-pills"><b><Icon name="house" size={12} weight="fill" />Home</b><span><Icon name="car-profile" size={12} />Fleet <Icon name="caret-down" size={9} /></span><span><Icon name="map-trifold" size={12} />Routes &amp; Pricing</span><span><Icon name="users-three" size={12} />About</span><span><Icon name="phone" size={12} />Contact</span></span>
           <span class="a-end"><span><Icon name="globe" size={12} />EN</span><span class="a-btn"><Icon name="calendar-check" size={12} />Book Now <Icon name="arrow-right" size={11} /></span></span>
         </nav>
@@ -171,9 +171,6 @@ const reasons = [
       items.forEach((it, j) => { it.classList.toggle("open", j === i); it.querySelector("button")!.setAttribute("aria-expanded", String(j === i)); });
     }));
 
-    const fit = q(".fit");
-    const size = () => fit.style.setProperty("zoom", String(Math.max(0.55, Math.min(1, fit.parentElement!.clientWidth / 1000))));
-    new ResizeObserver(size).observe(fit.parentElement!); size();
   });
 </script>
 
@@ -181,7 +178,8 @@ const reasons = [
   .switch { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--bg-sunk); border: 1px solid var(--rule); margin-bottom: 14px; }
   .switch button { border: 0; background: none; font: inherit; font-weight: 600; font-size: var(--text-sm); padding: 6px 16px; border-radius: 999px; color: var(--ink-muted); cursor: pointer; }
   .switch [aria-pressed="true"] { background: var(--bg-raised); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
-  .fit { width: 1000px; }
+  .ba { container-type: inline-size; }
+  .fit { width: 100%; }
   .pg { font: 13px/1.5 Inter, var(--font-body, system-ui), sans-serif; background: #fff; }
   .pg[hidden] { display: none; }
   .note { display: flex; align-items: center; gap: 8px; margin: 0; padding: 12px 26px; background: #fff4e5; color: #7a4a0c; font-size: 12.5px; }
@@ -309,6 +307,27 @@ const reasons = [
   .q small { color: var(--ink4); }
   .note.ok { margin-top: 0; }
 
+  .a-menu { display: none; color: var(--g9); }
+  @container (max-width: 720px) {
+    .b-nav { gap: 12px; padding: 10px 14px; } .b-links, .b-end > span:first-child { display: none; } .b-end { margin-left: auto; }
+    .b-hero { grid-template-columns: 1fr; padding: 22px 16px; } .b-hero h5 { font-size: 30px; } .b-iso { display: none; }
+    .b-stats { gap: 22px; } .b-stats b { font-size: 20px; }
+    .b-fleet { grid-template-columns: 1fr; padding: 14px 16px; } .b-fleet aside { display: none; }
+    .note { padding: 12px 16px; }
+    .a-nav { padding: 10px 14px; gap: 10px; } .a-menu { display: grid; } .a-pills, .a-end > span:first-child { display: none; } .a-end { margin-left: auto; }
+    .a-logo { white-space: nowrap; font-size: 16px; } .a-end .a-btn { white-space: nowrap; padding: 7px 11px; } .a-end .a-btn :global(svg) { display: none; }
+    .hero { height: 380px; }
+    .panel { left: 14px; right: 14px; top: auto; bottom: 40px; transform: none; width: auto; padding: 16px 18px; }
+    .copy h5 { font-size: 22px; } .copy i { margin: 8px 0; } .copy p { font-size: 12.5px; }
+    .nav { display: none; } .count { top: 14px; bottom: auto; right: 14px; }
+    .sec { padding: 22px 16px; } h6 { font-size: 24px; }
+    .cars { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .car > b { font-size: 17px; } .car > p { display: none; } .cap { flex-direction: column; gap: 3px; }
+    .row { flex-direction: column; align-items: stretch; gap: 8px; } .row .a-btn { justify-content: center; }
+    .why { grid-template-columns: 1fr; } .why-r { min-height: 160px; order: -1; }
+    .cols { grid-template-columns: 1fr; } .col.c1, .col.c2 { display: none; }
+  }
+  @container (max-width: 420px) { .b-cards { grid-template-columns: 1fr; } }
   @media (prefers-reduced-motion: reduce) {
     .col, .copy, .reasons li.open p { animation: none; }
     .slide, .reasons li.open .track i { transition: none; }
