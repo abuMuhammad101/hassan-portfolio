@@ -1,0 +1,121 @@
+---
+/* Clicker, the real app: screens captured from the running product with its
+   demo seed. Two journeys, light and dark. */
+import BrowserFrame from "../BrowserFrame.astro";
+import Icon from "../Icon.astro";
+const journeys = [
+  {
+    id: "water",
+    name: "Water board",
+    who: "Signed in as a manager",
+    screens: [
+      { key: "w-aging", title: "Aging", note: "Bills grouped by how overdue they are, with totals per band and a summary strip in crore. One saved view, no custom screen." },
+      { key: "w-statement", title: "Customer statement", note: "The contact record becomes a statement: outstanding, oldest overdue, advance held, and every bill and payment below it." },
+      { key: "w-bill-peek", title: "Bill in a peek", note: "Click a row and the bill opens beside the list. The list stays put, the open row stays marked." },
+      { key: "w-recovery", title: "Recovery cases", note: "Who owes, how long, which notice they're on, and whose case it is. Cases without an owner are counted at the top." },
+      { key: "w-runs", title: "Billing runs", note: "Each monthly run is one record: period, bills made, total billed, and its state." },
+    ],
+  },
+  {
+    id: "port",
+    name: "Clearing agency",
+    who: "Signed in as the owner",
+    screens: [
+      { key: "c-stages", title: "Jobs by stage", note: "The pipeline as a grouped list: booked to closed, with what's at risk and what's ready to invoice on top." },
+      { key: "c-risk", title: "Demurrage at risk", note: "Containers costing money by the day rise to the top, with the deadline and the agent responsible." },
+      { key: "c-job", title: "A job", note: "Stage track, the next move in plain words, and the containers' free days counting down inside the record." },
+      { key: "c-disb", title: "Disbursements", note: "Money paid out on a client's behalf, waiting for approval before it can be billed back." },
+    ],
+  },
+];
+---
+
+<div class="tour" data-tour data-theme-mode="light">
+  <div class="bar">
+    <div class="tabs" role="tablist" aria-label="Journey">
+      {journeys.map((j, i) => (
+        <button type="button" role="tab" data-journey={j.id} aria-selected={i === 0 ? "true" : "false"}>{j.name}</button>
+      ))}
+    </div>
+    <button type="button" class="mode" data-mode aria-pressed="false"><Icon name="moon" size={14} /><span>Dark</span></button>
+  </div>
+
+  {journeys.map((j, ji) => (
+    <section class="journey" data-panel={j.id} hidden={ji !== 0}>
+      <div class="chips" role="group" aria-label={`${j.name} screens`}>
+        {j.screens.map((s, si) => (
+          <button type="button" data-screen={s.key} aria-pressed={si === 0 ? "true" : "false"}>{s.title}</button>
+        ))}
+      </div>
+      <BrowserFrame address={`clicker.app · ${j.name.toLowerCase()} demo`} label={`Clicker, ${j.name} journey`}>
+        <div class="stage">
+          {j.screens.map((s, si) => (
+            <figure class="shot" data-shot={s.key} hidden={si !== 0}>
+              <a class="zoom" href={`/media/clicker/${s.key}-light.webp`} target="_blank" rel="noopener" aria-label={`Open ${s.title} full size`}>
+              <img class="light" src={`/media/clicker/${s.key}-light.webp`} alt={`Clicker, ${s.title}, light mode`} width="1600" height="1000" loading={ji === 0 && si === 0 ? "eager" : "lazy"} decoding="async" />
+              <img class="dark" src={`/media/clicker/${s.key}-dark.webp`} alt={`Clicker, ${s.title}, dark mode`} width="1600" height="1000" loading="lazy" decoding="async" />
+              </a>
+            </figure>
+          ))}
+        </div>
+      </BrowserFrame>
+      {j.screens.map((s, si) => (
+        <p class="note" data-note={s.key} hidden={si !== 0}><b>{s.title}.</b> {s.note} <span class="who">{j.who}, demo data.</span></p>
+      ))}
+    </section>
+  ))}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-tour]").forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[data-journey]")];
+    tabs.forEach((t) => t.addEventListener("click", () => {
+      tabs.forEach((x) => x.setAttribute("aria-selected", String(x === t)));
+      root.querySelectorAll<HTMLElement>("[data-panel]").forEach((p) => (p.hidden = p.dataset.panel !== t.dataset.journey));
+    }));
+    root.querySelectorAll<HTMLElement>("[data-panel]").forEach((panel) => {
+      const chips = [...panel.querySelectorAll<HTMLButtonElement>("[data-screen]")];
+      chips.forEach((c) => c.addEventListener("click", () => {
+        chips.forEach((x) => x.setAttribute("aria-pressed", String(x === c)));
+        panel.querySelectorAll<HTMLElement>("[data-shot]").forEach((s) => (s.hidden = s.dataset.shot !== c.dataset.screen));
+        panel.querySelectorAll<HTMLElement>("[data-note]").forEach((s) => (s.hidden = s.dataset.note !== c.dataset.screen));
+      }));
+    });
+    const mode = root.querySelector<HTMLButtonElement>("[data-mode]")!;
+    mode.addEventListener("click", () => {
+      const dark = root.dataset.themeMode !== "dark";
+      root.dataset.themeMode = dark ? "dark" : "light";
+      mode.setAttribute("aria-pressed", String(dark));
+      mode.querySelector("span")!.textContent = dark ? "Light" : "Dark";
+    });
+  });
+</script>
+
+<style>
+  .tour { --violet: #4a3fcf; }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .tabs { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--bg-sunk); border: 1px solid var(--rule); }
+  .tabs button, .mode { border: 0; background: none; font: inherit; font-weight: 600; font-size: var(--text-sm); padding: 6px 16px; border-radius: 999px; color: var(--ink-muted); cursor: pointer; }
+  .tabs [aria-selected="true"] { background: var(--bg-raised); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
+  .mode { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--rule); background: var(--bg-raised); color: var(--ink); }
+  .mode[aria-pressed="true"] { background: #17161d; color: #fff; border-color: #17161d; }
+  .chips { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chips button { flex: none; border: 1px solid var(--rule); background: transparent; font: inherit; font-size: 13px; padding: 5px 12px; border-radius: 999px; color: var(--ink-secondary); cursor: pointer; transition: all 0.15s; }
+  .chips [aria-pressed="true"] { border-color: var(--violet); color: var(--violet); background: color-mix(in srgb, var(--violet) 8%, transparent); }
+  :is(.tabs button, .mode, .chips button):focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+  .journey[hidden], .shot[hidden], .note[hidden] { display: none; }
+  .stage { background: #f8f8fb; }
+  .tour[data-theme-mode="dark"] .stage { background: #111015; }
+  .shot { margin: 0; animation: in 0.35s ease; }
+  .shot img { display: block; width: 100%; height: auto; }
+  .shot .dark { display: none; }
+  .tour[data-theme-mode="dark"] .shot .light { display: none; }
+  .tour[data-theme-mode="dark"] .shot .dark { display: block; }
+  @keyframes in { from { opacity: 0; } }
+  .zoom { display: block; cursor: zoom-in; }
+  .note { margin: 12px 0 0; color: var(--ink-secondary); font-size: var(--text-sm); max-width: 70ch; }
+  .note b { color: var(--ink); font-weight: 600; }
+  .who { color: var(--ink-muted); }
+  @media (prefers-reduced-motion: reduce) { .shot { animation: none; } }
+</style>

@@ -1,0 +1,48 @@
+title: Clicker
+titleRest: ERP
+angle: Define a model, get the app. An ERP where no screen is designed twice, dense enough for people who live in it all day.
+order: 5
+meta:
+  - { label: Role, value: "Solo: product, design and build" }
+  - { label: Platform, value: "Web, light and dark" }
+  - { label: Stage, value: "Two demo journeys, frozen for investors" }
+  - { label: Stack, value: "Django, Postgres, React" }
+ndaRecreated: false
+widget: tour
+widgetIntro: "These are real screens from the running product, captured from its demo seed. Pick a journey, step through the screens, and switch to dark."
+stats:
+  - { value: "0", unit: module screens drawn by hand, label: "Every list and form is generated from the model's schema" }
+  - { value: "16", unit: field types, label: "Each with a form control, a list cell and eight states" }
+  - { value: "2", unit: journeys, label: "A water board's billing and a port clearing agency, on the same engine" }
+problem:
+  - Small and mid-size businesses outgrow spreadsheets and land in ERPs built for someone else. The screens are crowded, every module behaves differently, and adding a module means designing forty more screens.
+  - Clicker is my own product. It is not a suite of apps but a framework that generates them. A module author declares the data; the API, lists, forms, filters and permissions are derived from it.
+constraints:
+  - "The law: if a change needs the renderer to know about a specific module, the schema is wrong."
+  - "Renderers don't know where they live. A page, a peek or a future split view gets the same form."
+  - "Deny by default. Every model, field and action needs an explicit grant, and every write is audited."
+  - "Zero recurring cost until the first investor demo, built part time."
+decisionsIntro: The calls that make it feel like one product instead of forty.
+decisions:
+  - title: The schema draws the screen
+    body: "Each model declares its fields, groups, views and summaries once. The same renderers draw every list and every form. The products module appeared with zero frontend changes, which was the test the engine had to pass."
+  - title: Density is the thesis
+    body: "13px body, 34px rows with hairlines and no zebra, tabular figures in every number column, borders instead of card shadows. Power users spend the whole day here; consumer spacing wastes their screen."
+  - title: One violet, because colour means something
+    body: "The accent is ink violet so it never competes with green, amber and red, which carry status. Text contrast was measured, not guessed: 4.5:1 or better in light and dark."
+  - title: An empty field never looks like data
+    body: "An editable empty field says 'Set amount…'; a read-only one shows a dash; a real zero always shows as 0. It's tested in code, because an ERP that confuses nothing with zero is lying."
+  - title: Peek, don't navigate
+    body: "Clicking a row opens the record beside the list. The list keeps its place, the open row stays marked, and Esc returns focus to it."
+states:
+  - { name: Empty vs zero, note: "Prompt, dash or 0, never confused" }
+  - { name: Read-only vs disabled, note: Look different on purpose }
+  - { name: Not yours, note: "A record you can't see is a 404, not a locked screen" }
+  - { name: Failed inline edit, note: Rolls back and says why }
+  - { name: Offline, note: A banner and an undoable toast stack }
+  - { name: Financial reversal, note: "Posted documents are reversed, never edited" }
+evidence:
+  - Two complete journeys run end to end on one engine, a water board's aging, statements and recovery, and a clearing agency's jobs, demurrage and self-drafting invoices.
+  - A rehearsal script drives both journeys through a real browser from a fresh seed before every demo.
+  - Light and dark, 1280 to 1920 wide, checked against the same screens.
+  - Every permission rule has a test that proves it denies.

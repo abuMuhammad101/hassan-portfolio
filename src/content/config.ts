@@ -27,7 +27,7 @@ const cases = defineCollection({
     order: z.number(),
     meta: z.array(z.object({ label: z.string(), value: z.string() })),
     ndaRecreated: z.boolean(),
-    widget: z.enum(["before-after", "record-chain", "copilot", "agent-console"]),
+    widget: z.enum(["before-after", "record-chain", "copilot", "agent-console", "density", "tour"]),
     widgetIntro: z.string(),
     stats: z.array(z.object({ value: z.string(), unit: z.string(), label: z.string() })).optional(),
     problem: z.array(z.string()),
@@ -36,8 +36,8 @@ const cases = defineCollection({
     decisions: z.array(z.object({ title: z.string(), body: z.string() })),
     states: z.array(z.object({ name: z.string(), note: z.string() })),
     evidence: z.array(z.string()),
-    measures: z.array(z.string()),
-    next: z.string(),
+    measures: z.array(z.string()).optional(),
+    next: z.string().optional(),
   }),
 });
 

@@ -6,6 +6,8 @@ import BeforeAfter from "./widgets/BeforeAfter.astro";
 import RecordChain from "./widgets/RecordChain.astro";
 import Copilot from "./widgets/Copilot.astro";
 import AgentConsole from "./widgets/AgentConsole.astro";
+import DensityTable from "./widgets/DensityTable.astro";
+import ClickerTour from "./widgets/ClickerTour.astro";
 import Icon from "./Icon.astro";
 
 interface Props {
@@ -21,7 +23,7 @@ const rail = [
   ["proof", "Try it"],
   ["states", "Edge states"],
   ["evidence", "Evidence"],
-  ["measure", "Measure"],
+  ...(data.measures?.length ? [["measure", "Measure"]] : []),
 ];
 ---
 
@@ -102,6 +104,8 @@ const rail = [
           {data.widget === "record-chain" && <RecordChain />}
           {data.widget === "copilot" && <Copilot />}
           {data.widget === "agent-console" && <AgentConsole />}
+          {data.widget === "density" && <DensityTable />}
+          {data.widget === "tour" && <ClickerTour />}
         </div>
         <p class="caption">Re-created for this page. It shows the pattern, with sample data.</p>
       </section>
@@ -123,14 +127,16 @@ const rail = [
         </ul>
       </section>
 
-      <section id="measure" class="reveal">
-        <p class="section-label">How I'd measure it</p>
-        <p>These results weren't tracked on this project. With access, these are the numbers I'd watch.</p>
-        <ul class="measures">
-          {data.measures.map((m: string) => <li>{m}</li>)}
-        </ul>
-        <p class="next-step"><b>Next:</b> {data.next}</p>
-      </section>
+      {data.measures?.length && (
+        <section id="measure" class="reveal">
+          <p class="section-label">How I'd measure it</p>
+          <p>These results weren't tracked on this project. With access, these are the numbers I'd watch.</p>
+          <ul class="measures">
+            {data.measures.map((m: string) => <li>{m}</li>)}
+          </ul>
+          {data.next && <p class="next-step"><b>Next:</b> {data.next}</p>}
+        </section>
+      )}
 
       {next && (
         <a class="next-case" href={`/work/${next.slug}/`}>
