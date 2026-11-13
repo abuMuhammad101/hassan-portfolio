@@ -12,10 +12,10 @@ import { resume } from "../data/resume";
 const nameOf = (id: string) => workIndex.find((w) => w.id === id)?.name ?? id;
 const featured = workIndex.filter((w) => w.page && w.id !== "hh-global");
 const rest = workIndex.filter((w) => !featured.includes(w));
-const stats = [
-  { value: "8", label: "products in this portfolio" },
-  { value: "5+", label: "years designing SaaS and mobile" },
-  { value: "3", label: "markets: Pakistan, the Gulf, the US" },
+const markets = [
+  { name: "United States", tz: "America/New_York", note: "Clients" },
+  { name: "GCC", tz: "Asia/Dubai", note: "Clients" },
+  { name: "Pakistan", tz: "Asia/Karachi", note: "Based here", home: true },
 ];
 const ways = [
   { icon: "user", title: "Start with the person", body: "And the rules they live under, before any screen." },
@@ -58,14 +58,19 @@ const earlier = [
             <a class="btn ghost" href="/resume/">Resume</a>
           </div>
         </div>
-        <ul class="stats">
-          {stats.map((s) => (
-            <li>
-              <span class="stat-value">{s.value}</span>
-              <span class="stat-label">{s.label}</span>
-            </li>
-          ))}
-        </ul>
+        <aside class="ledger" aria-label="At a glance">
+          <p class="ledger-line"><b>8</b> products <i aria-hidden="true"></i> <b>5+</b> years in SaaS and mobile</p>
+          <ul class="markets">
+            {markets.map((m) => (
+              <li class={m.home ? "home" : ""}>
+                <span class="m-dot" aria-hidden="true"></span>
+                <span class="m-name">{m.name}</span>
+                <span class="m-note">{m.note}</span>
+                <time class="m-time tabular-nums" data-tz={m.tz}>--:--</time>
+              </li>
+            ))}
+          </ul>
+        </aside>
       </div>
     </div>
   </section>
@@ -181,6 +186,12 @@ const earlier = [
   </main>
 
   <Footer />
+<script>
+  const fmt = (tz: string) => new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(new Date());
+  const tick = () => document.querySelectorAll<HTMLElement>("[data-tz]").forEach((el) => (el.textContent = fmt(el.dataset.tz!)));
+  tick();
+  setInterval(tick, 30000);
+</script>
 </Base>
 
 <style>
@@ -211,32 +222,74 @@ const earlier = [
     flex-wrap: wrap;
     gap: 10px;
   }
-  .stats {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .ledger {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-3);
+    gap: 18px;
     align-content: start;
   }
-  .stats li {
-    border-top: 1px solid var(--ink);
-    padding-top: 12px;
-    display: grid;
-    gap: 4px;
+  .ledger-line {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px;
+    color: var(--ink-secondary);
+    font-size: var(--text-sm);
   }
-  .stat-value {
+  .ledger-line b {
     font-family: var(--font-display);
-    font-size: clamp(2.2rem, 5vw, 3.25rem);
+    font-weight: 500;
+    font-size: 1.6rem;
     line-height: 1;
     letter-spacing: -0.02em;
     color: var(--ink);
   }
-  .stat-label {
+  .ledger-line i {
+    width: 4px;
+    height: 4px;
+    margin: 0 8px;
+    border-radius: 50%;
+    background: var(--ink-muted);
+    align-self: center;
+  }
+  .markets {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .markets li {
+    display: grid;
+    grid-template-columns: 10px 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .m-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px var(--ink-muted);
+  }
+  .home .m-dot {
+    background: var(--accent-warm);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-warm) 18%, transparent);
+  }
+  .m-name {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .m-note {
     font-size: var(--text-sm);
-    line-height: 1.4;
-    color: var(--ink-secondary);
+    color: var(--ink-muted);
+  }
+  .m-time {
+    min-width: 5.5ch;
+    text-align: right;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    color: var(--ink);
   }
   @media (min-width: 900px) {
     .hero-grid {

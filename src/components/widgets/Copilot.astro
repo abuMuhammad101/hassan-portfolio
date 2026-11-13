@@ -219,7 +219,7 @@ const patients = [
   .cp[data-step="ready"] .st-ready, .cp[data-step="done"] .st-done { display: grid !important; }
 
   .cp[data-step="idle"] .hint.st-idle { display: flex !important; }
-  .hint { align-self: end; margin-bottom: 96px; white-space: nowrap; align-items: center; gap: 9px; padding: 9px 14px 9px 9px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 12px 28px -14px rgb(0 0 0 / 0.3); color: #55585e; }
+  .hint { align-self: end; margin-bottom: 92px; white-space: nowrap; align-items: center; gap: 9px; padding: 9px 14px 9px 9px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 12px 28px -14px rgb(0 0 0 / 0.3); color: #55585e; }
   .cp:not([data-step="idle"]) .hint { display: none !important; }
   .spark { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff; }
 
@@ -280,6 +280,8 @@ const patients = [
   .exit strong { font-size: 19px; }
   .exit p { margin: 0 0 10px; color: #55585e; }
 
+  .screen::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 170px; background: linear-gradient(rgb(251 251 250 / 0), #fbfbfa 62%); pointer-events: none; z-index: 1; }
+  .layer, .dock { z-index: 2; }
   .dock { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; justify-content: center; gap: 14px; }
   .round { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 0; background: #fff; color: var(--ink); cursor: pointer; box-shadow: 0 0 0 1px #e2e2df, 0 8px 18px -10px rgb(0 0 0 / 0.35); transition: opacity 0.3s, transform 0.3s; }
   .back { position: absolute; left: 24px; background: #3a3a3d; color: #fff; box-shadow: none; }
@@ -299,7 +301,7 @@ const patients = [
     .dots { margin-top: 30px; }
     .cp[data-step="idle"] .hint.st-idle { display: block !important; text-align: center; padding: 10px 14px; border-radius: 16px; }
     .hint .spark { display: inline-grid; vertical-align: middle; margin-right: 6px; width: 20px; height: 20px; }
-    .hint { white-space: normal; max-width: calc(100% - 32px); margin-bottom: 92px; font-size: 12px; line-height: 1.35; }
+    .hint { white-space: normal; max-width: calc(100% - 32px); margin-bottom: 88px; font-size: 12px; line-height: 1.35; }
     .stage { width: 100%; padding: 0 16px; box-sizing: border-box; }
     .tile.wide { min-width: 0; width: 100%; box-sizing: border-box; }
     .tiles { grid-template-columns: 1fr 1fr; width: 100%; }
