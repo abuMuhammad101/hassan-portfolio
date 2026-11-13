@@ -50,6 +50,7 @@ export const workIndex: WorkRow[] = [
     name: "isTyme",
     tags: ["Marketplace", "Mobile"],
     angle: "The power of minimal, in a marketplace rooted in the local and the human.",
+    page: "istyme",
   },
   {
     id: "quick-service-app",

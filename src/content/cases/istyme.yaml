@@ -1,0 +1,50 @@
+title: isTyme
+titleRest: Local Work Marketplace
+angle: The power of minimal, in a marketplace rooted in the local and the human. One app for hiring and for finding work, in English and in Karachi Urdu.
+order: 8
+meta:
+  - { label: Role, value: "Product and brand design" }
+  - { label: Platform, value: "iOS and Android" }
+  - { label: Languages, value: "English, and Urdu right to left" }
+  - { label: Market, value: "Karachi first, built to travel to the GCC" }
+ndaRecreated: false
+widget: phone-tour
+widgetIntro: "These are the real screens from the design file. Pick a side of the marketplace and swipe through. Then switch to Urdu: every screen mirrors and the flow runs right to left."
+stats:
+  - { value: "47", unit: screens, label: "Eight flows, from first open to a finished job, in each language" }
+  - { value: "2", unit: languages, label: "English, and Karachi Urdu mirrored right to left" }
+  - { value: "1", unit: accent, label: "Saffron, for fills and decoration, never for text" }
+problem:
+  - "isTyme connects people who need something done with skilled people nearby: plumbers and electricians, home cooks and tailors, tutors and freelancers. Hiring and working live in one app, switched at the top of the home screen."
+  - "Both sides have to trust a stranger. A customer is letting someone into their home; a worker is giving their time before being paid. And many people on both sides are more at home in Urdu than in English, and not used to apps."
+constraints:
+  - "Every screen works in English and in Urdu, with the same components."
+  - "Workers verify their CNIC before they can send an offer. There is no skip, including for a customer who switches to worker mode."
+  - "Digits, prices, phone numbers, the status bar and the CNIC frame stay left to right in Urdu."
+  - "Money is held until the customer confirms the job is done."
+decisionsIntro: "Version 5.1 kept the components and the behaviour, and took everything else down to what one person needs on one screen."
+decisions:
+  - title: One job per screen, one accent
+    body: "A white canvas, ink for text and primary buttons, isTyme green for money and success, and saffron as the single vibrant accent. Saffron fills and decorates; when it has to be read, a darker saffron keeps it at AA."
+  - title: Write Urdu the way Karachi speaks
+    body: "Not textbook Urdu: the English words people actually say, in Urdu script, like پیمنٹ for payment and کنفرم for confirm. The English line comes first with Urdu under every heading and key button, and money always gets reassurance: پیسے محفوظ ہیں، ٹینشن نہ لیں."
+  - title: Mirror it, don't just translate it
+    body: "In Urdu the layout, arrows, progress bars, tab bar and chat bubbles flip. Prices, phone numbers, the keypad, the wordmark and the card frame don't. Nastaliq is set about 15% smaller with taller lines, so it fits the same components."
+  - title: Show what a fair price is
+    body: "When posting a job, the customer sets a price or asks for offers, and the local range sits under the number. Offers come back ranked, with rating, jobs done and distance, and one clear way to hire."
+  - title: Trust starts at verification
+    body: "Card front, card back, a selfie and a thumbprint check with a NADRA partner. When a photo won't read, the frame turns red and the fix is named in both languages: too much light on the card."
+  - title: One motif, used sparingly
+    body: "Proximity rings, for people near you: hairline circles, a dotted outer ring and a single saffron arc. Only on welcome, location, success and empty moments, and never behind text."
+states:
+  - { name: Wrong code, note: "Says how many tries are left, with a new code one tap away" }
+  - { name: Photo not clear, note: Names the fix in both languages }
+  - { name: No internet, note: Shows saved information and a retry }
+  - { name: No offers yet, note: "Says how many have seen it, then suggests a better price or a photo" }
+  - { name: Payment didn't go through, note: "Confirms no money left the wallet, offers another wallet" }
+  - { name: Job already taken, note: "Nothing counts against the worker, with similar jobs to look at" }
+evidence:
+  - "The full app in Figma: eight flows and 47 screens, each in English and in Urdu."
+  - "A style and copy sheet: colour roles, the one decorative motif, and a glossary of formal Urdu next to the words Karachi actually uses."
+  - "An Urdu right-to-left rule sheet for the build team: type sizes, what flips and what stays left to right."
+  - "The wordmark: a handwritten 'is' beside 'Tyme', with a reveal where the 'is' becomes a smile and then a clock."
