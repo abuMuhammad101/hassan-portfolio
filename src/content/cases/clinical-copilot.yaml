@@ -9,7 +9,7 @@ meta:
   - { label: Domain, value: Clinical workflows }
 ndaRecreated: true
 widget: copilot
-widgetIntro: Give the copilot a command. It appears, asks only for what's missing, and leaves you in control.
+widgetIntro: "Tap the mic to start a breathing test by voice. The copilot finds the patient and the device, asks only for what's missing, and you confirm each step."
 stats:
   - { value: "1", unit: component, label: The same overlay serves every flow }
   - { value: "0", unit: colours, label: "Monochrome, so it sits on any product" }
