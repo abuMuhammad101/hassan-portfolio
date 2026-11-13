@@ -1,0 +1,49 @@
+title: Quick-Service
+titleRest: Ordering App
+angle: A psychology-led audit that found the app was well made and the model around it was leaking, then showed what to fix first.
+order: 7
+meta:
+  - { label: Role, value: "UX audit and redesign direction" }
+  - { label: Platform, value: "iOS and Android, customer and rider apps" }
+  - { label: Scope, value: "46 screens, 5 flows, the design system" }
+  - { label: Domain, value: "Food ordering, Gulf" }
+ndaRecreated: true
+widget: range-audit
+widgetIntro: "Move the distance slider and add the item to the cart. Before, the app refuses you at the moment you want it most. After, it tells you the truth when it opens and offers the best way to still get your food."
+stats:
+  - { value: "46", unit: screens, label: "Reviewed across five flows in the customer and rider apps" }
+  - { value: "45", unit: findings, label: "16 of them high severity, each tied to a behavioural principle and a fix" }
+problem:
+  - "The brand delivers with its own riders only within 1 km of a branch, and its branches sit together in a busy central district full of hotels. For most residents, being out of range isn't an edge case; it's the normal case."
+  - "The app let people browse, build their order and choose extras, then checked the distance at Add to cart. Anyone outside the zone got four equal links to partner apps and left, taking the order, the data and the loyalty points with them."
+constraints:
+  - "Keep the brand's tokens and components; upgrade the craft, not the identity."
+  - "The server stays the authority on the delivery boundary."
+  - "Partner delivery stays visible and honest: prices and fees may differ, and points aren't earned there."
+decisionsIntro: "The audit's headline: the app is well crafted, the model around it leaks. Fix that first, polish the rest."
+decisions:
+  - title: Decide the channel when the app opens
+    body: "Check serviceability on launch and on every address change, not at Add to cart. Within 1 km the default is delivery; from 1 to 3 km it's pickup; beyond that the customer sees the honest options before they start."
+  - title: Pickup is the most profitable order
+    body: "No rider cost, the customer stays in the app and earns points, ready in about 15 minutes. It didn't exist in the product yet, so the redesign builds it end to end."
+  - title: Turn a dead end into a guided choice
+    body: "One recommended option, two alternatives, and the cart is never lost. A partner hand-off is tracked; a 'tell me when you deliver here' turns a refusal into a lead."
+  - title: Every finding names its principle
+    body: "Peak-end rule, Hick's law, loss aversion, default bias and more, each with severity and a fix, so the team can argue with the reasoning rather than the taste."
+  - title: Keep the tokens, cut the drift
+    body: "Measured across 25 screens: 14 corner radii, 12 font sizes, 8 button heights, 5 shadow recipes. Each roughly halved: one accent per screen, type for hierarchy, elevation instead of outlines."
+states:
+  - { name: Out of range, note: Said on open, not at the cart }
+  - { name: Between 1 and 3 km, note: Pickup by default }
+  - { name: Too far for anything, note: "A waitlist, not a refusal" }
+  - { name: Address changed, note: Re-checked without clearing the cart }
+  - { name: Partner hand-off, note: Disclosed honestly and tracked }
+evidence:
+  - "Scores by flow, weighted by business impact: rider sign-up 8.0, account and rewards 7.5, browse and order 7.0, rider deliveries 6.5, cart and checkout 6.0."
+  - "Eight redesigned screens that put the strategy into the product, built on the existing tokens."
+  - "A roadmap in three columns, now, next and later, plus three partner options for the owner to decide on."
+measures:
+  - Share of 1 to 3 km sessions that convert to pickup
+  - Orders lost at the range check
+  - Partner taps that turn into orders
+next: Review the delivery strategy with the owner, then start the first column of the roadmap.

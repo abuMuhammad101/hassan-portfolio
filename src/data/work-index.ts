@@ -56,6 +56,7 @@ export const workIndex: WorkRow[] = [
     name: "Quick-Service Ordering App",
     tags: ["Mobile", "UX audit"],
     angle: "A UX audit that gave the team enough context to make the app ready to compete.",
+    page: "quick-service-app",
   },
   {
     id: "hh-global",

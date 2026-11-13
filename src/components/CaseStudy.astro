@@ -9,6 +9,7 @@ import AgentConsole from "./widgets/AgentConsole.astro";
 import DensityTable from "./widgets/DensityTable.astro";
 import ClickerTour from "./widgets/ClickerTour.astro";
 import SiteTour from "./widgets/SiteTour.astro";
+import RangeAudit from "./widgets/RangeAudit.astro";
 import Icon from "./Icon.astro";
 
 interface Props {
@@ -108,6 +109,7 @@ const rail = [
           {data.widget === "density" && <DensityTable />}
           {data.widget === "tour" && <ClickerTour />}
           {data.widget === "site-tour" && <SiteTour />}
+          {data.widget === "range-audit" && <RangeAudit />}
         </div>
         <p class="caption">Re-created for this page. It shows the pattern, with sample data.</p>
       </section>
