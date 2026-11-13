@@ -1,279 +1,357 @@
 ---
-/* Guard and guide: a later record opens only when the earlier one is complete.
-   Re-created with sample data. */
-import "../../styles/mock-app.css";
+/* Therapy case screen, re-created from the shipped product's layout with
+   stand-in brand, names and data. The plan of care must be certified before
+   a daily note can start; the screen says why and offers the next step. */
 import BrowserFrame from "../BrowserFrame.astro";
 import Icon from "../Icon.astro";
 ---
 
-<div data-chain>
-  <BrowserFrame address="app.therapydocs.example" label="Re-created therapy documentation app">
-    <div class="mk-app">
-      <aside class="mk-rail" aria-hidden="true">
-        <span class="mk-logo"><Icon name="heartbeat" weight="bold" size={18} /></span>
-        <span><Icon name="squares-four" size={18} /></span>
-        <span class="on"><Icon name="users" size={18} /></span>
-        <span><Icon name="calendar-check" size={18} /></span>
-        <span><Icon name="chart-line-up" size={18} /></span>
-        <span class="end"><Icon name="gear-six" size={18} /></span>
-      </aside>
-      <div class="mk-main">
-        <div class="mk-top">
-          <span class="mk-crumb">Patients / <b>Sample Patient</b></span>
-          <Icon name="magnifying-glass" size={16} />
-          <Icon name="bell" size={16} />
-          <span class="mk-avatar">HK</span>
+<div class="tc" data-chain data-state="pending">
+  <BrowserFrame address="app.strandhealth.example/cases/tc-2041" label="Re-created therapy case screen">
+    <div class="app">
+      <header class="top">
+        <span class="brand"><i class="mark" aria-hidden="true"></i>Strand<small>Care</small></span>
+        <span class="patient-pill"><span class="av sm">AB</span>Arthur Bell <Icon name="caret-down" size={13} /></span>
+        <span class="top-end">
+          <span class="facility"><Icon name="buildings" size={15} />Facility: <b>Northside Care</b> <Icon name="caret-down" size={12} /></span>
+          <span class="bell"><Icon name="bell" size={17} /><i>3</i></span>
+          <span class="me">Hi, Kira <span class="av sm warm">KR</span></span>
+        </span>
+      </header>
+
+      <div class="body">
+        <nav class="rail" aria-hidden="true">
+          <span><Icon name="chart-bar" size={18} /></span>
+          <span><Icon name="user-list" size={18} /></span>
+          <span class="on"><Icon name="file-text" size={18} /></span>
+          <span><Icon name="calendar-dots" size={18} /></span>
+          <span><Icon name="receipt" size={18} /></span>
+          <span><Icon name="sign-out" size={18} /></span>
+          <span class="end"><Icon name="gear-six" size={18} /></span>
+        </nav>
+
+        <div class="disc" aria-hidden="true">
+          <span class="on">Physical therapy</span><span>OT</span><span>ST</span><span>RT</span>
         </div>
 
-        <div class="content">
-          <div class="patient">
-            <span class="mk-avatar lg">SP</span>
-            <span class="who"><b>Sample Patient</b><small>Physical therapy · Episode started 3 Mar</small></span>
-            <span class="mk-badge">Active case</span>
+        <main class="page">
+          <div class="title-row">
+            <div>
+              <h4>PT case · March</h4>
+              <p class="crumb"><span>Case management</span> <Icon name="caret-right" size={11} /> PT case · March</p>
+            </div>
+            <Icon name="dots-three-vertical" size={18} />
           </div>
 
-          <div class="grid">
-            <div class="mk-card record">
-              <p class="card-title">Care record</p>
-              <ol>
-                <li>
-                  <span class="ic ok"><Icon name="clipboard-text" size={17} /></span>
-                  <span class="txt"><b>Evaluation</b><small>Signed by the treating therapist</small></span>
-                  <span class="mk-badge ok"><Icon name="check-circle" weight="fill" size={12} /> Signed</span>
-                </li>
-                <li data-plan>
-                  <span class="ic"><Icon name="file-text" size={17} /></span>
-                  <span class="txt"><b>Plan of care</b><small data-plan-sub>Sent to the physician for sign-off</small></span>
-                  <span class="mk-badge wait" data-plan-badge>Awaiting certification</span>
-                </li>
-                <li data-note class="locked">
-                  <span class="ic"><Icon name="note-pencil" size={17} /></span>
-                  <span class="txt"><b>Session note</b><small data-note-sub>Today's visit</small></span>
-                  <span class="mk-badge" data-note-badge><Icon name="lock-simple" size={12} /> Locked</span>
-                </li>
-              </ol>
-            </div>
-
-            <div class="mk-card today">
-              <p class="card-title">Today</p>
-              <p class="visit"><Icon name="clock" size={14} /> 10:30 · 45 min visit</p>
-              <button type="button" class="mk-btn" data-start><Icon name="note-pencil" size={15} /> Start session note</button>
-
-              <div class="msg" role="status" aria-live="polite">
-                <div class="alert" data-blocked hidden>
-                  <p class="alert-title"><Icon name="warning-circle" weight="fill" size={16} /> The plan of care isn't certified yet</p>
-                  <p>A session note has to tie back to a certified plan. Without that link the note could be rejected at audit.</p>
-                  <button type="button" class="mk-btn ghost" data-certify>Request certification</button>
-                </div>
-                <div class="alert okay" data-ok hidden>
-                  <p class="alert-title"><Icon name="check-circle" weight="fill" size={16} /> Session note started</p>
-                  <p>It opened already linked to the certified plan.</p>
-                  <button type="button" class="mk-btn ghost" data-reset><Icon name="arrow-counter-clockwise" size={14} /> Run it again</button>
-                </div>
-              </div>
-            </div>
+          <div class="banner">
+            <svg class="thread-art" viewBox="0 0 600 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0 52 C120 10 210 70 330 34 S520 4 600 26" /><path d="M0 62 C140 30 230 76 350 46 S540 20 600 40" /></svg>
+            <span class="av lg">AB</span>
+            <span class="who"><b>Arthur Bell</b><span class="chip live">Active</span><small>Male · 78 years · Room 214</small></span>
+            <span class="go"><Icon name="arrow-right" size={16} /></span>
           </div>
-          <p class="demo-note" data-demo hidden>Demo: the physician's sign-off is simulated.</p>
-        </div>
+
+          <dl class="meta">
+            <div><dt>Case ID</dt><dd>#TC-2041</dd></div>
+            <div><dt>Start of care</dt><dd>03/04</dd></div>
+            <div><dt>Supervising therapist</dt><dd>M. Chen, PT</dd></div>
+            <div><dt>Planned discharge</dt><dd>06/01</dd></div>
+            <div><dt>Evaluation</dt><dd class="st ok">Signed</dd></div>
+            <div><dt>Plan of care</dt><dd class="st poc"><span class="when-pending">Awaiting certification</span><span class="when-sent">Sent to physician</span><span class="when-done">Certified · due 06/01</span></dd></div>
+          </dl>
+
+          <ol class="thread" aria-label="Record chain">
+            <li class="done"><i></i>Evaluation</li>
+            <li class="done"><i></i>Plan of care</li>
+            <li class="cert"><i></i>Certification</li>
+            <li class="notes"><i></i>Daily notes</li>
+            <li><i></i>Progress note</li>
+          </ol>
+
+          <div class="tabs" aria-hidden="true">
+            <span>Case details</span><span class="on">Clinical documentation</span><span>Sessions <i>4</i></span><span>Clinical summary</span><span>Outcomes</span>
+          </div>
+
+          <div class="bar">
+            <b>Documentation / visit history</b>
+            <span class="filters">Status: <b>All</b> <Icon name="caret-down" size={11} /> Notes: <b>All</b> <Icon name="caret-down" size={11} /></span>
+            <span class="new-wrap">
+              <button type="button" class="btn-primary" data-new aria-expanded="false"><Icon name="plus" size={14} weight="bold" />New document</button>
+              <span class="menu" data-menu hidden>
+                <button type="button" data-pick="daily"><Icon name="pen-nib" size={15} /><span><b>Daily note</b><small class="lock-why">Needs a certified plan of care</small><small class="open-why">Ready to start</small></span><Icon name="lock-simple" size={13} /></button>
+                <button type="button" disabled><Icon name="chart-line-up" size={15} /><span><b>Progress note</b><small>Due after 10 visits</small></span><Icon name="lock-simple" size={13} /></button>
+                <button type="button" disabled><Icon name="arrows-clockwise" size={15} /><span><b>Re-evaluation</b><small>Opens after three re-certifications</small></span><Icon name="lock-simple" size={13} /></button>
+              </span>
+            </span>
+          </div>
+
+          <div class="alert warn" data-alert-warn hidden role="status">
+            <Icon name="warning-circle" size={18} />
+            <p><b>A daily note can't start yet.</b> The plan of care isn't certified, so a note written now would have nothing to tie back to and could fail audit.</p>
+            <button type="button" class="btn-ghost" data-cert>Request certification</button>
+          </div>
+          <div class="alert ok" data-alert-ok hidden role="status">
+            <Icon name="check-circle" size={18} />
+            <p><b>Plan of care certified</b> by Dr. A. Rahman. Daily notes are open for this case.</p>
+          </div>
+
+          <table class="docs">
+            <thead><tr><th>Type</th><th>Therapist</th><th>Due</th><th>Completed</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr class="new-row" data-new-row hidden>
+                <td><Icon name="pen-nib" size={14} /> Daily note</td><td><span class="who-c"><span class="av xs warm">KR</span>Kira Ross</span></td><td>Today</td><td>–</td><td><span class="chip draft">Draft</span></td><td><a>Continue <Icon name="caret-right" size={11} /></a></td>
+              </tr>
+              <tr class="poc-row">
+                <td>Plan of care</td><td><span class="who-c"><span class="av xs">MC</span>M. Chen</span></td><td>03/06</td><td>03/05</td>
+                <td><span class="chip wait when-pending">Awaiting certification</span><span class="chip wait when-sent"><Icon name="spinner-gap" size={11} /> Sent</span><span class="chip okc when-done">Certified</span></td>
+                <td><button type="button" class="link when-pending" data-cert>Request certification</button><a class="when-done">See details <Icon name="caret-right" size={11} /></a></td>
+              </tr>
+              <tr>
+                <td>Evaluation <Icon name="lock-simple" size={13} /></td><td><span class="who-c"><span class="av xs">MC</span>M. Chen</span></td><td>03/04</td><td>03/04</td><td><span class="chip okc">Signed</span></td><td><a>See details <Icon name="caret-right" size={11} /></a></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="foot">
+            <span>Show: <b>All items</b></span>
+            <button type="button" class="reset" data-reset><Icon name="arrow-counter-clockwise" size={13} />Reset demo</button>
+          </div>
+        </main>
       </div>
+      <span class="fab" aria-hidden="true"><Icon name="chat-circle-dots" size={18} /></span>
     </div>
   </BrowserFrame>
 </div>
 
 <script>
   document.querySelectorAll<HTMLElement>("[data-chain]").forEach((root) => {
-    const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
-    const start = q<HTMLButtonElement>("[data-start]"), certify = q<HTMLButtonElement>("[data-certify]");
-    const blocked = q("[data-blocked]"), ok = q("[data-ok]"), demo = q("[data-demo]");
-    const planBadge = q("[data-plan-badge]"), noteBadge = q("[data-note-badge]"), note = q("[data-note]");
-    const lockHtml = noteBadge.innerHTML;
-    const quick = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let certified = false;
+    const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const menu = $("[data-menu]");
+    const newBtn = $("[data-new]");
+    const warn = $("[data-alert-warn]");
+    const ok = $("[data-alert-ok]");
+    const row = $("[data-new-row]");
+    let timer: number | undefined;
 
-    start.addEventListener("click", () => {
-      blocked.hidden = certified;
-      ok.hidden = !certified;
-      if (certified) {
-        noteBadge.textContent = "In progress";
-        noteBadge.className = "mk-badge ok";
-        q("[data-note-sub]").textContent = "Linked to the certified plan";
-        start.disabled = true;
-      }
+    const set = (s: string) => (root.dataset.state = s);
+    const closeMenu = () => { menu.hidden = true; newBtn.setAttribute("aria-expanded", "false"); };
+
+    newBtn.addEventListener("click", () => {
+      menu.hidden = !menu.hidden;
+      newBtn.setAttribute("aria-expanded", String(!menu.hidden));
     });
-    certify.addEventListener("click", () => {
-      certify.disabled = true;
-      certify.textContent = "Requesting…";
-      setTimeout(() => {
-        certified = true;
-        planBadge.textContent = "Certified";
-        planBadge.className = "mk-badge ok";
-        q("[data-plan-sub]").textContent = "Signed off by the physician";
-        noteBadge.textContent = "Ready";
-        note.classList.remove("locked");
-        blocked.hidden = true;
-        demo.hidden = false;
-        start.focus();
-      }, quick ? 0 : 900);
+    $("[data-pick]").addEventListener("click", () => {
+      closeMenu();
+      if (root.dataset.state === "done") { ok.hidden = true; row.hidden = false; }
+      else if (root.dataset.state === "pending") warn.hidden = false;
     });
-    q("[data-reset]").addEventListener("click", () => {
-      certified = false;
-      planBadge.textContent = "Awaiting certification";
-      planBadge.className = "mk-badge wait";
-      q("[data-plan-sub]").textContent = "Sent to the physician for sign-off";
-      noteBadge.innerHTML = lockHtml;
-      noteBadge.className = "mk-badge";
-      q("[data-note-sub]").textContent = "Today's visit";
-      note.classList.add("locked");
-      certify.disabled = false;
-      certify.textContent = "Request certification";
-      ok.hidden = true;
-      demo.hidden = true;
-      start.disabled = false;
-      start.focus();
+    root.querySelectorAll<HTMLButtonElement>("[data-cert]").forEach((b) =>
+      b.addEventListener("click", () => {
+        if (root.dataset.state !== "pending") return;
+        warn.hidden = true;
+        set("sent");
+        timer = window.setTimeout(() => { set("done"); ok.hidden = false; }, 1400);
+      })
+    );
+    $("[data-reset]").addEventListener("click", () => {
+      clearTimeout(timer);
+      set("pending");
+      [warn, ok, row, menu].forEach((el) => (el.hidden = true));
+    });
+    const app = $(".app");
+    const fit = () => {
+      const w = app.parentElement!.clientWidth;
+      app.style.setProperty("zoom", String(Math.max(0.6, Math.min(1, w / 1000))));
+    };
+    new ResizeObserver(fit).observe(app.parentElement!);
+    fit();
+    document.addEventListener("click", (e) => {
+      if (!root.querySelector(".new-wrap")!.contains(e.target as Node)) closeMenu();
     });
   });
 </script>
 
 <style>
-  small {
-    font-size: 11.5px;
-    color: var(--ink-muted);
+  .tc {
+    --c-bg: #f3f4f1;
+    --c-panel: #ffffff;
+    --c-ink: #1a1f1c;
+    --c-mute: #6b716d;
+    --c-line: #e6e8e4;
+    --c-acc: #4b4fd6;
+    --c-acc-soft: #eceefd;
+    --c-gold: #c9952b;
+    --c-ok: #2f8a4c;
+    --c-ok-soft: #eaf5ee;
+    --c-warn: #b4620f;
+    --c-warn-soft: #fdf3e6;
+    color: var(--c-ink);
+    font-family: var(--font-body, Inter, system-ui, sans-serif);
   }
-  .content {
-    padding: 16px;
-    display: grid;
-    gap: 12px;
-  }
-  .patient {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .who {
-    display: grid;
-    margin-right: auto;
-  }
-  .who b {
-    font-size: 15px;
-    font-weight: 600;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-    gap: 12px;
-    align-items: start;
-  }
-  .card-title {
-    margin: 0;
-    padding: 12px 14px 8px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ink-secondary);
-  }
-  ol {
-    list-style: none;
-    margin: 0;
-    padding: 0 6px 6px;
-  }
-  li {
+  .app {
     position: relative;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 8px;
-    border-radius: 10px;
+    width: 1000px;
+    background: var(--c-bg);
+    font-size: 12.5px;
+    line-height: 1.35;
   }
-  li + li::before {
-    content: "";
-    position: absolute;
-    left: 24px;
-    top: -10px;
-    height: 20px;
-    border-left: 1.5px dashed var(--rule);
-  }
-  .ic {
-    position: relative;
-    width: 34px;
-    height: 34px;
-    flex: none;
+  .top {
     display: grid;
-    place-items: center;
-    border-radius: 10px;
-    background: var(--bg-sunk);
-    color: var(--ink-secondary);
-  }
-  .txt {
-    display: grid;
-    min-width: 0;
-    margin-right: auto;
-  }
-  .txt b {
-    font-weight: 500;
-  }
-  .locked .txt b,
-  .locked .ic {
-    color: var(--ink-muted);
-  }
-  .today {
-    padding-bottom: 14px;
-  }
-  .visit {
-    display: flex;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 6px;
-    margin: 0 14px 12px;
-    color: var(--ink-secondary);
+    padding: 10px 18px;
   }
-  .today > .mk-btn {
-    margin: 0 14px;
-    width: calc(100% - 28px);
+  .brand { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+  .brand small { font-weight: 500; color: var(--c-mute); font-size: 11px; margin-left: 1px; }
+  .mark {
+    width: 20px; height: 20px; border-radius: 6px;
+    background: conic-gradient(from 200deg, var(--c-acc), #8a8ef0, var(--c-gold), var(--c-acc));
   }
-  .msg {
-    min-height: 150px;
-    padding: 12px 14px 0;
+  .patient-pill {
+    display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13.5px;
+    padding: 4px 12px 4px 4px; border-radius: 999px; background: var(--c-panel);
+    box-shadow: 0 0 0 1px var(--c-line), 0 0 0 4px var(--c-acc-soft);
   }
-  .alert {
-    border-radius: 10px;
-    padding: 12px;
-    background: color-mix(in srgb, var(--warn) 10%, var(--bg-raised));
-    border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--bg-raised));
+  .top-end { justify-self: end; display: flex; align-items: center; gap: 16px; color: var(--c-mute); }
+  .facility { display: inline-flex; align-items: center; gap: 5px; }
+  .facility b, .me { color: var(--c-ink); font-weight: 600; }
+  .me { display: inline-flex; align-items: center; gap: 8px; }
+  .bell { position: relative; display: inline-flex; color: var(--c-ink); }
+  .bell i { position: absolute; top: -5px; right: -6px; font: 600 9px/14px sans-serif; font-style: normal; min-width: 14px; text-align: center; border-radius: 7px; background: #d64545; color: #fff; }
+
+  .av {
+    display: inline-grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 50%;
+    background: #dfe2f8; color: #343899; font-weight: 700; font-size: 10.5px; letter-spacing: 0.02em;
   }
-  .alert.okay {
-    background: color-mix(in srgb, var(--ok) 9%, var(--bg-raised));
-    border-color: color-mix(in srgb, var(--ok) 32%, var(--bg-raised));
+  .av.warm { background: #f6e6c6; color: #7a5410; }
+  .av.sm { width: 26px; height: 26px; }
+  .av.xs { width: 22px; height: 22px; font-size: 9px; margin-right: 8px; }
+  .av.lg { width: 46px; height: 46px; font-size: 15px; background: #3a3f72; color: #fff; box-shadow: 0 0 0 2px rgb(255 255 255 / 0.18); }
+
+  .body { display: grid; grid-template-columns: 52px 44px 1fr; gap: 0; padding: 0 16px 16px 0; }
+  .rail { display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 10px; color: #3d433f; }
+  .rail span { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; }
+  .rail .on { background: var(--c-acc); color: #fff; box-shadow: 0 6px 14px -6px var(--c-acc); }
+  .rail .end { margin-top: 18px; }
+  .disc { display: flex; flex-direction: column; gap: 4px; padding-top: 10px; }
+  .disc span {
+    writing-mode: vertical-rl; transform: rotate(180deg); text-align: center;
+    padding: 14px 0; border-radius: 0 8px 8px 0; background: #e7e9e5; color: var(--c-mute); font-weight: 600; font-size: 11px;
   }
-  .alert p {
-    margin: 0 0 10px;
-    color: var(--ink-secondary);
+  .disc .on { background: var(--c-panel); color: var(--c-acc); padding: 18px 0; }
+  .page { background: var(--c-panel); border-radius: 14px; padding: 18px 20px 14px; box-shadow: 0 1px 2px rgb(0 0 0 / 0.04); min-width: 0; }
+
+  .title-row { display: flex; justify-content: space-between; align-items: flex-start; }
+  h4 { margin: 0; font-size: 16px; font-weight: 650; letter-spacing: -0.01em; }
+  .crumb { margin: 4px 0 0; color: var(--c-mute); display: flex; align-items: center; gap: 5px; }
+  .crumb span { color: var(--c-acc); font-weight: 600; }
+
+  .banner {
+    position: relative; overflow: hidden; margin-top: 14px; display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 12px; color: #fff;
+    background: linear-gradient(110deg, #1f2233 0%, #2b2f4f 55%, #3a3366 100%);
   }
-  .alert .alert-title {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 4px;
+  .thread-art { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.55; }
+  .thread-art path { fill: none; stroke: var(--c-gold); stroke-width: 1.2; }
+  .thread-art path + path { stroke: #8a8ef0; opacity: 0.6; }
+  .who { position: relative; display: grid; grid-template-columns: auto auto; justify-content: start; column-gap: 8px; row-gap: 2px; align-items: center; }
+  .who b { font-size: 15px; }
+  .who small { grid-column: 1 / -1; color: rgb(255 255 255 / 0.72); }
+  .go { position: relative; margin-left: auto; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; background: rgb(255 255 255 / 0.12); }
+
+  .chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .chip.live { background: rgb(255 255 255 / 0.14); color: #d7f2df; box-shadow: inset 0 0 0 1px rgb(215 242 223 / 0.35); }
+  .chip.okc { background: var(--c-ok-soft); color: var(--c-ok); box-shadow: inset 0 0 0 1px #bfe0c9; }
+  .chip.wait { background: var(--c-warn-soft); color: var(--c-warn); box-shadow: inset 0 0 0 1px #f0d3ad; }
+  .chip.draft { background: var(--c-acc-soft); color: var(--c-acc); }
+
+  .meta {
+    margin: 12px 0 0; display: grid; grid-template-columns: repeat(6, auto); justify-content: space-between; gap: 12px;
+    padding: 11px 16px; border: 1px dashed #d6d9d4; border-radius: 12px;
   }
-  .alert-title :global(svg) {
-    color: color-mix(in srgb, var(--warn) 80%, var(--ink));
+  .meta dt { color: var(--c-mute); font-size: 11px; }
+  .meta dd { margin: 3px 0 0; font-weight: 600; }
+  .st::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; background: currentColor; }
+  .st.ok { color: var(--c-ok); }
+  .st.poc { color: var(--c-warn); transition: color 0.3s; }
+  [data-state="done"] .st.poc { color: var(--c-ok); }
+
+  .thread { list-style: none; margin: 14px 0 2px; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); counter-reset: none; }
+  .thread li { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--c-mute); font-size: 11px; font-weight: 600; }
+  .thread li::before { content: ""; position: absolute; top: 6px; right: 50%; width: 100%; height: 2px; background: var(--c-line); z-index: 0; }
+  .thread li:first-child::before { display: none; }
+  .thread i { position: relative; z-index: 1; width: 14px; height: 14px; border-radius: 50%; background: var(--c-panel); box-shadow: inset 0 0 0 2px #cfd3ce; transition: box-shadow 0.3s, background 0.3s; }
+  .thread .done { color: var(--c-ink); }
+  .thread .done::before { background: var(--c-gold); }
+  .thread .done i { background: var(--c-gold); box-shadow: 0 0 0 3px #f6ead1; }
+  .thread .cert i { box-shadow: inset 0 0 0 2px var(--c-warn), 0 0 0 3px var(--c-warn-soft); }
+  .thread .cert, [data-state="done"] .thread .notes { color: var(--c-ink); }
+  [data-state="sent"] .thread .cert i { animation: pulse 1s ease-in-out infinite; }
+  [data-state="done"] .thread .cert::before, [data-state="done"] .thread .notes::before { background: var(--c-gold); }
+  [data-state="done"] .thread .cert i { background: var(--c-gold); box-shadow: 0 0 0 3px #f6ead1; }
+  [data-state="done"] .thread .notes i { box-shadow: inset 0 0 0 2px var(--c-acc), 0 0 0 3px var(--c-acc-soft); }
+  @keyframes pulse { 50% { box-shadow: inset 0 0 0 2px var(--c-warn), 0 0 0 7px var(--c-warn-soft); } }
+
+  .tabs { display: flex; gap: 4px; margin-top: 14px; border-bottom: 1px solid var(--c-line); }
+  .tabs span { padding: 9px 12px; color: var(--c-mute); font-weight: 500; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tabs .on { color: var(--c-ink); font-weight: 650; border-color: var(--c-acc); }
+  .tabs i { font-style: normal; display: inline-grid; place-items: center; min-width: 17px; height: 17px; margin-left: 4px; border-radius: 9px; background: #8b918d; color: #fff; font-size: 10px; }
+
+  .bar { display: flex; align-items: center; gap: 14px; margin: 12px 0 10px; }
+  .bar > b { font-weight: 600; color: #3d433f; }
+  .filters { margin-left: auto; color: var(--c-mute); display: inline-flex; align-items: center; gap: 4px; }
+  .filters b { color: var(--c-ink); }
+  .new-wrap { position: relative; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 6px; border: 0; cursor: pointer; font: inherit; font-weight: 600;
+    padding: 7px 12px; border-radius: 9px; background: var(--c-acc); color: #fff; box-shadow: 0 6px 14px -8px var(--c-acc);
   }
-  .okay .alert-title :global(svg) {
-    color: var(--ok);
+  .btn-primary:focus-visible, .btn-ghost:focus-visible, .link:focus-visible, .menu button:focus-visible, .reset:focus-visible { outline: 2px solid var(--c-gold); outline-offset: 2px; }
+  .menu {
+    position: absolute; right: 0; top: calc(100% + 6px); z-index: 5; width: 270px; padding: 6px; display: grid; gap: 2px;
+    background: var(--c-panel); border-radius: 12px; box-shadow: 0 0 0 1px var(--c-line), 0 18px 40px -16px rgb(20 24 40 / 0.35);
   }
-  .demo-note {
-    margin: 0;
-    font-size: 11.5px;
-    color: var(--ink-muted);
+  .menu button {
+    display: grid; grid-template-columns: 18px 1fr 14px; align-items: center; gap: 10px; text-align: left;
+    padding: 8px 9px; border: 0; border-radius: 8px; background: none; font: inherit; color: var(--c-ink); cursor: pointer;
   }
-  @media (max-width: 720px) {
-    .grid {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    li {
-      flex-wrap: wrap;
-    }
-    .msg {
-      min-height: 0;
-    }
+  .menu button:hover:not(:disabled) { background: var(--c-bg); }
+  .menu button:disabled { color: #9ca19d; cursor: not-allowed; }
+  .menu span { display: grid; }
+  .menu small { color: var(--c-mute); font-size: 11px; }
+  .open-why, [data-state="done"] .lock-why { display: none; }
+  [data-state="done"] .open-why { display: inline; color: var(--c-ok); }
+  [data-state="done"] [data-pick] > :global(svg:last-child) { visibility: hidden; }
+
+  .alert { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 10px; }
+  .alert p { margin: 0; flex: 1; }
+  .alert.warn { background: var(--c-warn-soft); color: #6d3c08; box-shadow: inset 0 0 0 1px #f0d3ad; }
+  .alert.ok { background: var(--c-ok-soft); color: #1f5e34; box-shadow: inset 0 0 0 1px #bfe0c9; }
+  .btn-ghost { border: 0; cursor: pointer; font: inherit; font-weight: 600; padding: 6px 11px; border-radius: 8px; background: var(--c-panel); color: var(--c-warn); box-shadow: 0 0 0 1px #f0d3ad; white-space: nowrap; }
+
+  .docs { width: 100%; border-collapse: collapse; }
+  .docs th { text-align: left; font-weight: 600; color: var(--c-mute); font-size: 11.5px; padding: 8px 10px; border-bottom: 1px solid var(--c-line); }
+  .docs td { padding: 10px; border-bottom: 1px solid var(--c-line); vertical-align: middle; }
+  .docs td:first-child { font-weight: 600; }
+  .docs td:first-child :global(svg) { vertical-align: -2px; color: var(--c-mute); }
+  .who-c { display: inline-flex; align-items: center; }
+  .docs td:last-child { text-align: right; }
+  .docs a, .link { color: var(--c-acc); font-weight: 600; display: inline-flex; align-items: center; gap: 3px; cursor: default; }
+  .link { border: 0; background: none; font: inherit; cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 3px; }
+  .new-row { animation: rowin 0.45s ease-out; background: #f8f8ff; }
+  @keyframes rowin { from { opacity: 0; transform: translateY(-4px); } }
+
+  .when-sent, .when-done { display: none !important; }
+  [data-state="sent"] .when-pending, [data-state="done"] .when-pending { display: none !important; }
+  [data-state="sent"] .when-sent, [data-state="done"] .when-done { display: inline-flex !important; }
+  .st .when-sent, .st .when-done { display: none !important; }
+  [data-state="sent"] .st .when-sent, [data-state="done"] .st .when-done { display: inline !important; }
+
+  .foot { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; color: var(--c-mute); }
+  .foot b { color: var(--c-ink); }
+  .reset { display: inline-flex; align-items: center; gap: 5px; border: 0; background: none; font: inherit; color: var(--c-mute); cursor: pointer; }
+  .fab { position: absolute; right: 0; bottom: 70px; display: grid; place-items: center; width: 38px; height: 40px; border-radius: 10px 0 0 10px; background: #2a2e3f; color: #fff; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .new-row, [data-state="sent"] .thread .cert i { animation: none; }
   }
 </style>
