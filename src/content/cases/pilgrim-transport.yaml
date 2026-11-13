@@ -9,7 +9,7 @@ meta:
   - { label: Scope, value: "Front end only, backend unchanged" }
 ndaRecreated: true
 widget: before-after
-widgetIntro: "Switch between before and after, then try the search: change the group size, swap the route, or pick a popular route. The backend is the same in both."
+widgetIntro: "Switch between before and after. The backend, the fleet and the bookings are the same in both; what changed is who the site is for."
 stats:
   - { value: "0", unit: removed, label: Every section of the original site survives }
   - { value: "1", unit: backend, label: "Left exactly as it was" }

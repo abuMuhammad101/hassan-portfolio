@@ -1,23 +1,33 @@
 ---
-/* The same booking site before and after: same backend and content, reshaped.
-   Re-created with a stand-in brand, illustrated stand-ins for photos and
-   sample prices. */
+/* Before: the generic car-rental template an agent produced.
+   After: the same backend reshaped into a pilgrim transport service.
+   Re-created with stand-in brands, illustrated stand-ins for photos and
+   sample content. */
 import BrowserFrame from "../BrowserFrame.astro";
 import Icon from "../Icon.astro";
-const fleet = [
-  { name: "Sedan", type: "Sedan", pax: 3, bags: 2, from: 180 },
-  { name: "Family MPV", type: "MPV", pax: 7, bags: 5, from: 260 },
-  { name: "Full-size SUV", type: "SUV", pax: 7, bags: 6, from: 340 },
-  { name: "Group van", type: "Van", pax: 10, bags: 10, from: 420 },
+const slides = [
+  { t: "VIP Airport Transfers, Door to Door", d: "Meet-and-greet arrivals and a vehicle waiting the moment you land.", art: "s-dusk" },
+  { t: "Between the Holy Cities, in Comfort", d: "Fixed-price rides with drivers who know the way and the rhythm of the day.", art: "s-road" },
+  { t: "Ziyarat Tours at Your Pace", d: "Visit the historic sites with a driver who waits while you pray.", art: "s-palms" },
 ];
-const routes = [
-  ["Jeddah Airport", "Makkah", "1 h 15 min"],
-  ["Makkah", "Madinah", "4 h 30 min"],
-  ["Madinah Airport", "Madinah", "25 min"],
+const fleet = [
+  { n: "Sedan", k: "Sedan", p: 3, b: 2, d: "For individuals and small families." },
+  { n: "Family MPV", k: "MPV", p: 7, b: 5, d: "Spacious, registered for pilgrim travel." },
+  { n: "Full-size SUV", k: "SUV", p: 7, b: 6, d: "Premium comfort for VIP travel." },
+  { n: "Group Van", k: "Van", p: 10, b: 10, d: "High capacity, made for groups." },
+];
+const quotes = ["Always on time and the driver knew every stop.", "Smooth ride between the cities, very professional.", "Helped with all our luggage at 3 am. Highly recommend.", "Our family of seven fit easily. Will book again."];
+const reasons = [
+  { t: "Safe & Comfortable Travel", d: "Every vehicle is registered for pilgrim transport and maintained for comfort on long drives." },
+  { t: "Always on Time", d: "Flight monitoring and support around the clock, with free waiting time for arrivals." },
+  { t: "Updates on WhatsApp", d: "Booking confirmation, reminders, driver details and journey updates, where pilgrims already are." },
 ];
 ---
 
-<div class="ba" data-ba data-view="after">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&display=swap" />
+
+<div class="ba" data-ba>
   <div class="switch" role="group" aria-label="Show the site before or after the redesign">
     <button type="button" data-show="before" aria-pressed="false">Before</button>
     <button type="button" data-show="after" aria-pressed="true">After</button>
@@ -25,83 +35,101 @@ const routes = [
 
   <BrowserFrame address="pilgrimdrivers.example" label="Re-created pilgrim transport site">
     <div class="fit">
-      <!-- BEFORE: what the agent shipped -->
+      <!-- BEFORE: generic rental template -->
       <div class="pg before" data-before hidden>
         <nav class="b-nav">
-          <span class="b-pills"><b><Icon name="house" size={12} />Home</b><span>Fleet <Icon name="caret-down" size={10} /></span><span>Routes &amp; Pricing</span><span>About Us</span><span>Partners <Icon name="caret-down" size={10} /></span><span>Contact</span></span>
-          <span class="b-end"><span>EN <Icon name="caret-down" size={10} /></span><span class="b-cta">Book Now <Icon name="arrow-right" size={11} /></span></span>
+          <span class="b-logo"><Icon name="car-profile" size={20} weight="fill" />RENT<b>CAR</b>PRO</span>
+          <span class="b-links"><b>Home</b><span>Fleet</span><span>About</span><span>Contact</span></span>
+          <span class="b-end"><span>Sign In</span><span class="b-btn">Get Started</span></span>
         </nav>
         <div class="b-hero">
-          <div class="art a-dusk"></div>
-          <div class="b-card"><h5>VIP Airport Transfers, Door to Door</h5><i></i><p>Meet-and-greet arrivals, priority pickup, and a vehicle waiting the moment you land. Seamless transfers across the region.</p></div>
-          <span class="b-dots"><b></b><i></i><i></i><i></i><i></i></span>
-          <span class="b-count">01 / 05</span>
+          <div>
+            <span class="b-chip"><Icon name="lightning" size={12} />Premium Car Rental Experience</span>
+            <h5>Drive Your <em>Dreams</em></h5>
+            <p>Experience luxury and reliability with our premium fleet. From business meetings to weekend adventures, find the perfect vehicle for every journey.</p>
+            <div class="b-ctas"><span class="b-btn"><Icon name="arrow-right" size={13} />Browse Fleet</span><span class="b-ghost">Learn More</span></div>
+            <div class="b-stats"><span><b>1000+</b>Happy Customers</span><span><b>150+</b>Premium Cars</span><span><b>24/7</b>Support</span></div>
+          </div>
+          <div class="b-iso" aria-hidden="true"><div class="lot">{Array.from({ length: 8 }).map((_, i) => <i style={`--h:${[8, 220, 0, 210, 40, 0, 215, 30][i]}`}></i>)}</div></div>
         </div>
-        <div class="b-sec">
-          <h6>Choose Your Vehicle</h6>
-          <p>Comfort tailored for every journey.</p>
-          <div class="b-cars">
-            {fleet.map((f) => (
-              <div class="b-car"><div class="art a-car"></div><b>{f.name}</b><small>{f.type.toUpperCase()}</small><p>{f.pax} passengers · {f.bags} bags</p><span>Routes &amp; Pricing</span><span class="b-cta sm">Book Now</span></div>
-            ))}
+        <div class="b-fleet">
+          <aside><span class="b-in"><Icon name="magnifying-glass" size={12} />Search by make, model…</span><span class="b-btn wide">Search Fleet</span><small>Vehicle make</small><span class="b-in">All Makes</span><small>Fuel type</small><span class="b-in">All Fuel Types</span><small>Daily rate</small><span class="b-in">$ Min — $ Max</span></aside>
+          <div class="b-cards">
+            <div class="b-card"><span class="b-price">$75/day</span><div class="art a-car"></div><b>Sedan 2021</b><small><Icon name="gas-pump" size={11} />Gasoline · GPS included</small></div>
+            <div class="b-card"><span class="b-price">$85/day</span><div class="art a-car"></div><b>SUV 2020</b><small><Icon name="gas-pump" size={11} />Gasoline · Insurance included</small></div>
           </div>
         </div>
-        <p class="note"><Icon name="info" size={13} />Booking starts on another page. Nothing says what a trip costs, or which car fits your group, until you get there.</p>
+        <p class="note"><Icon name="info" size={14} />A generic rental template: daily rates, fuel type, model year, "Drive Your Dreams". None of it helps a pilgrim choose a ride from the airport to the Haram.</p>
       </div>
 
-      <!-- AFTER: the redesign -->
+      <!-- AFTER: pilgrim transport -->
       <div class="pg after" data-after>
-        <header class="a-top">
-          <Icon name="list" size={20} />
-          <span class="logo"><i></i>Pilgrim Drivers</span>
-          <span class="a-end"><span class="lang"><Icon name="translate" size={13} />Eng <Icon name="caret-down" size={10} /></span><span class="me"><Icon name="user" size={16} /></span></span>
-        </header>
+        <nav class="a-nav">
+          <span class="a-logo"><i></i>Pilgrim Drivers</span>
+          <span class="a-pills"><b><Icon name="house" size={12} weight="fill" />Home</b><span><Icon name="car-profile" size={12} />Fleet <Icon name="caret-down" size={9} /></span><span><Icon name="map-trifold" size={12} />Routes &amp; Pricing</span><span><Icon name="users-three" size={12} />About</span><span><Icon name="phone" size={12} />Contact</span></span>
+          <span class="a-end"><span><Icon name="globe" size={12} />EN</span><span class="a-btn"><Icon name="calendar-check" size={12} />Book Now <Icon name="arrow-right" size={11} /></span></span>
+        </nav>
 
-        <section class="a-hero">
-          <svg class="arc" viewBox="0 0 400 400" aria-hidden="true"><circle cx="200" cy="200" r="170" /><circle cx="200" cy="200" r="120" /></svg>
-          <div class="a-left">
-            <h5>Your sacred journey deserves a driver who understands its weight.</h5>
-            <form class="search" data-search onsubmit="return false">
-              <label><span><Icon name="users" size={12} />Passengers</span>
-                <span class="step"><button type="button" data-pax="-1" aria-label="Fewer passengers"><Icon name="minus" size={11} /></button><b data-pax-v>4</b><button type="button" data-pax="1" aria-label="More passengers"><Icon name="plus" size={11} /></button></span></label>
-              <label><span><Icon name="suitcase-rolling" size={12} />Bags</span>
-                <span class="step"><button type="button" data-bag="-1" aria-label="Fewer bags"><Icon name="minus" size={11} /></button><b data-bag-v>3</b><button type="button" data-bag="1" aria-label="More bags"><Icon name="plus" size={11} /></button></span></label>
-              <label><span><Icon name="calendar-blank" size={12} />When</span><span class="field"><Icon name="calendar-blank" size={14} />14 Mar, 09:30</span></label>
-              <label class="wide"><span>From</span><span class="field"><Icon name="map-pin" size={14} weight="fill" /><b data-from>Jeddah Airport</b><Icon name="caret-down" size={11} /></span></label>
-              <button type="button" class="swap" data-swap aria-label="Swap from and to"><Icon name="arrows-left-right" size={15} /></button>
-              <label class="wide"><span>To</span><span class="field"><Icon name="map-pin" size={14} weight="fill" /><b data-to>Makkah</b><Icon name="caret-down" size={11} /></span></label>
-              <button type="button" class="go" data-go>Book now <Icon name="magnifying-glass" size={15} /></button>
-            </form>
+        <section class="hero" data-hero>
+          {slides.map((s, i) => <div class={`slide art ${s.art}`} data-slide={i} aria-hidden={i !== 0 ? "true" : undefined}></div>)}
+          <div class="wash"></div>
+          <div class="panel">
+            {slides.map((s, i) => (
+              <div class="copy" data-copy={i} hidden={i !== 0}><h5>{s.t}</h5><i></i><p>{s.d}</p></div>
+            ))}
           </div>
-          <div class="mosaic" aria-hidden="true">
-            <div class="art t1 a-street"></div><div class="art t2 a-car2"></div>
-            <div class="art t3 a-dusk"></div><div class="art t4 a-palms"></div>
-            <div class="art t5 a-crowd"></div>
+          <button type="button" class="nav prev" data-prev aria-label="Previous slide"><Icon name="caret-left" size={16} /></button>
+          <button type="button" class="nav next" data-next aria-label="Next slide"><Icon name="caret-right" size={16} /></button>
+          <span class="count"><b data-count>01</b> / 03</span>
+          <span class="dots">{slides.map((_, i) => <button type="button" data-dot={i} aria-label={`Slide ${i + 1}`}><i></i></button>)}</span>
+        </section>
+
+        <section class="sec sand">
+          <h6>Choose Your Vehicle</h6><i class="rule"></i>
+          <p class="sub">Picked by how many travel and how much they carry.</p>
+          <div class="cars">
+            {fleet.map((f) => (
+              <article class="car">
+                <div class="art a-car"><span class="kind">{f.k}</span></div>
+                <b>{f.n}</b>
+                <p>{f.d}</p>
+                <span class="cap"><span><Icon name="users" size={13} />{f.p} passengers</span><span><Icon name="suitcase-rolling" size={13} />{f.b} bags</span></span>
+                <span class="row"><span class="ghost">Routes &amp; Pricing</span><span class="a-btn sm">Book Now</span></span>
+              </article>
+            ))}
           </div>
         </section>
 
-        <section class="results" data-results hidden>
-          <p class="r-head"><b data-r-title></b><span data-r-sub></span></p>
-          <div class="cars">
-            {fleet.map((f) => (
-              <div class="car" data-car data-pax={f.pax} data-bags={f.bags}>
-                <div class="art a-car"></div>
-                <div class="c-b"><b>{f.name}</b><small><Icon name="users" size={11} />{f.pax} <Icon name="suitcase-rolling" size={11} />{f.bags}</small></div>
-                <div class="c-p"><small>from</small><b>SAR {f.from}</b></div>
-                <span class="why-not">Too small for your group</span>
+        <section class="sec why">
+          <div class="why-l">
+            <h6>Why Choose Pilgrim Drivers</h6><i class="rule"></i>
+            <ol class="reasons">
+              {reasons.map((r, i) => (
+                <li data-reason={i} class={i === 0 ? "open" : ""}>
+                  <span class="track"><i></i></span>
+                  <button type="button" data-open={i} aria-expanded={i === 0 ? "true" : "false"}><b>{r.t}</b><em>0{i + 1}</em></button>
+                  <p>{r.d}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div class="art s-road why-r"></div>
+        </section>
+
+        <section class="sec sand quotes">
+          <h6>What Our Travellers Say</h6><i class="rule"></i>
+          <div class="cols" aria-hidden="true">
+            {[0, 1, 2].map((c) => (
+              <div class={`col c${c}`}>
+                {[...quotes, ...quotes].map((q, i) => (
+                  <div class="q"><span class="stars">★★★★★</span><p>“{q}”</p><small>Sample review {c * 4 + (i % 4) + 1}</small></div>
+                ))}
               </div>
             ))}
           </div>
         </section>
 
-        <section class="popular" data-popular>
-          <p class="r-head"><b>Popular routes</b><span>Fixed prices, no surprises</span></p>
-          <div class="routes">
-            {routes.map(([f, t, d]) => (
-              <button type="button" class="route" data-route={`${f}|${t}`}><span><b>{f}</b><Icon name="arrow-right" size={12} /><b>{t}</b></span><small><Icon name="clock" size={11} />{d}</small></button>
-            ))}
-          </div>
-        </section>
+        <p class="note ok"><Icon name="check-circle" size={14} />Same backend and data. Vehicles by passengers and bags, fixed routes, real reviews and WhatsApp updates, in a voice that fits the journey.</p>
       </div>
     </div>
   </BrowserFrame>
@@ -118,27 +146,29 @@ const routes = [
       buttons.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
     }));
 
-    let pax = 4, bags = 3, searched = false;
-    const paxV = q("[data-pax-v]"), bagV = q("[data-bag-v]"), from = q("[data-from]"), to = q("[data-to]");
-    const results = q("[data-results]"), popular = q("[data-popular]");
-    const render = () => {
-      paxV.textContent = String(pax); bagV.textContent = String(bags);
-      if (!searched) return;
-      let fits = 0;
-      root.querySelectorAll<HTMLElement>("[data-car]").forEach((c) => {
-        const ok = +c.dataset.pax! >= pax && +c.dataset.bags! >= bags;
-        c.classList.toggle("no", !ok); if (ok) fits++;
-      });
-      q("[data-r-title]").textContent = `${from.textContent} → ${to.textContent}`;
-      q("[data-r-sub]").textContent = `${fits} of 4 vehicles fit ${pax} passengers and ${bags} bags · sample prices`;
+    // Hero slider
+    const slides = [...root.querySelectorAll<HTMLElement>("[data-slide]")];
+    const copies = [...root.querySelectorAll<HTMLElement>("[data-copy]")];
+    const dots = [...root.querySelectorAll<HTMLButtonElement>("[data-dot]")];
+    let cur = 0, timer: number | undefined;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const go = (n: number) => {
+      cur = (n + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle("on", i === cur));
+      copies.forEach((c, i) => (c.hidden = i !== cur));
+      dots.forEach((d, i) => d.toggleAttribute("aria-current", i === cur));
+      q("[data-count]").textContent = `0${cur + 1}`;
     };
-    root.querySelectorAll<HTMLButtonElement>("[data-pax]").forEach((b) => b.addEventListener("click", () => { pax = Math.min(12, Math.max(1, pax + +b.dataset.pax!)); render(); }));
-    root.querySelectorAll<HTMLButtonElement>("[data-bag]").forEach((b) => b.addEventListener("click", () => { bags = Math.min(12, Math.max(0, bags + +b.dataset.bag!)); render(); }));
-    q("[data-swap]").addEventListener("click", () => { const t = from.textContent; from.textContent = to.textContent; to.textContent = t; render(); });
-    const search = () => { searched = true; results.hidden = false; popular.hidden = true; render(); };
-    q("[data-go]").addEventListener("click", search);
-    root.querySelectorAll<HTMLButtonElement>("[data-route]").forEach((b) => b.addEventListener("click", () => {
-      const [f, t] = b.dataset.route!.split("|"); from.textContent = f; to.textContent = t; search();
+    const auto = () => { clearInterval(timer); if (!reduce) timer = window.setInterval(() => go(cur + 1), 5000); };
+    q("[data-prev]").addEventListener("click", () => { go(cur - 1); auto(); });
+    q("[data-next]").addEventListener("click", () => { go(cur + 1); auto(); });
+    dots.forEach((d, i) => d.addEventListener("click", () => { go(i); auto(); }));
+    go(0); auto();
+
+    // Reasons accordion
+    const items = [...root.querySelectorAll<HTMLElement>("[data-reason]")];
+    root.querySelectorAll<HTMLButtonElement>("[data-open]").forEach((b, i) => b.addEventListener("click", () => {
+      items.forEach((it, j) => { it.classList.toggle("open", j === i); it.querySelector("button")!.setAttribute("aria-expanded", String(j === i)); });
     }));
 
     const fit = q(".fit");
@@ -152,111 +182,135 @@ const routes = [
   .switch button { border: 0; background: none; font: inherit; font-weight: 600; font-size: var(--text-sm); padding: 6px 16px; border-radius: 999px; color: var(--ink-muted); cursor: pointer; }
   .switch [aria-pressed="true"] { background: var(--bg-raised); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
   .fit { width: 1000px; }
-  .pg { --gold: #a9822a; --gold2: #c9a24a; --ink: #17181a; --mute: #7d8086; background: #fff; color: var(--ink); font: 13px/1.45 Inter, var(--font-body, system-ui), sans-serif; min-height: 640px; }
+  .pg { font: 13px/1.5 Inter, var(--font-body, system-ui), sans-serif; background: #fff; }
   .pg[hidden] { display: none; }
-  button { font: inherit; }
-  :is(.go, .swap, .step button, .route):focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .note { display: flex; align-items: center; gap: 8px; margin: 0; padding: 12px 26px; background: #fff4e5; color: #7a4a0c; font-size: 12.5px; }
+  .note.ok { background: #e7f2ed; color: #0b4a2c; }
 
   /* Illustrated stand-ins for photography */
-  .art { position: relative; overflow: hidden; background: #ddd; }
-  .a-dusk { background: linear-gradient(180deg, #f3c58f 0%, #e7a06d 38%, #8d6b7c 70%, #4c4a63 100%); }
-  .a-dusk::after { content: ""; position: absolute; inset: auto 0 0; height: 46%; background:
-      radial-gradient(circle at 50% 0, #4a4258 18px, transparent 19px) 50% 30% / 60px 60px no-repeat,
-      linear-gradient(#3d3a4d, #2f2d3b); clip-path: polygon(0 40%, 8% 40%, 8% 20%, 10% 20%, 10% 40%, 22% 40%, 22% 30%, 34% 30%, 34% 10%, 35% 0, 36% 10%, 36% 30%, 46% 30%, 46% 18%, 54% 18%, 54% 30%, 64% 30%, 64% 10%, 65% 0, 66% 10%, 66% 30%, 78% 30%, 78% 40%, 90% 40%, 90% 22%, 92% 22%, 92% 40%, 100% 40%, 100% 100%, 0 100%); }
-  .a-car, .a-car2 { background: linear-gradient(180deg, #eef0f2 0%, #e2e5e8 60%, #cfd3d7 100%); }
-  .a-car::after, .a-car2::after { content: ""; position: absolute; left: 14%; right: 14%; bottom: 20%; height: 30%; border-radius: 40% 46% 10px 10px / 70% 70% 10px 10px; background: linear-gradient(180deg, #4a4f57, #2a2e34); box-shadow: 0 10px 10px -6px rgb(0 0 0 / 0.35); }
-  .a-car::before, .a-car2::before { content: ""; position: absolute; left: 30%; right: 32%; bottom: 38%; height: 14%; border-radius: 30% 30% 0 0; background: #8fa3b5; z-index: 1; }
-  .a-car2 { background: linear-gradient(180deg, #f6efe4, #e9dcc6); }
-  .a-car2::after { background: linear-gradient(180deg, #f2f2f0, #c9c9c5); }
-  .a-palms { background: linear-gradient(180deg, #bfe0f0 0%, #e6eef0 55%, #d9cdb6 56%, #cbbd9f 100%); }
-  .a-palms::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 18px 10px at 30% 36%, #3f6b43 60%, transparent 62%), radial-gradient(ellipse 18px 10px at 68% 30%, #3f6b43 60%, transparent 62%), linear-gradient(90deg, transparent 29%, #7a5d3f 29% 31%, transparent 31% 67%, #7a5d3f 67% 69%, transparent 69%) 0 40% / 100% 20% no-repeat; }
-  .a-street { background: linear-gradient(180deg, #d6dde4 0%, #aeb9c5 50%, #8e8a85 51%, #6f6b66 100%); }
-  .a-street::after { content: ""; position: absolute; inset: 18% 10% 50%; background: repeating-linear-gradient(90deg, #8995a3 0 14px, #a6b1bd 14px 22px); clip-path: polygon(0 40%, 20% 40%, 20% 0, 40% 0, 40% 30%, 70% 30%, 70% 10%, 100% 10%, 100% 100%, 0 100%); }
-  .a-crowd { background: linear-gradient(180deg, #e9e3d6, #d8cdb7); }
-  .a-crowd::after { content: ""; position: absolute; inset: 40% 0 0; background: radial-gradient(circle 7px at 15% 20%, #fff 96%, transparent), radial-gradient(circle 7px at 35% 14%, #f2f2f2 96%, transparent), radial-gradient(circle 7px at 58% 22%, #fff 96%, transparent), radial-gradient(circle 7px at 80% 16%, #eee 96%, transparent), linear-gradient(90deg, #fff 8%, transparent 8% 28%, #f0f0f0 28% 42%, transparent 42% 51%, #fff 51% 65%, transparent 65% 73%, #eee 73% 87%, transparent 87%) 0 100% / 100% 60% no-repeat; }
+  .art { position: relative; overflow: hidden; }
+  .s-dusk { background: linear-gradient(180deg, #f5cf9c 0%, #e9a774 35%, #a07a82 66%, #4f4a66 100%); }
+  .s-road { background: linear-gradient(180deg, #cfe3ee 0%, #f2e6cf 52%, #c9b48d 53%, #a8946f 100%); }
+  .s-palms { background: linear-gradient(180deg, #a9d3e9 0%, #e8efe9 58%, #d8c7a2 59%, #c2ac80 100%); }
+  .s-dusk::after, .s-road::after, .s-palms::after { content: ""; position: absolute; inset: auto 0 0; height: 52%; background: linear-gradient(#3a3649, #2b2938);
+    clip-path: polygon(0 55%, 9% 55%, 9% 35%, 11% 35%, 11% 55%, 24% 55%, 24% 44%, 36% 44%, 36% 18%, 37% 6%, 38% 18%, 38% 44%, 45% 44%, 45% 30%, 50% 22%, 55% 30%, 55% 44%, 62% 44%, 62% 18%, 63% 6%, 64% 18%, 64% 44%, 76% 44%, 76% 55%, 89% 55%, 89% 36%, 91% 36%, 91% 55%, 100% 55%, 100% 100%, 0 100%); }
+  .s-road::after { height: 34%; background: linear-gradient(#57524a, #3d3a35); clip-path: polygon(0 40%, 100% 30%, 100% 100%, 0 100%); }
+  .s-road::before { content: ""; position: absolute; left: 34%; width: 30%; bottom: 20%; height: 14%; border-radius: 40% 46% 8px 8px / 70% 70% 8px 8px; background: linear-gradient(#f4f4f2, #c9c8c3); box-shadow: 0 10px 12px -6px rgb(0 0 0 / 0.4); z-index: 1; }
+  .s-palms::after { height: 46%; background: radial-gradient(ellipse 34px 16px at 20% 18%, #3d6b46 60%, transparent 62%), radial-gradient(ellipse 34px 16px at 74% 10%, #3d6b46 60%, transparent 62%), linear-gradient(90deg, transparent 19.5%, #6d5236 19.5% 21%, transparent 21% 73.5%, #6d5236 73.5% 75%, transparent 75%) 0 30% / 100% 70% no-repeat; clip-path: none; }
+  .a-car { background: linear-gradient(180deg, #f1efe9 0%, #e5e1d7 62%, #d6d0c2 100%); }
+  .a-car::after { content: ""; position: absolute; left: 16%; right: 16%; bottom: 20%; height: 30%; border-radius: 40% 46% 10px 10px / 70% 70% 10px 10px; background: linear-gradient(180deg, #44484f, #24272c); box-shadow: 0 10px 10px -6px rgb(0 0 0 / 0.35); }
+  .a-car::before { content: ""; position: absolute; left: 31%; right: 33%; bottom: 38%; height: 14%; border-radius: 30% 30% 0 0; background: #8ea2b3; z-index: 1; }
 
-  /* Before */
-  .before { background: #fff; font-size: 12px; }
-  .b-nav { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 10px 18px; border-bottom: 1px solid #eee; }
-  .b-pills { display: flex; gap: 14px; align-items: center; color: #444; font-size: 11px; }
-  .b-pills > * { display: inline-flex; align-items: center; gap: 4px; }
-  .b-pills b { padding: 5px 11px; border-radius: 999px; background: #0f3d33; color: #fff; }
-  .b-end { display: flex; gap: 12px; align-items: center; font-size: 11px; }
-  .b-cta { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 5px; background: #946c1c; color: #fff; font-weight: 600; font-size: 11px; }
-  .b-cta.sm { padding: 5px 9px; justify-self: start; }
-  .b-hero { position: relative; height: 300px; }
-  .b-hero .art { position: absolute; inset: 0; filter: saturate(0.35) brightness(1.15); }
-  .b-card { position: absolute; left: 28px; top: 70px; width: 230px; padding: 18px; background: #faf9f6; box-shadow: 0 6px 20px rgb(0 0 0 / 0.12); }
-  .b-card h5 { margin: 0; font: 700 19px/1.15 Georgia, serif; }
-  .b-card i { display: block; width: 26px; height: 2px; margin: 9px 0; background: #b8892d; }
-  .b-card p { margin: 0; font-size: 10.5px; color: #555; }
-  .b-dots { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; align-items: center; }
-  .b-dots b { width: 16px; height: 3px; background: #b8892d; } .b-dots i { width: 4px; height: 4px; border-radius: 50%; background: #fff; }
-  .b-count { position: absolute; right: 14px; bottom: 12px; padding: 3px 8px; border-radius: 10px; background: rgb(0 0 0 / 0.4); color: #fff; font-size: 10px; }
-  .b-sec { padding: 22px 28px 6px; background: #faf8f3; text-align: center; }
-  .b-sec h6 { margin: 0; font: 700 20px Georgia, serif; }
-  .b-sec > p { margin: 4px 0 14px; color: #777; }
-  .b-cars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: left; }
-  .b-car { display: grid; gap: 3px; padding: 10px; background: #fff; border: 1px solid #eee; }
-  .b-car .art { height: 70px; margin-bottom: 6px; }
-  .b-car small { color: #b8892d; font-size: 9px; letter-spacing: 0.08em; }
-  .b-car p { margin: 0; color: #666; font-size: 11px; }
-  .b-car > span:not(.b-cta) { color: #0f3d33; font-size: 11px; text-decoration: underline; }
-  .note { display: flex; align-items: center; gap: 7px; margin: 14px 28px; padding: 9px 12px; border-radius: 8px; background: #fff6e6; color: #7a5410; font-size: 12px; }
+  /* BEFORE */
+  .before { --or: #f2610d; color: #1c2230; font-family: Poppins, Inter, system-ui, sans-serif; }
+  .b-nav { display: flex; align-items: center; gap: 30px; padding: 12px 26px; border-bottom: 1px solid #eee; }
+  .b-logo { display: flex; align-items: center; gap: 6px; font-weight: 800; letter-spacing: 0.02em; }
+  .b-logo b { color: var(--or); }
+  .b-links { display: flex; gap: 22px; margin: 0 auto; color: #444; } .b-links b { color: var(--or); font-weight: 500; }
+  .b-end { display: flex; align-items: center; gap: 18px; }
+  .b-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; background: linear-gradient(180deg, #ff7a1f, #e85a06); color: #fff; font-weight: 600; box-shadow: 0 6px 14px -6px #e85a06; }
+  .b-btn.wide { justify-content: center; }
+  .b-ghost { padding: 8px 14px; border-radius: 8px; border: 1px solid #ccd; }
+  .b-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 34px 26px 26px; background: radial-gradient(60% 80% at 80% 50%, #ffe8d9, #fff 70%); }
+  .b-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; border: 1px solid #fbc9a8; background: #fff3ea; color: #b04a0a; font-size: 11.5px; }
+  .b-hero h5 { margin: 16px 0 10px; font-size: 40px; line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; }
+  .b-hero em { font-style: normal; color: var(--or); }
+  .b-hero p { margin: 0 0 18px; color: #555; max-width: 400px; }
+  .b-ctas { display: flex; gap: 10px; }
+  .b-stats { display: flex; gap: 46px; margin-top: 22px; padding-top: 16px; border-top: 1px solid #eee; }
+  .b-stats span { display: grid; text-align: center; color: #555; font-size: 11px; } .b-stats b { font-size: 24px; color: var(--or); }
+  .b-iso { display: grid; place-items: center; }
+  .lot { display: grid; grid-template-columns: repeat(4, 40px); gap: 12px 14px; padding: 26px; background: #2b2b2e; border-bottom: 10px solid var(--or); transform: rotateX(55deg) rotateZ(-40deg); box-shadow: 30px 30px 0 -10px #1d1d1f; }
+  .lot i { height: 62px; border-radius: 10px; background: hsl(var(--h) 25% 62%); box-shadow: inset 0 -8px 0 rgb(0 0 0 / 0.2), 0 0 0 3px #e35c0b; }
+  .b-fleet { display: grid; grid-template-columns: 200px 1fr; gap: 16px; padding: 18px 26px; background: #f5f6f8; }
+  .b-fleet aside { display: grid; gap: 7px; align-content: start; padding: 12px; border-radius: 12px; background: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.08); }
+  .b-fleet small { color: #555; margin-top: 4px; }
+  .b-in { display: flex; align-items: center; gap: 6px; padding: 6px 9px; border-radius: 7px; border: 1px solid #ddd; color: #777; font-size: 11.5px; }
+  .b-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .b-card { position: relative; display: grid; align-content: start; gap: 4px; padding-bottom: 12px; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 1px 4px rgb(0 0 0 / 0.08); }
+  .b-card .art { height: 110px; } .b-card b, .b-card small { padding: 0 12px; } .b-card b { font-size: 15px; }
+  .b-card small { display: flex; align-items: center; gap: 4px; color: #777; }
+  .b-price { position: absolute; top: 10px; right: 10px; z-index: 2; padding: 4px 9px; border-radius: 7px; background: var(--or); color: #fff; font-weight: 700; font-size: 12px; }
 
-  /* After */
-  .a-top { display: flex; align-items: center; gap: 18px; padding: 14px 26px; color: var(--gold); }
-  .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; color: var(--ink); letter-spacing: -0.01em; }
-  .logo i { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--gold); background: radial-gradient(circle at 50% 62%, var(--ink) 0 6px, transparent 7px), conic-gradient(from 210deg, #0f3d33 0 120deg, transparent 120deg); }
-  .a-end { margin-left: auto; display: flex; align-items: center; gap: 14px; }
-  .lang { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--gold); color: var(--ink); font-size: 12px; }
-  .me { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--gold); }
+  /* AFTER */
+  .after { --g9: #00321b; --g6: #27865b; --g1: #e7f2ed; --gold: #c69220; --sand: #faf7f1; --ink: #222; --ink4: #6b6b6b; --line: #e7dfcf; --disp: "Cormorant Garamond", Georgia, serif; color: var(--ink); }
+  .a-nav { display: flex; align-items: center; gap: 16px; padding: 10px 22px; border-bottom: 1px solid var(--line); }
+  .a-logo { display: flex; align-items: center; gap: 8px; font: 700 18px var(--disp); color: var(--g9); }
+  .a-logo i { width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 50% 60%, var(--gold) 0 5px, transparent 6px), var(--g9); box-shadow: inset 0 0 0 2px var(--gold); }
+  .a-pills { display: flex; align-items: center; gap: 4px; margin: 0 auto; color: #3b3b3b; font-size: 12px; }
+  .a-pills > * { display: inline-flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 999px; }
+  .a-pills > * + * { border-left: 1px solid var(--line); border-radius: 0; }
+  .a-pills b { background: var(--g9); color: #fff; font-weight: 600; box-shadow: 0 3px 0 -1px var(--gold); }
+  .a-end { display: flex; align-items: center; gap: 12px; font-size: 12px; }
+  .a-end > span:first-child { display: inline-flex; gap: 4px; align-items: center; }
+  .a-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 9px; background: linear-gradient(180deg, #d19e2c, #b38219); color: #fff; font-weight: 600; box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 6px 14px -8px #8a640f; }
+  .a-btn.sm { padding: 6px 11px; font-size: 12px; }
 
-  .a-hero { position: relative; overflow: hidden; display: grid; grid-template-columns: 1.15fr 1fr; gap: 24px; margin: 0 22px; padding: 34px 0 34px 34px; border-radius: 24px; background: #f2f3f4; }
-  .arc { position: absolute; left: 22%; top: 8%; width: 520px; height: 520px; pointer-events: none; }
-  .arc circle { fill: none; stroke: #e7e3d8; stroke-width: 22; }
-  .a-left { position: relative; }
-  h5 { margin: 0 0 22px; font-size: 29px; font-weight: 550; line-height: 1.18; letter-spacing: -0.025em; max-width: 470px; }
-  .search { display: grid; gap: 12px 10px; max-width: 480px; grid-template-columns: 1fr 1fr 34px 1fr; grid-template-areas: "p b b w" "f f sw t" "g g g g"; }
-  .search > :nth-child(1) { grid-area: p; } .search > :nth-child(2) { grid-area: b; } .search > :nth-child(3) { grid-area: w; }
-  .search > :nth-child(4) { grid-area: f; } .search > :nth-child(5) { grid-area: sw; } .search > :nth-child(6) { grid-area: t; } .search > :nth-child(7) { grid-area: g; }
-  .search label { display: grid; gap: 5px; font-size: 11px; color: #45484d; }
-  .search label > span:first-child { display: flex; align-items: center; gap: 5px; }
-  .field, .step { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 11px; border-radius: 10px; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 0 0 1px #e8e8e6; color: var(--ink); font-size: 12.5px; }
-  .field :global(svg:last-child) { margin-left: auto; color: var(--mute); }
-  .field b { font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .step { justify-content: space-between; padding: 0 5px; }
-  .step b { font-size: 14px; }
-  .step button { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; border: 0; background: #f3f1ea; color: var(--gold); cursor: pointer; }
-  .swap { align-self: end; display: grid; place-items: center; height: 38px; border: 0; background: none; color: var(--ink); cursor: pointer; border-radius: 8px; }
-  .swap:hover { background: #e7e7e4; }
-  .go { display: flex; justify-content: center; align-items: center; gap: 9px; height: 44px; margin-top: 6px; border: 0; border-radius: 10px; background: linear-gradient(180deg, var(--gold2), var(--gold)); color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; box-shadow: 0 10px 22px -12px #8a6a1f; }
+  .hero { position: relative; height: 340px; overflow: hidden; }
+  .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s ease; }
+  .slide.on { opacity: 1; }
+  .wash { position: absolute; inset: 0; background: rgb(0 0 0 / 0.08); }
+  .panel { position: absolute; left: 40px; top: 50%; transform: translateY(-50%); width: 300px; padding: 24px 26px; border-radius: 16px; background: rgb(255 255 255 / 0.8); backdrop-filter: blur(12px); box-shadow: 0 24px 50px -20px rgb(0 0 0 / 0.4); }
+  .copy[hidden] { display: none; }
+  .copy { animation: fade 0.5s ease; }
+  .copy h5 { margin: 0; font: 700 27px/1.1 var(--disp); color: var(--ink); }
+  .copy i, .rule { display: block; width: 48px; height: 2px; margin: 12px 0; border-radius: 2px; background: var(--gold); }
+  .copy p { margin: 0; color: #2b2b2b; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } }
+  .nav { position: absolute; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgb(255 255 255 / 0.25); background: rgb(0 0 0 / 0.5); color: #fff; cursor: pointer; }
+  .prev { left: 10px; } .next { right: 10px; }
+  .panel { left: 62px; }
+  .count { position: absolute; right: 18px; bottom: 16px; padding: 4px 11px; border-radius: 999px; background: rgb(0 0 0 / 0.35); color: rgb(255 255 255 / 0.6); font-size: 12px; } .count b { color: #fff; font-size: 14px; }
+  .dots { position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); display: flex; }
+  .dots button { display: grid; place-items: center; height: 30px; padding: 0 4px; border: 0; background: none; cursor: pointer; }
+  .dots i { width: 6px; height: 6px; border-radius: 3px; background: rgb(255 255 255 / 0.7); transition: width 0.4s; }
+  .dots [aria-current] i { width: 30px; background: var(--gold); }
+  :is(.nav, .dots button, .why button):focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
-  .mosaic { position: relative; display: grid; grid-template-columns: 1.6fr 1fr; grid-template-rows: 70px 200px 90px; gap: 10px; margin: -34px -22px -34px 0; padding: 0; }
-  .mosaic .art { border-radius: 20px; }
-  .t1 { grid-column: 1; grid-row: 1; margin-left: 30%; } .t2 { grid-column: 2; grid-row: 1; }
-  .t3 { grid-column: 1; grid-row: 2 / 4; margin-bottom: -40px; } .t4 { grid-column: 2; grid-row: 2; height: 96px; } .t5 { grid-column: 2; grid-row: 2 / 4; margin-top: 106px; }
+  .sec { padding: 26px 26px 28px; }
+  .sand { background: var(--sand); }
+  h6 { margin: 0; font: 700 28px/1.1 var(--disp); color: var(--g9); }
+  .sub { margin: 0 0 16px; color: var(--ink4); font-size: 14px; }
+  .cars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .car { display: grid; gap: 6px; padding: 10px 10px 12px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 10px 22px -18px rgb(0 50 27 / 0.5); transition: transform 0.25s, box-shadow 0.25s; }
+  .car:hover { transform: translateY(-3px); box-shadow: 0 0 0 1px var(--gold), 0 16px 28px -18px rgb(0 50 27 / 0.6); }
+  .car .art { height: 92px; border-radius: 11px; }
+  .kind { position: absolute; top: 8px; left: 8px; z-index: 2; padding: 2px 8px; border-radius: 999px; background: var(--g9); color: #fff; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  .car > b { font: 700 19px var(--disp); color: var(--g9); margin-top: 2px; }
+  .car > p { margin: 0; color: var(--ink4); font-size: 12px; min-height: 36px; }
+  .cap { display: flex; gap: 12px; padding: 7px 0; border-block: 1px dashed var(--line); font-size: 12px; color: #3b3b3b; }
+  .cap span { display: inline-flex; align-items: center; gap: 5px; } .cap :global(svg) { color: var(--g6); }
+  .row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
+  .ghost { color: var(--g9); font-weight: 600; font-size: 12px; text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
 
-  .popular, .results { padding: 20px 26px 22px; }
-  .popular[hidden], .results[hidden] { display: none; }
-  .r-head { display: flex; align-items: baseline; gap: 10px; margin: 0 0 12px; }
-  .r-head b { font-size: 15px; font-weight: 600; }
-  .r-head span { color: var(--mute); font-size: 12px; }
-  .routes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .route { display: grid; gap: 4px; text-align: left; padding: 12px 14px; border: 0; border-radius: 14px; background: #faf8f3; box-shadow: 0 0 0 1px #efe9dc; cursor: pointer; color: var(--ink); }
-  .route:hover { box-shadow: 0 0 0 1.5px var(--gold); }
-  .route span { display: flex; align-items: center; gap: 6px; color: var(--gold); }
-  .route b { color: var(--ink); font-weight: 600; }
-  .route small { display: flex; align-items: center; gap: 4px; color: var(--mute); }
-  .cars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-  .car { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 8px 6px; padding: 8px 8px 11px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px #ebebea, 0 6px 16px -12px rgb(0 0 0 / 0.3); transition: opacity 0.25s, filter 0.25s; animation: rise 0.35s ease-out; }
-  .car .art { grid-column: 1 / -1; height: 74px; border-radius: 10px; }
-  .c-b { display: grid; padding-left: 4px; } .c-b b { font-weight: 600; }
-  .c-b small { display: flex; align-items: center; gap: 4px; color: var(--mute); }
-  .c-p { display: grid; text-align: right; padding-right: 4px; } .c-p small { color: var(--mute); font-size: 10.5px; } .c-p b { color: var(--gold); }
-  .why-not { display: none; }
-  .car.no { opacity: 0.45; filter: grayscale(1); }
-  .car.no .why-not { display: block; position: absolute; top: 14px; left: 14px; padding: 2px 8px; border-radius: 999px; background: #fff; font-size: 10.5px; font-weight: 600; color: #6b6e73; }
-  @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
-  @media (prefers-reduced-motion: reduce) { .car { animation: none; } }
+  .why { display: grid; grid-template-columns: 1.1fr 1fr; gap: 26px; align-items: stretch; }
+  .reasons { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
+  .reasons li { padding: 10px 0 8px; }
+  .track { display: block; height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
+  .track i { display: block; height: 100%; width: 0; background: var(--gold); }
+  .reasons li.open .track i { width: 100%; transition: width 5s linear; }
+  .why button { display: flex; width: 100%; justify-content: space-between; align-items: baseline; padding: 9px 0 0; border: 0; background: none; text-align: left; cursor: pointer; }
+  .why button b { font: 700 19px var(--disp); color: var(--ink4); transition: color 0.3s; }
+  .why button em { font-style: normal; color: var(--ink4); font-size: 12px; }
+  .reasons li.open b { color: var(--g9); } .reasons li.open em { color: var(--gold); }
+  .reasons p { display: none; margin: 6px 0 0; color: #3b3b3b; max-width: 380px; }
+  .reasons li.open p { display: block; animation: fade 0.4s ease; }
+  .why-r { border-radius: 18px; min-height: 230px; }
+
+  .quotes { padding-bottom: 0; }
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; height: 220px; margin-top: 8px; overflow: hidden; mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent); }
+  .col { display: grid; gap: 12px; align-content: start; animation: up 22s linear infinite; }
+  .col.c1 { animation-direction: reverse; animation-duration: 26s; }
+  .col.c2 { animation-duration: 30s; }
+  @keyframes up { to { transform: translateY(-50%); } }
+  .q { padding: 13px 15px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+  .stars { color: var(--gold); letter-spacing: 2px; font-size: 12px; }
+  .q p { margin: 4px 0 6px; font: 600 16px/1.3 var(--disp); color: var(--ink); }
+  .q small { color: var(--ink4); }
+  .note.ok { margin-top: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .col, .copy, .reasons li.open p { animation: none; }
+    .slide, .reasons li.open .track i { transition: none; }
+  }
 </style>
