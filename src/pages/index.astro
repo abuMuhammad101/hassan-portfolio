@@ -13,9 +13,9 @@ const nameOf = (id: string) => workIndex.find((w) => w.id === id)?.name ?? id;
 const featured = workIndex.filter((w) => w.page && w.id !== "hh-global");
 const rest = workIndex.filter((w) => !featured.includes(w));
 const markets = [
-  { name: "United States", tz: "America/New_York", off: -5 },
-  { name: "GCC", tz: "Asia/Dubai", off: 4 },
-  { name: "Pakistan", tz: "Asia/Karachi", off: 5, home: true },
+  { name: "United States" },
+  { name: "GCC" },
+  { name: "Pakistan", home: true },
 ];
 const ways = [
   { icon: "user", title: "Start with the person", body: "And the rules they live under, before any screen." },
@@ -59,18 +59,15 @@ const earlier = [
           </div>
         </div>
         <aside class="ledger" aria-label="At a glance">
-          <p class="ledger-line"><b>8</b> products <i aria-hidden="true"></i> <b>5+</b> years in SaaS and mobile</p>
-          <div class="zones" data-zones>
+          <p class="figs">
+            <span><b>8</b> products designed</span>
+            <span><b>5+</b> years in SaaS and mobile</span>
+          </p>
+          <ol class="route" aria-label="Markets: United States, GCC, Pakistan">
             {markets.map((m) => (
-              <div class={`zone ${m.home ? "home" : ""}`} data-tz={m.tz} data-off={m.off}>
-                <span class="z-name">{m.name}{m.home && <em>Based here</em>}</span>
-                <span class="z-bar" aria-hidden="true">{Array.from({ length: 24 }).map(() => <i></i>)}</span>
-                <time class="z-time tabular-nums">--:--</time>
-              </div>
+              <li class={m.home ? "home" : ""}><i aria-hidden="true"></i><span>{m.name}</span>{m.home && <em>Based here</em>}</li>
             ))}
-            <span class="z-now" aria-hidden="true"></span>
-          </div>
-          <p class="z-key"><i aria-hidden="true"></i> Working hours, 9 to 6 local. The line is now.</p>
+          </ol>
         </aside>
       </div>
     </div>
@@ -87,12 +84,7 @@ const earlier = [
           <li class="reveal">
             <span class="b-top">
               <span class="b-num tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-              <svg class="b-art" viewBox="0 0 72 72" aria-hidden="true">
-                {i === 0 && (<g><path class="soft" d="M6 50c10-18 20 8 30-10s20 6 30-12" /><circle cx="36" cy="36" r="14" /><circle cx="36" cy="36" r="3.5" class="fill" /><path d="M36 14v8M36 50v8M14 36h8M50 36h8" /></g>)}
-                {i === 1 && (<g><path class="soft" d="M14 20h18M14 36h18M14 52h18" /><circle cx="12" cy="20" r="3" /><circle cx="12" cy="36" r="3" /><circle cx="12" cy="52" r="3" /><path d="M32 20c10 0 10 16 22 16M32 52c10 0 10-16 22-16M32 36h22" /><circle cx="58" cy="36" r="6" class="fill" /></g>)}
-                {i === 2 && (<g>{[[10,14],[22,22],[16,34],[30,12],[28,40],[40,26],[12,52],[36,54]].map(([x,y]) => <circle cx={x} cy={y} r="2" class="soft-dot" />)}<path d="M38 38c6-6 12-6 18-14" /><path d="M50 22l6 2-2 6" /></g>)}
-                {i === 3 && (<g><path d="M10 44c6-14 10-20 12-12s-6 16 2 10 8-14 12-6 4 8 10 2" /><path class="soft" d="M8 56h56" /><circle cx="62" cy="56" r="3" class="fill" /></g>)}
-              </svg>
+              <span class="b-art"><Icon name={b.icon} weight="duotone" size={26} /></span>
             </span>
             <p class="belief">{b.text}</p>
             <p class="note">{b.note}</p>
@@ -195,31 +187,6 @@ const earlier = [
   </main>
 
   <Footer />
-<script>
-  // Each bar is the same 24 hours in UTC; filled cells are 9:00-18:00 local.
-  const offsetOf = (tz: string) => {
-    const d = new Date();
-    const local = new Date(d.toLocaleString("en-US", { timeZone: tz }));
-    const utc = new Date(d.toLocaleString("en-US", { timeZone: "UTC" }));
-    return Math.round((local.getTime() - utc.getTime()) / 3600000);
-  };
-  const draw = () => {
-    const now = new Date();
-    document.querySelectorAll<HTMLElement>("[data-zones] .zone").forEach((z) => {
-      const tz = z.dataset.tz!;
-      const off = offsetOf(tz);
-      z.querySelectorAll("i").forEach((cell, h) => {
-        const local = (((h + off) % 24) + 24) % 24;
-        cell.classList.toggle("on", local >= 9 && local < 18);
-      });
-      z.querySelector("time")!.textContent = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(now);
-    });
-    const zones = document.querySelector<HTMLElement>("[data-zones]");
-    if (zones) zones.style.setProperty("--now", `${((now.getUTCHours() + now.getUTCMinutes() / 60) / 24) * 100}%`);
-  };
-  draw();
-  setInterval(draw, 30000);
-</script>
 </Base>
 
 <style>
@@ -252,116 +219,71 @@ const earlier = [
   }
   .ledger {
     display: grid;
-    gap: 18px;
+    gap: 26px;
     align-content: start;
   }
-  .ledger-line {
+  .figs {
     margin: 0;
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
-    gap: 6px;
+    gap: 10px 36px;
     color: var(--ink-secondary);
     font-size: var(--text-sm);
   }
-  .ledger-line b {
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 1.6rem;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-  }
-  .ledger-line i {
-    width: 4px;
-    height: 4px;
-    margin: 0 8px;
-    border-radius: 50%;
-    background: var(--ink-muted);
-    align-self: center;
-  }
-  .zones {
-    position: relative;
+  .figs span {
     display: grid;
-    gap: 14px;
-    padding: 16px 0 4px;
-    border-top: 1px solid var(--rule);
-  }
-  .zone {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 7px 12px;
-    align-items: baseline;
-  }
-  .z-name {
-    grid-row: 1;
-    font-size: var(--text-sm);
-    color: var(--ink);
-    font-weight: 500;
-  }
-  .z-name em {
-    font-style: normal;
-    font-weight: 400;
-    color: var(--ink-muted);
-    margin-left: 8px;
-  }
-  .z-time {
-    grid-row: 1;
-    grid-column: 2;
-    font-family: var(--font-display);
-    font-size: 1.05rem;
-    color: var(--ink);
-  }
-  .z-bar {
-    grid-row: 2;
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: repeat(24, 1fr);
     gap: 2px;
   }
-  .z-bar i {
-    height: 6px;
-    border-radius: 2px;
-    background: color-mix(in srgb, var(--ink) 8%, transparent);
+  .figs b {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 5vw, 3.4rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
   }
-  .z-bar i.on {
-    background: color-mix(in srgb, var(--ink) 55%, transparent);
+  .route {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    position: relative;
   }
-  .home .z-bar i.on {
-    background: var(--accent-warm);
-  }
-  .z-now {
-    position: absolute;
-    top: 10px;
-    bottom: 0;
-    left: var(--now, 50%);
-    width: 1px;
-    background: var(--ink);
-    opacity: 0.7;
-  }
-  .z-now::before {
+  .route::before {
     content: "";
     position: absolute;
-    top: -3px;
-    left: -3px;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--ink);
+    left: 4px;
+    right: calc(33.333% - 4px);
+    top: 4px;
+    border-top: 1px dashed color-mix(in srgb, var(--ink) 35%, transparent);
   }
-  .z-key {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 7px;
+  .route li {
+    position: relative;
+    display: grid;
+    gap: 2px;
+    padding-top: 20px;
+    font-size: var(--text-sm);
+    color: var(--ink);
+  }
+  .route i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bg);
+    box-shadow: inset 0 0 0 1.5px var(--ink);
+  }
+  .route .home i {
+    background: var(--accent-warm);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent-warm) 16%, transparent);
+  }
+  .route em {
+    font-style: normal;
     font-size: 12px;
     color: var(--ink-muted);
-  }
-  .z-key i {
-    width: 14px;
-    height: 6px;
-    border-radius: 2px;
-    background: color-mix(in srgb, var(--ink) 55%, transparent);
   }
   @media (min-width: 900px) {
     .hero-grid {
@@ -436,34 +358,22 @@ const earlier = [
     color: var(--ink-muted);
   }
   .b-art {
-    width: 72px;
-    height: 72px;
-    fill: none;
-    stroke: var(--ink);
-    stroke-width: 1.4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    color: var(--ink);
+    background: linear-gradient(160deg, var(--bg-raised), var(--bg-sunk));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.7),
+      0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent),
+      0 8px 18px -12px rgb(0 0 0 / 0.35);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s;
   }
-  .b-art .soft {
-    stroke: var(--ink-muted);
-    stroke-dasharray: 2 4;
-  }
-  .b-art .fill {
-    fill: var(--accent-warm);
-    stroke: none;
-  }
-  .b-art .soft-dot {
-    fill: var(--ink-muted);
-    stroke: none;
-    opacity: 0.55;
-  }
-  .beliefs li:hover .b-art .soft {
-    animation: dash 1.6s linear infinite;
-  }
-  @keyframes dash {
-    to {
-      stroke-dashoffset: -12;
-    }
+  .beliefs li:hover .b-art {
+    transform: rotate(-6deg) scale(1.04);
+    color: var(--accent-warm);
   }
   .belief {
     font-family: var(--font-display);
@@ -504,7 +414,7 @@ const earlier = [
   }
   @media (prefers-reduced-motion: reduce) {
     .beliefs li, .beliefs li:hover { transition: none; transform: none; }
-    .beliefs li:hover .b-art .soft { animation: none; }
+    .beliefs li:hover .b-art { transform: none; }
   }
 
   .cards {
