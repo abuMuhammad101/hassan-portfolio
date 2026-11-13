@@ -222,7 +222,8 @@ const patients = [
   .cp[data-step="device"] .st-device, .cp:is([data-step="details"], [data-step="edit"], [data-step="details-set"]) .st-details,
   .cp[data-step="ready"] .st-ready, .cp[data-step="done"] .st-done { display: grid !important; }
 
-  .hint { align-self: end; margin-bottom: 96px; white-space: nowrap; display: flex !important; align-items: center; gap: 9px; padding: 9px 14px 9px 9px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 12px 28px -14px rgb(0 0 0 / 0.3); color: #55585e; }
+  .cp[data-step="idle"] .hint.st-idle { display: flex !important; }
+  .hint { align-self: end; margin-bottom: 96px; white-space: nowrap; align-items: center; gap: 9px; padding: 9px 14px 9px 9px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 12px 28px -14px rgb(0 0 0 / 0.3); color: #55585e; }
   .cp:not([data-step="idle"]) .hint { display: none !important; }
   .spark { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff; }
 
