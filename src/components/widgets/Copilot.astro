@@ -1,331 +1,298 @@
 ---
-/* A command-driven copilot overlay on a clinical schedule. It appears when
-   asked, asks only for what's missing, and leaves the clinician in control.
-   Re-created with sample data. */
-import "../../styles/mock-app.css";
-import BrowserFrame from "../BrowserFrame.astro";
+/* Voice-first copilot over a tablet app, re-created with stand-in brand,
+   names and data. Monochrome overlay; it asks only for what's missing,
+   and the clinician confirms every step. */
 import Icon from "../Icon.astro";
-const rows = [
-  { time: "09:00", name: "Patient A", kind: "Physical therapy", status: "Seen", cls: "ok" },
-  { time: "10:30", name: "Patient B", kind: "Respiratory therapy", status: "Waiting", cls: "wait" },
-  { time: "11:15", name: "Patient C", kind: "Occupational therapy", status: "Scheduled", cls: "" },
-  { time: "13:00", name: "Patient D", kind: "Speech therapy", status: "Scheduled", cls: "" },
+const patients = [
+  ["AB", "Arthur Bell", "PT · Plan of care certified", "Active"],
+  ["RL", "Rosa Lind", "OT · Evaluation due", "Pending"],
+  ["OH", "Omar Haddad", "RT · 4 of 12 visits", "Active"],
+  ["MK", "Mei Kato", "PT · Discharge planned", "Discharge"],
+  ["JS", "Jonah Sterne", "ST · Re-evaluation", "Active"],
 ];
 ---
 
-<div data-copilot>
-  <BrowserFrame address="app.clinicalworkspace.example" label="Re-created clinical schedule with a copilot overlay">
-    <div class="mk-app">
-      <aside class="mk-rail" aria-hidden="true">
-        <span class="mk-logo"><Icon name="first-aid-kit" weight="bold" size={18} /></span>
-        <span class="on"><Icon name="calendar-check" size={18} /></span>
-        <span><Icon name="users" size={18} /></span>
-        <span><Icon name="chart-line-up" size={18} /></span>
-        <span class="end"><Icon name="gear-six" size={18} /></span>
-      </aside>
-      <div class="mk-main">
-        <div class="mk-top">
-          <span class="mk-crumb"><b>Today's schedule</b> · Thursday</span>
-          <Icon name="magnifying-glass" size={16} />
-          <Icon name="bell" size={16} />
-          <span class="mk-avatar">HK</span>
-        </div>
-
-        <div class="content">
-          <div class="mk-card table" role="table" aria-label="Sample schedule">
-            {rows.map((r) => (
-              <div class="row" role="row" data-row={r.name}>
-                <span class="time" role="cell">{r.time}</span>
-                <span class="mk-avatar" aria-hidden="true">{r.name.slice(-1)}</span>
-                <span class="who" role="cell"><b>{r.name}</b><small>{r.kind}</small></span>
-                <span class="extra" role="cell" data-extra></span>
-                <span class={`mk-badge ${r.cls}`} role="cell">{r.status}</span>
-              </div>
+<div class="cp" data-copilot data-step="idle">
+  <div class="tablet" role="group" aria-label="Re-created tablet app with a voice copilot">
+    <div class="screen">
+      <div class="app" aria-hidden="true">
+        <header class="bar">
+          <Icon name="list" size={18} />
+          <span class="brand"><i class="mark"></i>Strand</span>
+          <span class="end"><Icon name="magnifying-glass" size={17} /><span class="av sm warm">KR</span></span>
+        </header>
+        <div class="dash">
+          <div class="dh"><h4>Today</h4><span class="add"><Icon name="plus" size={13} weight="bold" />Add patient</span></div>
+          <p class="lbl">Recently viewed</p>
+          <div class="recent">{patients.map(([i, n]) => <span><b class="av">{i}</b>{n.split(" ")[0]}</span>)}</div>
+          <p class="lbl">My patients · 5</p>
+          <ul class="list">
+            {patients.map(([i, n, d, s]) => (
+              <li><b class="av">{i}</b><span><strong>{n}</strong><small>{d}</small></span><em class={s.toLowerCase()}>{s}</em><Icon name="caret-right" size={13} /></li>
             ))}
-          </div>
-
-          <div class="dock">
-            <div class="overlay" data-overlay hidden>
-              <p class="who-line"><span class="spark"><Icon name="sparkle" weight="fill" size={13} /></span> Copilot</p>
-              <div role="status" aria-live="polite">
-                <p class="thinking" data-step="think" hidden><i></i><i></i><i></i><span>Working on it</span></p>
-                <div data-step="ask" hidden>
-                  <p>Which patient is this assessment for?</p>
-                  <div class="btns">
-                    <button type="button" class="mk-btn ghost" data-pick="Patient B">Patient B · waiting now</button>
-                    <button type="button" class="mk-btn ghost" data-pick="Patient C">Patient C · 11:15</button>
-                  </div>
-                </div>
-                <div data-step="propose" hidden>
-                  <p data-proposal></p>
-                  <p class="preview"><Icon name="clipboard-text" size={16} /> <span data-preview></span></p>
-                  <div class="btns">
-                    <button type="button" class="mk-btn" data-accept>Accept</button>
-                    <button type="button" class="mk-btn ghost" data-edit><Icon name="pencil-simple" size={14} /> Change</button>
-                    <button type="button" class="mk-btn ghost" data-cancel>Cancel</button>
-                  </div>
-                </div>
-                <div data-step="done" hidden>
-                  <p class="done-line"><Icon name="check-circle" weight="fill" size={16} /> <span data-done></span></p>
-                  <div class="btns">
-                    <button type="button" class="mk-btn ghost" data-undo><Icon name="arrow-counter-clockwise" size={14} /> Undo</button>
-                    <button type="button" class="mk-btn ghost" data-close>Done</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bar" data-bar>
-              <span class="prompt"><Icon name="sparkle" size={16} /> Tell the copilot what to do</span>
-              <button type="button" class="chip" data-cmd="assess">Start an assessment</button>
-              <button type="button" class="chip" data-cmd="note">Draft today's note</button>
-              <span class="mic" aria-hidden="true"><Icon name="microphone" size={16} /></span>
-            </div>
-          </div>
+          </ul>
         </div>
       </div>
+
+      <div class="veil" aria-hidden="true"></div>
+
+      <div class="layer" aria-live="polite">
+        <p class="said"><span class="q">“</span><span data-said></span><span class="q">”</span></p>
+        <ol class="dots" aria-hidden="true"><li data-d="patient"></li><li data-d="device"></li><li data-d="details"></li><li data-d="ready"></li></ol>
+
+        <!-- idle -->
+        <div class="hint st-idle">
+          <span class="spark"><Icon name="sparkle" size={14} weight="fill" /></span>
+          Tap the mic and try <b>“Start a breathing test for Arthur.”</b>
+        </div>
+
+        <!-- listening -->
+        <div class="orb st-listen"><span></span><span></span><span></span><i><Icon name="waveform" size={26} /></i></div>
+
+        <!-- patient -->
+        <div class="stage st-patient">
+          <p class="ask">Is this the right patient?</p>
+          <div class="tile wide"><b class="av lg">AB</b><span><strong>Arthur Bell</strong><small>78 · Room 214 · RT case will be created</small></span></div>
+          <div class="acts"><button type="button" class="ghost" data-go="listen">Someone else</button><button type="button" class="solid" data-go="device">Yes, that's him</button></div>
+        </div>
+
+        <!-- device -->
+        <div class="stage st-device">
+          <div class="rings"><span></span><span></span><span></span><i><Icon name="device-mobile" size={24} /></i></div>
+          <p class="ask"><span class="searching">Looking for the spirometer…</span><span class="found"><Icon name="bluetooth" size={14} /> Spirometer SN-4471 connected</span></p>
+          <div class="acts found"><button type="button" class="solid" data-go="details">Continue</button></div>
+        </div>
+
+        <!-- details -->
+        <div class="stage st-details st-edit">
+          <p class="ask"><span class="h-empty">Predicted values need these. One is missing.</span><span class="h-set">All set. Pulled from Arthur's record.</span></p>
+          <div class="tiles">
+            <div class="tile"><strong>Male</strong><small>Sex</small></div>
+            <div class="tile"><strong>12/04/1948</strong><small>Date of birth</small></div>
+            <div class="tile"><strong>74 kg</strong><small>Weight</small></div>
+            <button type="button" class="tile need" data-go="edit"><strong class="h-empty">Add</strong><strong class="h-set">5 ft 6 in</strong><small>Height</small><Icon name="pencil-simple" size={13} /></button>
+            <div class="tile"><strong>From record</strong><small>Ethnicity</small></div>
+          </div>
+          <div class="capsule" role="group" aria-label="Height">
+            <span class="num"><b>5</b><small>ft</small></span><span class="num"><b>6</b><small>in</small></span><span class="cm">168 cm</span>
+            <button type="button" class="ok" data-go="details-set" aria-label="Confirm height"><Icon name="check" size={16} weight="bold" /></button>
+          </div>
+          <div class="acts h-set"><button type="button" class="solid" data-go="ready">Looks right</button></div>
+        </div>
+
+        <!-- ready -->
+        <div class="stage st-ready">
+          <p class="ask">Ready when Arthur is.</p>
+          <div class="tile wide instr"><Icon name="wind" size={22} /><span><strong>Breathe in fully, then blow hard and fast</strong><small>Keep going until the device beeps · 3 tries, best one counts</small></span></div>
+          <div class="acts"><button type="button" class="solid" data-go="done"><Icon name="play" size={13} weight="fill" />Start test</button></div>
+        </div>
+
+        <!-- done -->
+        <div class="stage st-done">
+          <div class="tile wide result"><span class="check"><Icon name="check" size={16} weight="bold" /></span><span><strong>Saved to Arthur's record</strong><small>FEV1 1.92 L · FVC 2.61 L · 3 tries · sample data</small></span><button type="button" class="undo" data-go="details-set"><Icon name="arrow-u-up-left" size={13} />Undo</button></div>
+        </div>
+
+        <!-- exit -->
+        <div class="exit" data-exit hidden role="dialog" aria-label="Exit the guide?">
+          <strong>Exit the guide?</strong>
+          <p>This test isn't finished. Nothing will be saved.</p>
+          <div class="acts"><button type="button" class="ghost" data-exit-yes>Exit guide</button><button type="button" class="solid" data-exit-no>Keep going</button></div>
+        </div>
+      </div>
+
+      <div class="dock">
+        <button type="button" class="round back" data-back aria-label="Back"><Icon name="arrow-left" size={17} /></button>
+        <button type="button" class="round close" data-close aria-label="Close copilot"><Icon name="x" size={16} /></button>
+        <button type="button" class="mic" data-mic aria-label="Talk to the copilot"><Icon name="microphone" size={20} weight="fill" /></button>
+      </div>
     </div>
-  </BrowserFrame>
+  </div>
 </div>
 
 <script>
   document.querySelectorAll<HTMLElement>("[data-copilot]").forEach((root) => {
-    const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
-    const overlay = q("[data-overlay]");
-    const steps = [...root.querySelectorAll<HTMLElement>("[data-step]")];
-    const quick = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let cmd = "", patient = "", session = "09:00 visit with Patient A", timer = 0;
-
-    const clearMarks = () => root.querySelectorAll<HTMLElement>("[data-extra]").forEach((e) => (e.textContent = ""));
-    const show = (name: string) => {
-      overlay.hidden = false;
-      steps.forEach((s) => (s.hidden = s.dataset.step !== name));
-      if (name !== "think") steps.find((s) => s.dataset.step === name)?.querySelector("button")?.focus();
+    const said = root.querySelector<HTMLElement>("[data-said]")!;
+    const exit = root.querySelector<HTMLElement>("[data-exit]")!;
+    const screen = root.querySelector<HTMLElement>(".tablet")!;
+    const order = ["idle", "listen", "patient", "device", "details", "edit", "details-set", "ready", "done"];
+    const lines: Record<string, string> = {
+      listen: "Start a breathing test for Arthur",
+      patient: "Start a breathing test for Arthur",
+      device: "Yes, that's him",
+      details: "Continue",
+      edit: "His height is five six",
+      "details-set": "His height is five six",
+      ready: "Looks right",
+      done: "Start",
     };
-    const think = (then: () => void) => {
-      show("think");
-      clearTimeout(timer);
-      timer = window.setTimeout(then, quick ? 0 : 650);
+    let timers: number[] = [];
+    const clear = () => { timers.forEach(clearTimeout); timers = []; };
+    const go = (s: string) => {
+      clear();
+      root.dataset.step = s;
+      root.classList.toggle("found-it", false);
+      if (s === "details-set") root.dataset.height = "set";
+      if (s === "idle" || s === "listen") delete root.dataset.height;
+      said.textContent = lines[s] ?? "";
+      if (s === "listen") {
+        said.textContent = "";
+        const text = lines.listen;
+        [...text].forEach((_, i) => timers.push(window.setTimeout(() => (said.textContent = text.slice(0, i + 1)), 400 + i * 38)));
+        timers.push(window.setTimeout(() => go("patient"), 400 + text.length * 38 + 600));
+      }
+      if (s === "device") timers.push(window.setTimeout(() => root.classList.add("found-it"), 1800));
     };
-    const propose = () => {
-      const assess = cmd === "assess";
-      q("[data-proposal]").textContent = assess
-        ? `I'll open a new assessment for ${patient}.`
-        : "I'll draft today's note from this visit.";
-      q("[data-preview]").textContent = assess ? `New assessment · ${patient}` : `Draft note · ${session}`;
-      show("propose");
-    };
-    const close = () => {
-      overlay.hidden = true;
-      session = "09:00 visit with Patient A";
-      q<HTMLButtonElement>("[data-cmd]").focus();
-    };
-
-    root.querySelectorAll<HTMLElement>("[data-cmd]").forEach((b) =>
-      b.addEventListener("click", () => {
-        cmd = b.dataset.cmd!;
-        clearMarks();
-        think(() => (cmd === "assess" ? show("ask") : propose()));
-      })
-    );
-    root.querySelectorAll<HTMLElement>("[data-pick]").forEach((b) =>
-      b.addEventListener("click", () => {
-        patient = b.dataset.pick!;
-        think(propose);
-      })
-    );
-    q("[data-edit]").addEventListener("click", () => {
-      if (cmd === "assess") return show("ask");
-      session = session.startsWith("09") ? "10:30 visit with Patient B" : "09:00 visit with Patient A";
-      propose();
+    root.querySelectorAll<HTMLElement>("[data-go]").forEach((b) => b.addEventListener("click", () => go(b.dataset.go!)));
+    root.querySelector("[data-mic]")!.addEventListener("click", () => {
+      const s = root.dataset.step!;
+      if (s === "idle" || s === "done") go("listen");
     });
-    q("[data-accept]").addEventListener("click", () => {
-      const assess = cmd === "assess";
-      q("[data-done]").textContent = assess ? `Assessment opened for ${patient}.` : "Draft note ready for your review.";
-      const who = assess ? patient : session.slice(-9);
-      const cell = root.querySelector<HTMLElement>(`[data-row="${who}"] [data-extra]`);
-      if (cell) cell.textContent = assess ? "Assessment open" : "Draft note";
-      show("done");
+    root.querySelector("[data-back]")!.addEventListener("click", () => {
+      const map: Record<string, string> = { patient: "idle", device: "patient", details: "device", edit: "details", "details-set": "device", ready: "details-set", done: "ready" };
+      const s = root.dataset.step!;
+      if (map[s]) go(map[s]);
     });
-    q("[data-undo]").addEventListener("click", () => {
-      clearMarks();
-      q("[data-done]").textContent = "Undone. Nothing was changed.";
+    root.querySelector("[data-close]")!.addEventListener("click", () => {
+      const s = root.dataset.step!;
+      if (s === "idle") return;
+      if (s === "done" || s === "listen" || s === "patient") return go("idle");
+      exit.hidden = false;
     });
-    q("[data-cancel]").addEventListener("click", close);
-    q("[data-close]").addEventListener("click", close);
+    root.querySelector("[data-exit-yes]")!.addEventListener("click", () => { exit.hidden = true; go("idle"); });
+    root.querySelector("[data-exit-no]")!.addEventListener("click", () => (exit.hidden = true));
+    void order;
+    const fit = () => screen.style.setProperty("zoom", String(Math.max(0.55, Math.min(1, root.clientWidth / 1000))));
+    new ResizeObserver(fit).observe(root);
+    fit();
   });
 </script>
 
 <style>
-  small {
-    font-size: 11.5px;
-    color: var(--ink-muted);
+  .cp { --ink: #18191b; --mute: #8b8e94; --line: #ececea; --dark: rgb(30 30 32 / 0.9); }
+  .tablet {
+    width: 1000px; padding: 14px; border-radius: 36px; background: #1b1b1d;
+    box-shadow: inset 0 0 0 1.5px #3a3a3d, 0 40px 80px -40px rgb(0 0 0 / 0.55);
   }
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 16px;
-  }
-  .table {
-    padding: 4px 6px;
-  }
-  .row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 8px;
-  }
-  .row + .row {
-    border-top: 1px solid var(--rule);
-  }
-  .time {
-    width: 40px;
-    color: var(--ink-secondary);
-    font-variant-numeric: tabular-nums;
-  }
-  .who {
-    display: grid;
-    min-width: 0;
-    margin-right: auto;
-  }
-  .who b {
-    font-weight: 500;
-  }
-  .extra:not(:empty) {
-    font-size: 11.5px;
-    font-weight: 500;
-    padding: 2px 9px;
-    border-radius: 999px;
-    border: 1px solid var(--ink);
-    white-space: nowrap;
-  }
-  .dock {
-    position: relative;
-    margin-top: auto;
-  }
-  .bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 10px 8px 14px;
-    border-radius: 14px;
-    background: var(--bg-raised);
-    border: 1px solid var(--rule);
-    box-shadow: 0 12px 28px -18px rgb(0 0 0 / 0.35);
-  }
-  .prompt {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--ink-muted);
-    margin-right: auto;
-  }
-  .chip {
-    font: inherit;
-    font-size: 12.5px;
-    font-weight: 500;
-    padding: 6px 12px;
-    border-radius: 999px;
-    border: 1px solid var(--rule);
-    background: var(--bg-sunk);
-    color: var(--ink);
-    cursor: pointer;
-  }
-  .chip:hover {
-    border-color: var(--ink);
-  }
-  .mic {
-    width: 30px;
-    height: 30px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: var(--ink);
-    color: var(--bg);
-  }
-  /* The overlay is monochrome on purpose: ink, paper and one hairline. */
-  .overlay {
-    position: absolute;
-    right: 0;
-    bottom: calc(100% + 10px);
-    width: min(380px, 100%);
-    background: var(--bg-raised);
-    border: 1px solid var(--ink);
-    border-radius: 16px;
-    padding: 14px 16px 16px;
-    box-shadow: 0 24px 48px -20px rgb(0 0 0 / 0.45);
-  }
-  .who-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0 0 8px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  .spark {
-    width: 22px;
-    height: 22px;
-    display: grid;
-    place-items: center;
-    border-radius: 7px;
-    background: var(--ink);
-    color: var(--bg);
-  }
-  .overlay p {
-    margin: 0 0 10px;
-  }
-  .preview {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 10px;
-    border-radius: 10px;
-    border: 1px dashed var(--ink-muted);
-    font-weight: 500;
-  }
-  .btns {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .done-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
-  }
-  .thinking {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    color: var(--ink-muted);
-  }
-  .thinking i {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--ink);
-    animation: blink 0.9s infinite ease-in-out;
-  }
-  .thinking i:nth-child(2) { animation-delay: 0.15s; }
-  .thinking i:nth-child(3) { animation-delay: 0.3s; }
-  .thinking span {
-    margin-left: 6px;
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 0.25; }
-    50% { opacity: 1; }
-  }
-  @media (max-width: 560px) {
-    .time {
-      display: none;
-    }
-    .mic {
-      display: none;
-    }
+  .screen { position: relative; overflow: hidden; height: 650px; border-radius: 24px; background: #fbfbfa; color: var(--ink); font: 13px/1.4 Inter, var(--font-body, system-ui), sans-serif; }
+
+  /* Underlying app */
+  .app { position: absolute; inset: 0; transition: filter 0.5s ease, transform 0.5s ease, opacity 0.5s; }
+  .cp:not([data-step="idle"]) .app { filter: blur(7px) saturate(0.4); transform: scale(1.015); opacity: 0.55; }
+  .bar { display: flex; align-items: center; padding: 14px 22px; color: #45484d; }
+  .brand { display: flex; align-items: center; gap: 7px; margin: 0 auto; font-weight: 700; font-size: 16px; letter-spacing: -0.02em; color: var(--ink); }
+  .mark { width: 20px; height: 20px; border-radius: 6px; background: radial-gradient(circle at 30% 30%, #8f93f2, #4b4fd6 60%); }
+  .end { display: flex; align-items: center; gap: 14px; }
+  .dash { padding: 4px 26px; }
+  .dh { display: flex; align-items: center; }
+  h4 { margin: 0; font-size: 24px; font-weight: 650; letter-spacing: -0.02em; }
+  .add { margin-left: auto; display: inline-flex; gap: 6px; align-items: center; padding: 7px 12px; border-radius: 9px; background: var(--ink); color: #fff; font-weight: 600; }
+  .lbl { margin: 18px 0 10px; font-size: 12px; font-weight: 600; color: var(--mute); }
+  .recent { display: flex; gap: 26px; }
+  .recent span { display: grid; justify-items: center; gap: 6px; font-size: 12px; color: #55585e; }
+  .av { display: inline-grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%; background: #e6e7fb; color: #3a3ea8; font-weight: 650; font-size: 13px; font-style: normal; }
+  .av.sm { width: 28px; height: 28px; font-size: 10px; }
+  .av.warm { background: #f5e7c8; color: #7a5410; }
+  .list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .list li { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px var(--line); color: var(--mute); }
+  .list .av { width: 38px; height: 38px; }
+  .list span { display: grid; flex: 1; }
+  .list strong { color: var(--ink); font-weight: 600; }
+  .list em { font-style: normal; font-size: 12px; font-weight: 600; }
+  .list em::before { content: "● "; font-size: 9px; }
+  .active { color: #23824a; } .pending { color: #a95a0c; } .discharge { color: #b33a3a; }
+
+  /* Overlay */
+  .veil { position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 100%, rgb(255 255 255 / 0.6), rgb(245 245 244 / 0.2)); opacity: 0; transition: opacity 0.4s; pointer-events: none; }
+  .cp:not([data-step="idle"]) .veil { opacity: 1; }
+  .layer { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+  .layer > * { grid-area: 1 / 1; pointer-events: auto; }
+  .said { align-self: start; margin: 70px 0 0; max-width: 620px; text-align: center; font-size: 22px; font-weight: 550; letter-spacing: -0.015em; color: var(--ink); min-height: 31px; }
+  .said .q { color: #b9bbbf; }
+  .cp:is([data-step="idle"]) .said { visibility: hidden; }
+  .dots { align-self: start; margin-top: 40px; list-style: none; padding: 0; display: flex; gap: 6px; }
+  .dots li { width: 18px; height: 3px; border-radius: 2px; background: #d5d6d8; transition: background 0.3s, width 0.3s; }
+  .cp:is([data-step="idle"], [data-step="listen"]) .dots { visibility: hidden; }
+  .cp[data-step="patient"] [data-d="patient"],
+  .cp[data-step="device"] :is([data-d="patient"], [data-d="device"]),
+  .cp:is([data-step="details"], [data-step="edit"], [data-step="details-set"]) :is([data-d="patient"], [data-d="device"], [data-d="details"]),
+  .cp:is([data-step="ready"], [data-step="done"]) .dots li { background: var(--ink); }
+
+  .st-idle, .st-listen, .st-patient, .st-device, .st-details, .st-ready, .st-done { display: none !important; }
+  .cp[data-step="idle"] .st-idle, .cp[data-step="listen"] .st-listen, .cp[data-step="patient"] .st-patient,
+  .cp[data-step="device"] .st-device, .cp:is([data-step="details"], [data-step="edit"], [data-step="details-set"]) .st-details,
+  .cp[data-step="ready"] .st-ready, .cp[data-step="done"] .st-done { display: grid !important; }
+
+  .hint { align-self: end; margin-bottom: 96px; white-space: nowrap; display: flex !important; align-items: center; gap: 9px; padding: 9px 14px 9px 9px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 12px 28px -14px rgb(0 0 0 / 0.3); color: #55585e; }
+  .cp:not([data-step="idle"]) .hint { display: none !important; }
+  .spark { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff; }
+
+  .stage { justify-items: center; gap: 16px; animation: up 0.4s cubic-bezier(.2,.8,.2,1); }
+  @keyframes up { from { opacity: 0; transform: translateY(10px) scale(0.98); } }
+  .ask { margin: 0; font-size: 15px; font-weight: 600; color: #3d4045; display: flex; align-items: center; gap: 6px; }
+  .tile { display: grid; align-content: center; gap: 3px; min-width: 150px; min-height: 92px; padding: 14px 18px; border-radius: 18px; background: var(--dark); color: #fff; text-align: left; border: 0; font: inherit; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.06) inset, 0 18px 36px -18px rgb(0 0 0 / 0.55); backdrop-filter: blur(10px); }
+  .tile strong { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
+  .tile small { color: rgb(255 255 255 / 0.62); font-size: 12px; }
+  .tile.wide { display: flex; align-items: center; gap: 14px; min-width: 420px; }
+  .tile.wide > span { display: grid; gap: 2px; }
+  .tile .av.lg { width: 48px; height: 48px; background: rgb(255 255 255 / 0.14); color: #fff; }
+  .tiles { display: grid; grid-template-columns: repeat(3, 160px); gap: 12px; }
+  .need { position: relative; cursor: pointer; background: #fff; color: var(--ink); box-shadow: 0 0 0 2px var(--ink), 0 18px 36px -18px rgb(0 0 0 / 0.4); }
+  .need small { color: var(--mute); }
+  .need :global(svg) { position: absolute; top: 12px; right: 12px; }
+  .h-set { display: none !important; }
+  .cp[data-height="set"] .h-set { display: revert !important; }
+  .cp[data-height="set"] .h-empty { display: none; }
+  .cp[data-height="set"] .need { background: var(--dark); color: #fff; box-shadow: 0 18px 36px -18px rgb(0 0 0 / 0.55); }
+  .cp[data-height="set"] .need small { color: rgb(255 255 255 / 0.62); }
+  .cp[data-height="set"] .acts.h-set { display: flex !important; }
+
+  .st-details { position: relative; }
+  .capsule { position: absolute; inset: 0; margin: auto; width: fit-content; height: fit-content; display: none; align-items: center; gap: 22px; padding: 10px 10px 10px 28px; border-radius: 20px; background: var(--dark); color: #fff; box-shadow: 0 24px 48px -20px rgb(0 0 0 / 0.6); animation: up 0.3s ease-out; }
+  .cp[data-step="edit"] .capsule { display: flex; }
+  .cp[data-step="edit"] .tiles { opacity: 0.25; pointer-events: none; filter: blur(2px); }
+  .num b { font-size: 30px; font-weight: 650; }
+  .num small { margin-left: 4px; color: rgb(255 255 255 / 0.6); }
+  .cm { margin-left: 40px; color: rgb(255 255 255 / 0.6); }
+  .ok { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid rgb(255 255 255 / 0.5); background: none; color: #fff; cursor: pointer; }
+
+  .acts { display: flex; gap: 10px; justify-content: center; }
+  .solid, .ghost { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 999px; font: inherit; font-weight: 600; cursor: pointer; border: 0; }
+  .solid { background: var(--ink); color: #fff; box-shadow: 0 10px 22px -12px rgb(0 0 0 / 0.6); }
+  .ghost { background: #fff; color: var(--ink); box-shadow: 0 0 0 1px #dcdcda; }
+  :is(.solid, .ghost, .ok, .mic, .round, .need, .undo):focus-visible { outline: 2px solid #4b4fd6; outline-offset: 3px; }
+
+  .orb, .rings { position: relative; width: 220px; height: 220px; display: grid !important; place-items: center; }
+  .cp:not([data-step="listen"]) .orb { display: none !important; }
+  .orb span, .rings span { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgb(24 25 27 / 0.18); animation: pulse 2.4s ease-out infinite; }
+  .orb span:nth-child(2), .rings span:nth-child(2) { animation-delay: 0.8s; }
+  .orb span:nth-child(3), .rings span:nth-child(3) { animation-delay: 1.6s; }
+  .orb i, .rings i { display: grid; place-items: center; width: 92px; height: 92px; border-radius: 50%; background: #2a2a2d; color: #fff; box-shadow: 0 0 0 10px rgb(255 255 255 / 0.7), 0 0 0 11px rgb(24 25 27 / 0.12), 0 20px 40px -14px rgb(0 0 0 / 0.5); }
+  @keyframes pulse { from { transform: scale(0.45); opacity: 1; } to { transform: scale(1); opacity: 0; } }
+  .found { display: none !important; }
+  .cp.found-it .found { display: inline-flex !important; }
+  .cp.found-it .searching { display: none; }
+  .cp.found-it .rings span { animation: none; opacity: 0; }
+
+  .instr :global(svg) { flex: none; }
+  .result { gap: 12px !important; }
+  .check { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #fff; color: var(--ink); flex: none; }
+  .undo { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 999px; border: 0; background: rgb(255 255 255 / 0.12); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+
+  .exit { display: grid; justify-items: center; gap: 6px; padding: 26px 30px; border-radius: 22px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 30px 60px -24px rgb(0 0 0 / 0.45); z-index: 3; text-align: center; }
+  .exit[hidden] { display: none; }
+  .exit strong { font-size: 19px; }
+  .exit p { margin: 0 0 10px; color: #55585e; }
+
+  .dock { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; justify-content: center; gap: 14px; }
+  .round { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 0; background: #fff; color: var(--ink); cursor: pointer; box-shadow: 0 0 0 1px #e2e2df, 0 8px 18px -10px rgb(0 0 0 / 0.35); transition: opacity 0.3s, transform 0.3s; }
+  .back { position: absolute; left: 24px; background: #3a3a3d; color: #fff; box-shadow: none; }
+  .cp[data-step="idle"] .round { opacity: 0; pointer-events: none; transform: translateY(6px); }
+  .mic { display: grid; place-items: center; width: 56px; height: 56px; margin-top: -5px; border-radius: 50%; border: 0; cursor: pointer; background: var(--ink); color: #fff; box-shadow: 0 0 0 5px rgb(255 255 255 / 0.9), 0 0 0 6px #e2e2df, 0 14px 28px -12px rgb(0 0 0 / 0.6); }
+  .cp[data-step="listen"] .mic { animation: live 1.2s ease-in-out infinite; }
+  @keyframes live { 50% { box-shadow: 0 0 0 9px rgb(255 255 255 / 0.9), 0 0 0 10px #d0d0cd, 0 14px 28px -12px rgb(0 0 0 / 0.6); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orb span, .rings span, .stage, .capsule, .cp[data-step="listen"] .mic { animation: none; }
+    .app { transition: none; }
   }
 </style>
