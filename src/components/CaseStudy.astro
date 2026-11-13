@@ -7,6 +7,7 @@ import RecordChain from "./widgets/RecordChain.astro";
 import Copilot from "./widgets/Copilot.astro";
 import AgentConsole from "./widgets/AgentConsole.astro";
 import DensityTable from "./widgets/DensityTable.astro";
+import ClickerTour from "./widgets/ClickerTour.astro";
 import Icon from "./Icon.astro";
 
 interface Props {
@@ -104,6 +105,7 @@ const rail = [
           {data.widget === "copilot" && <Copilot />}
           {data.widget === "agent-console" && <AgentConsole />}
           {data.widget === "density" && <DensityTable />}
+          {data.widget === "tour" && <ClickerTour />}
         </div>
         <p class="caption">Re-created for this page. It shows the pattern, with sample data.</p>
       </section>

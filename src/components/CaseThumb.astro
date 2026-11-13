@@ -41,13 +41,7 @@ const { kind } = Astro.props;
         <span class="row"><Icon name="arrows-counter-clockwise" size={10} /> Denials <em class="wait">Loop</em></span>
       </div>
     )}
-    {kind === "clicker" && (
-      <div class="pad list">
-        <span class="row">Al-Noor Apts <em>14,280</em></span>
-        <span class="row">Bilal Traders <em>9,912</em></span>
-        <span class="row">Crescent School <em>21,504</em></span>
-      </div>
-    )}
+    {kind === "clicker" && <img class="real" src="/media/clicker/w-aging-light.webp" alt="" loading="lazy" />}
   </div>
 
   <div class="sheet s2">
@@ -78,13 +72,7 @@ const { kind } = Astro.props;
         <span class="qsub">3h left · coding mismatch</span>
       </div>
     )}
-    {kind === "clicker" && (
-      <div class="pad">
-        <span class="alert vio"><Icon name="lightning" weight="fill" size={10} /> 12 selected</span>
-        <span class="line"></span><span class="line short"></span>
-        <span class="s-btn vio">Generate bills</span>
-      </div>
-    )}
+    {kind === "clicker" && <img class="real" src="/media/clicker/c-stages-dark.webp" alt="" loading="lazy" />}
   </div>
 
   <div class="front"><span class="seam"></span></div>
@@ -182,6 +170,13 @@ const { kind } = Astro.props;
   }
 
   /* Sheet faces */
+  .real {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left top;
+  }
   .sheet:has(.dark) {
     background: #0d1424;
     color: #fff;

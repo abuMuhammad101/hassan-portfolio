@@ -27,7 +27,7 @@ const cases = defineCollection({
     order: z.number(),
     meta: z.array(z.object({ label: z.string(), value: z.string() })),
     ndaRecreated: z.boolean(),
-    widget: z.enum(["before-after", "record-chain", "copilot", "agent-console", "density"]),
+    widget: z.enum(["before-after", "record-chain", "copilot", "agent-console", "density", "tour"]),
     widgetIntro: z.string(),
     stats: z.array(z.object({ value: z.string(), unit: z.string(), label: z.string() })).optional(),
     problem: z.array(z.string()),
