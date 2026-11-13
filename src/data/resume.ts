@@ -30,7 +30,7 @@ export const resume = {
       role: "Sr. UI/UX Designer",
       company: "Tafsol Technologies",
       start: "2023",
-      end: "Jun 2026",
+      end: "May 2026",
       bullets: [
         "Led UI/UX strategy for SaaS platforms (LMS, ERP, CRM, dashboards), improving usability and workflow efficiency.",
         "Managed end-to-end design lifecycle — user research, wireframes, prototypes, design systems, developer handoff — within Agile teams.",
