@@ -1,413 +1,262 @@
 ---
-/* The same booking site before and after: identical content, reshaped.
-   Re-created with sample data and a stand-in brand. */
+/* The same booking site before and after: same backend and content, reshaped.
+   Re-created with a stand-in brand, illustrated stand-ins for photos and
+   sample prices. */
 import BrowserFrame from "../BrowserFrame.astro";
 import Icon from "../Icon.astro";
-const routes = [
-  { from: "Jeddah Airport", to: "Makkah", time: "about 1 h 15 min", icon: "airplane-takeoff", tone: "a" },
-  { from: "Makkah", to: "Madinah", time: "about 4 h 30 min", icon: "mosque", tone: "b" },
-  { from: "Madinah Airport", to: "Madinah", time: "about 25 min", icon: "airplane-takeoff", tone: "c" },
-];
 const fleet = [
-  { name: "Sedan", seats: "Up to 3 travellers", icon: "car-profile" },
-  { name: "Family SUV", seats: "Up to 6 travellers", icon: "car-profile" },
-  { name: "Van", seats: "Up to 12 travellers", icon: "van" },
+  { name: "Sedan", type: "Sedan", pax: 3, bags: 2, from: 180 },
+  { name: "Family MPV", type: "MPV", pax: 7, bags: 5, from: 260 },
+  { name: "Full-size SUV", type: "SUV", pax: 7, bags: 6, from: 340 },
+  { name: "Group van", type: "Van", pax: 10, bags: 10, from: 420 },
 ];
-const why = [
-  { icon: "seal-check", t: "Licensed drivers" },
-  { icon: "suitcase-rolling", t: "Help with luggage" },
-  { icon: "headset", t: "Support day and night" },
+const routes = [
+  ["Jeddah Airport", "Makkah", "1 h 15 min"],
+  ["Makkah", "Madinah", "4 h 30 min"],
+  ["Madinah Airport", "Madinah", "25 min"],
 ];
 ---
 
-<div class="ba" data-ba>
+<div class="ba" data-ba data-view="after">
   <div class="switch" role="group" aria-label="Show the site before or after the redesign">
     <button type="button" data-show="before" aria-pressed="false">Before</button>
     <button type="button" data-show="after" aria-pressed="true">After</button>
   </div>
 
-  <BrowserFrame address="pilgrimdrivers.example" label="Re-created booking site">
-    <div class="page after" data-after>
-      <header class="nav">
-        <span class="logo"><span class="logo-mark"><Icon name="mosque" weight="fill" size={16} /></span> Pilgrim Drivers</span>
-        <span class="links"><span>Routes</span><span>Fleet</span><span>Help</span></span>
-        <span class="book">Book a ride</span>
-      </header>
-
-      <section class="hero">
-        <span class="eyebrow"><Icon name="seal-check" weight="fill" size={14} /> Private drivers for Umrah and Hajj</span>
-        <h3>Your pilgrimage, driven with care.</h3>
-        <p>Private cars and vans between the airports, Makkah and Madinah.</p>
-        <div class="search">
-          <span class="field"><Icon name="airplane-takeoff" size={16} /><span><small>From</small>Jeddah Airport</span></span>
-          <span class="field"><Icon name="map-pin" size={16} /><span><small>To</small>Makkah</span></span>
-          <span class="field"><Icon name="calendar-blank" size={16} /><span><small>Date</small>Thu, 14 May</span></span>
-          <span class="field"><Icon name="users" size={16} /><span><small>Travellers</small>4</span></span>
-          <span class="go">Check availability <Icon name="arrow-right" size={15} /></span>
+  <BrowserFrame address="pilgrimdrivers.example" label="Re-created pilgrim transport site">
+    <div class="fit">
+      <!-- BEFORE: what the agent shipped -->
+      <div class="pg before" data-before hidden>
+        <nav class="b-nav">
+          <span class="b-pills"><b><Icon name="house" size={12} />Home</b><span>Fleet <Icon name="caret-down" size={10} /></span><span>Routes &amp; Pricing</span><span>About Us</span><span>Partners <Icon name="caret-down" size={10} /></span><span>Contact</span></span>
+          <span class="b-end"><span>EN <Icon name="caret-down" size={10} /></span><span class="b-cta">Book Now <Icon name="arrow-right" size={11} /></span></span>
+        </nav>
+        <div class="b-hero">
+          <div class="art a-dusk"></div>
+          <div class="b-card"><h5>VIP Airport Transfers, Door to Door</h5><i></i><p>Meet-and-greet arrivals, priority pickup, and a vehicle waiting the moment you land. Seamless transfers across the region.</p></div>
+          <span class="b-dots"><b></b><i></i><i></i><i></i><i></i></span>
+          <span class="b-count">01 / 05</span>
         </div>
-      </section>
-
-      <section class="block">
-        <div class="block-head"><h4>Popular routes</h4><span>All routes <Icon name="arrow-right" size={13} /></span></div>
-        <div class="routes">
-          {routes.map((r) => (
-            <div class="route">
-              <span class={`art ${r.tone}`}><Icon name={r.icon} weight="duotone" size={30} /></span>
-              <b>{r.from} <Icon name="arrow-right" size={12} /> {r.to}</b>
-              <small><Icon name="clock" size={12} /> {r.time}</small>
-            </div>
-          ))}
+        <div class="b-sec">
+          <h6>Choose Your Vehicle</h6>
+          <p>Comfort tailored for every journey.</p>
+          <div class="b-cars">
+            {fleet.map((f) => (
+              <div class="b-car"><div class="art a-car"></div><b>{f.name}</b><small>{f.type.toUpperCase()}</small><p>{f.pax} passengers · {f.bags} bags</p><span>Routes &amp; Pricing</span><span class="b-cta sm">Book Now</span></div>
+            ))}
+          </div>
         </div>
-      </section>
+        <p class="note"><Icon name="info" size={13} />Booking starts on another page. Nothing says what a trip costs, or which car fits your group, until you get there.</p>
+      </div>
 
-      <section class="block">
-        <div class="block-head"><h4>Choose your vehicle</h4></div>
-        <div class="fleet">
-          {fleet.map((f) => (
-            <div><Icon name={f.icon} weight="duotone" size={26} /><span><b>{f.name}</b><small>{f.seats}</small></span></div>
-          ))}
-        </div>
-      </section>
+      <!-- AFTER: the redesign -->
+      <div class="pg after" data-after>
+        <header class="a-top">
+          <Icon name="list" size={20} />
+          <span class="logo"><i></i>Pilgrim Drivers</span>
+          <span class="a-end"><span class="lang"><Icon name="translate" size={13} />Eng <Icon name="caret-down" size={10} /></span><span class="me"><Icon name="user" size={16} /></span></span>
+        </header>
 
-      <section class="why">
-        {why.map((w) => <span><Icon name={w.icon} size={18} /> {w.t}</span>)}
-      </section>
-    </div>
+        <section class="a-hero">
+          <svg class="arc" viewBox="0 0 400 400" aria-hidden="true"><circle cx="200" cy="200" r="170" /><circle cx="200" cy="200" r="120" /></svg>
+          <div class="a-left">
+            <h5>Your sacred journey deserves a driver who understands its weight.</h5>
+            <form class="search" data-search onsubmit="return false">
+              <label><span><Icon name="users" size={12} />Passengers</span>
+                <span class="step"><button type="button" data-pax="-1" aria-label="Fewer passengers"><Icon name="minus" size={11} /></button><b data-pax-v>4</b><button type="button" data-pax="1" aria-label="More passengers"><Icon name="plus" size={11} /></button></span></label>
+              <label><span><Icon name="suitcase-rolling" size={12} />Bags</span>
+                <span class="step"><button type="button" data-bag="-1" aria-label="Fewer bags"><Icon name="minus" size={11} /></button><b data-bag-v>3</b><button type="button" data-bag="1" aria-label="More bags"><Icon name="plus" size={11} /></button></span></label>
+              <label><span><Icon name="calendar-blank" size={12} />When</span><span class="field"><Icon name="calendar-blank" size={14} />14 Mar, 09:30</span></label>
+              <label class="wide"><span>From</span><span class="field"><Icon name="map-pin" size={14} weight="fill" /><b data-from>Jeddah Airport</b><Icon name="caret-down" size={11} /></span></label>
+              <button type="button" class="swap" data-swap aria-label="Swap from and to"><Icon name="arrows-left-right" size={15} /></button>
+              <label class="wide"><span>To</span><span class="field"><Icon name="map-pin" size={14} weight="fill" /><b data-to>Makkah</b><Icon name="caret-down" size={11} /></span></label>
+              <button type="button" class="go" data-go>Book now <Icon name="magnifying-glass" size={15} /></button>
+            </form>
+          </div>
+          <div class="mosaic" aria-hidden="true">
+            <div class="art t1 a-street"></div><div class="art t2 a-car2"></div>
+            <div class="art t3 a-dusk"></div><div class="art t4 a-palms"></div>
+            <div class="art t5 a-crowd"></div>
+          </div>
+        </section>
 
-    <div class="page before" data-before hidden>
-      <p class="b-links">Home | Routes | Fleet | About | Testimonials | FAQ | Contact</p>
-      <h3>Welcome to Pilgrim Drivers</h3>
-      <p>We provide private cars and vans between the airports, Makkah and Madinah for Umrah and Hajj travellers. Book a ride with us today.</p>
-      <span class="b-btn">Get Started</span>
-      <h4>Our Routes</h4>
-      {routes.map((r) => <p>{r.from} to {r.to} ({r.time})</p>)}
-      <h4>Our Fleet</h4>
-      {fleet.map((f) => <p>{f.name}: {f.seats}</p>)}
-      <h4>Why Choose Us</h4>
-      <p>{why.map((w) => w.t).join(". ")}.</p>
-      <h4>Testimonials</h4>
-      <p>Read what travellers say about us.</p>
-      <h4>FAQ</h4>
-      <p>Find answers to common questions.</p>
+        <section class="results" data-results hidden>
+          <p class="r-head"><b data-r-title></b><span data-r-sub></span></p>
+          <div class="cars">
+            {fleet.map((f) => (
+              <div class="car" data-car data-pax={f.pax} data-bags={f.bags}>
+                <div class="art a-car"></div>
+                <div class="c-b"><b>{f.name}</b><small><Icon name="users" size={11} />{f.pax} <Icon name="suitcase-rolling" size={11} />{f.bags}</small></div>
+                <div class="c-p"><small>from</small><b>SAR {f.from}</b></div>
+                <span class="why-not">Too small for your group</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section class="popular" data-popular>
+          <p class="r-head"><b>Popular routes</b><span>Fixed prices, no surprises</span></p>
+          <div class="routes">
+            {routes.map(([f, t, d]) => (
+              <button type="button" class="route" data-route={`${f}|${t}`}><span><b>{f}</b><Icon name="arrow-right" size={12} /><b>{t}</b></span><small><Icon name="clock" size={11} />{d}</small></button>
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   </BrowserFrame>
 </div>
 
 <script>
   document.querySelectorAll<HTMLElement>("[data-ba]").forEach((root) => {
-    const before = root.querySelector<HTMLElement>("[data-before]")!;
-    const after = root.querySelector<HTMLElement>("[data-after]")!;
+    const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const before = q("[data-before]"), after = q("[data-after]");
     const buttons = [...root.querySelectorAll<HTMLButtonElement>("[data-show]")];
-    buttons.forEach((b) =>
-      b.addEventListener("click", () => {
-        const showBefore = b.dataset.show === "before";
-        before.hidden = !showBefore;
-        after.hidden = showBefore;
-        buttons.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-      })
-    );
+    buttons.forEach((b) => b.addEventListener("click", () => {
+      const showBefore = b.dataset.show === "before";
+      before.hidden = !showBefore; after.hidden = showBefore;
+      buttons.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    }));
+
+    let pax = 4, bags = 3, searched = false;
+    const paxV = q("[data-pax-v]"), bagV = q("[data-bag-v]"), from = q("[data-from]"), to = q("[data-to]");
+    const results = q("[data-results]"), popular = q("[data-popular]");
+    const render = () => {
+      paxV.textContent = String(pax); bagV.textContent = String(bags);
+      if (!searched) return;
+      let fits = 0;
+      root.querySelectorAll<HTMLElement>("[data-car]").forEach((c) => {
+        const ok = +c.dataset.pax! >= pax && +c.dataset.bags! >= bags;
+        c.classList.toggle("no", !ok); if (ok) fits++;
+      });
+      q("[data-r-title]").textContent = `${from.textContent} → ${to.textContent}`;
+      q("[data-r-sub]").textContent = `${fits} of 4 vehicles fit ${pax} passengers and ${bags} bags · sample prices`;
+    };
+    root.querySelectorAll<HTMLButtonElement>("[data-pax]").forEach((b) => b.addEventListener("click", () => { pax = Math.min(12, Math.max(1, pax + +b.dataset.pax!)); render(); }));
+    root.querySelectorAll<HTMLButtonElement>("[data-bag]").forEach((b) => b.addEventListener("click", () => { bags = Math.min(12, Math.max(0, bags + +b.dataset.bag!)); render(); }));
+    q("[data-swap]").addEventListener("click", () => { const t = from.textContent; from.textContent = to.textContent; to.textContent = t; render(); });
+    const search = () => { searched = true; results.hidden = false; popular.hidden = true; render(); };
+    q("[data-go]").addEventListener("click", search);
+    root.querySelectorAll<HTMLButtonElement>("[data-route]").forEach((b) => b.addEventListener("click", () => {
+      const [f, t] = b.dataset.route!.split("|"); from.textContent = f; to.textContent = t; search();
+    }));
+
+    const fit = q(".fit");
+    const size = () => fit.style.setProperty("zoom", String(Math.max(0.55, Math.min(1, fit.parentElement!.clientWidth / 1000))));
+    new ResizeObserver(size).observe(fit.parentElement!); size();
   });
 </script>
 
 <style>
-  .switch {
-    display: inline-flex;
-    padding: 4px;
-    border-radius: 999px;
-    background: var(--bg-sunk);
-    border: 1px solid var(--rule);
-    margin-bottom: 14px;
-  }
-  .switch button {
-    font: inherit;
-    font-size: var(--text-sm);
-    font-weight: 500;
-    padding: 6px 18px;
-    border-radius: 999px;
-    border: none;
-    background: transparent;
-    color: var(--ink-secondary);
-    cursor: pointer;
-  }
-  .switch button[aria-pressed="true"] {
-    background: var(--bg-raised);
-    color: var(--ink);
-    box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
-  }
-  .page {
-    height: 520px;
-    font-size: 13px;
-    line-height: 1.45;
-    color: var(--ink);
-  }
-  small {
-    font-size: 11px;
-    color: var(--ink-muted);
-  }
+  .switch { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--bg-sunk); border: 1px solid var(--rule); margin-bottom: 14px; }
+  .switch button { border: 0; background: none; font: inherit; font-weight: 600; font-size: var(--text-sm); padding: 6px 16px; border-radius: 999px; color: var(--ink-muted); cursor: pointer; }
+  .switch [aria-pressed="true"] { background: var(--bg-raised); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
+  .fit { width: 1000px; }
+  .pg { --gold: #a9822a; --gold2: #c9a24a; --ink: #17181a; --mute: #7d8086; background: #fff; color: var(--ink); font: 13px/1.45 Inter, var(--font-body, system-ui), sans-serif; min-height: 640px; }
+  .pg[hidden] { display: none; }
+  button { font: inherit; }
+  :is(.go, .swap, .step button, .route):focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  /* Illustrated stand-ins for photography */
+  .art { position: relative; overflow: hidden; background: #ddd; }
+  .a-dusk { background: linear-gradient(180deg, #f3c58f 0%, #e7a06d 38%, #8d6b7c 70%, #4c4a63 100%); }
+  .a-dusk::after { content: ""; position: absolute; inset: auto 0 0; height: 46%; background:
+      radial-gradient(circle at 50% 0, #4a4258 18px, transparent 19px) 50% 30% / 60px 60px no-repeat,
+      linear-gradient(#3d3a4d, #2f2d3b); clip-path: polygon(0 40%, 8% 40%, 8% 20%, 10% 20%, 10% 40%, 22% 40%, 22% 30%, 34% 30%, 34% 10%, 35% 0, 36% 10%, 36% 30%, 46% 30%, 46% 18%, 54% 18%, 54% 30%, 64% 30%, 64% 10%, 65% 0, 66% 10%, 66% 30%, 78% 30%, 78% 40%, 90% 40%, 90% 22%, 92% 22%, 92% 40%, 100% 40%, 100% 100%, 0 100%); }
+  .a-car, .a-car2 { background: linear-gradient(180deg, #eef0f2 0%, #e2e5e8 60%, #cfd3d7 100%); }
+  .a-car::after, .a-car2::after { content: ""; position: absolute; left: 14%; right: 14%; bottom: 20%; height: 30%; border-radius: 40% 46% 10px 10px / 70% 70% 10px 10px; background: linear-gradient(180deg, #4a4f57, #2a2e34); box-shadow: 0 10px 10px -6px rgb(0 0 0 / 0.35); }
+  .a-car::before, .a-car2::before { content: ""; position: absolute; left: 30%; right: 32%; bottom: 38%; height: 14%; border-radius: 30% 30% 0 0; background: #8fa3b5; z-index: 1; }
+  .a-car2 { background: linear-gradient(180deg, #f6efe4, #e9dcc6); }
+  .a-car2::after { background: linear-gradient(180deg, #f2f2f0, #c9c9c5); }
+  .a-palms { background: linear-gradient(180deg, #bfe0f0 0%, #e6eef0 55%, #d9cdb6 56%, #cbbd9f 100%); }
+  .a-palms::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 18px 10px at 30% 36%, #3f6b43 60%, transparent 62%), radial-gradient(ellipse 18px 10px at 68% 30%, #3f6b43 60%, transparent 62%), linear-gradient(90deg, transparent 29%, #7a5d3f 29% 31%, transparent 31% 67%, #7a5d3f 67% 69%, transparent 69%) 0 40% / 100% 20% no-repeat; }
+  .a-street { background: linear-gradient(180deg, #d6dde4 0%, #aeb9c5 50%, #8e8a85 51%, #6f6b66 100%); }
+  .a-street::after { content: ""; position: absolute; inset: 18% 10% 50%; background: repeating-linear-gradient(90deg, #8995a3 0 14px, #a6b1bd 14px 22px); clip-path: polygon(0 40%, 20% 40%, 20% 0, 40% 0, 40% 30%, 70% 30%, 70% 10%, 100% 10%, 100% 100%, 0 100%); }
+  .a-crowd { background: linear-gradient(180deg, #e9e3d6, #d8cdb7); }
+  .a-crowd::after { content: ""; position: absolute; inset: 40% 0 0; background: radial-gradient(circle 7px at 15% 20%, #fff 96%, transparent), radial-gradient(circle 7px at 35% 14%, #f2f2f2 96%, transparent), radial-gradient(circle 7px at 58% 22%, #fff 96%, transparent), radial-gradient(circle 7px at 80% 16%, #eee 96%, transparent), linear-gradient(90deg, #fff 8%, transparent 8% 28%, #f0f0f0 28% 42%, transparent 42% 51%, #fff 51% 65%, transparent 65% 73%, #eee 73% 87%, transparent 87%) 0 100% / 100% 60% no-repeat; }
+
+  /* Before */
+  .before { background: #fff; font-size: 12px; }
+  .b-nav { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 10px 18px; border-bottom: 1px solid #eee; }
+  .b-pills { display: flex; gap: 14px; align-items: center; color: #444; font-size: 11px; }
+  .b-pills > * { display: inline-flex; align-items: center; gap: 4px; }
+  .b-pills b { padding: 5px 11px; border-radius: 999px; background: #0f3d33; color: #fff; }
+  .b-end { display: flex; gap: 12px; align-items: center; font-size: 11px; }
+  .b-cta { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 5px; background: #946c1c; color: #fff; font-weight: 600; font-size: 11px; }
+  .b-cta.sm { padding: 5px 9px; justify-self: start; }
+  .b-hero { position: relative; height: 300px; }
+  .b-hero .art { position: absolute; inset: 0; filter: saturate(0.35) brightness(1.15); }
+  .b-card { position: absolute; left: 28px; top: 70px; width: 230px; padding: 18px; background: #faf9f6; box-shadow: 0 6px 20px rgb(0 0 0 / 0.12); }
+  .b-card h5 { margin: 0; font: 700 19px/1.15 Georgia, serif; }
+  .b-card i { display: block; width: 26px; height: 2px; margin: 9px 0; background: #b8892d; }
+  .b-card p { margin: 0; font-size: 10.5px; color: #555; }
+  .b-dots { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; align-items: center; }
+  .b-dots b { width: 16px; height: 3px; background: #b8892d; } .b-dots i { width: 4px; height: 4px; border-radius: 50%; background: #fff; }
+  .b-count { position: absolute; right: 14px; bottom: 12px; padding: 3px 8px; border-radius: 10px; background: rgb(0 0 0 / 0.4); color: #fff; font-size: 10px; }
+  .b-sec { padding: 22px 28px 6px; background: #faf8f3; text-align: center; }
+  .b-sec h6 { margin: 0; font: 700 20px Georgia, serif; }
+  .b-sec > p { margin: 4px 0 14px; color: #777; }
+  .b-cars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: left; }
+  .b-car { display: grid; gap: 3px; padding: 10px; background: #fff; border: 1px solid #eee; }
+  .b-car .art { height: 70px; margin-bottom: 6px; }
+  .b-car small { color: #b8892d; font-size: 9px; letter-spacing: 0.08em; }
+  .b-car p { margin: 0; color: #666; font-size: 11px; }
+  .b-car > span:not(.b-cta) { color: #0f3d33; font-size: 11px; text-decoration: underline; }
+  .note { display: flex; align-items: center; gap: 7px; margin: 14px 28px; padding: 9px 12px; border-radius: 8px; background: #fff6e6; color: #7a5410; font-size: 12px; }
 
   /* After */
-  .after {
-    /* Mixing with ink keeps the brand colour legible in both themes. */
-    --brand: color-mix(in srgb, #17a58c 62%, var(--ink));
-    --brand-soft: color-mix(in srgb, #17a58c 13%, var(--bg-raised));
-  }
-  .nav {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--rule);
-  }
-  .logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-  }
-  .logo-mark {
-    width: 26px;
-    height: 26px;
-    display: grid;
-    place-items: center;
-    border-radius: 8px;
-    background: var(--brand);
-    color: var(--bg-raised);
-  }
-  .links {
-    display: flex;
-    gap: 16px;
-    margin-left: auto;
-    color: var(--ink-secondary);
-  }
-  .book {
-    background: var(--ink);
-    color: var(--bg);
-    border-radius: 999px;
-    padding: 6px 14px;
-    font-weight: 500;
-  }
-  .hero {
-    padding: 28px 20px 22px;
-    background:
-      radial-gradient(120% 140% at 100% 0%, var(--brand-soft), transparent 60%),
-      var(--bg-raised);
-  }
-  .eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--brand);
-    font-weight: 500;
-  }
-  .hero h3 {
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 28px;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    margin: 8px 0 6px;
-  }
-  .hero p {
-    margin: 0 0 16px;
-    color: var(--ink-secondary);
-  }
-  .search {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 6px;
-    background: var(--bg-raised);
-    border: 1px solid var(--rule);
-    border-radius: 14px;
-    box-shadow: 0 14px 30px -18px rgb(0 0 0 / 0.3);
-  }
-  .field {
-    flex: 1 1 110px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    border-radius: 10px;
-    color: var(--ink-muted);
-  }
-  .field + .field {
-    box-shadow: -1px 0 0 var(--rule);
-  }
-  .field span {
-    display: grid;
-    color: var(--ink);
-    font-weight: 500;
-    white-space: nowrap;
-  }
-  .field small {
-    font-weight: 400;
-  }
-  .go {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    flex: 1 1 150px;
-    background: var(--brand);
-    color: var(--bg-raised);
-    font-weight: 500;
-    border-radius: 10px;
-    padding: 10px 14px;
-    white-space: nowrap;
-  }
-  .block {
-    padding: 18px 20px 0;
-  }
-  .block-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 10px;
-  }
-  .block-head h4 {
-    margin: 0;
-    font-size: 15px;
-    font-weight: 600;
-  }
-  .block-head span {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: var(--ink-secondary);
-  }
-  .routes {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-  }
-  .route {
-    border: 1px solid var(--rule);
-    border-radius: 12px;
-    padding: 8px 8px 10px;
-    display: grid;
-    gap: 4px;
-  }
-  .route b {
-    font-weight: 500;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 4px 0;
-  }
-  .route small {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 0 4px;
-  }
-  .art {
-    height: 74px;
-    border-radius: 8px;
-    display: grid;
-    place-items: center;
-    color: var(--brand);
-    background: linear-gradient(135deg, var(--brand-soft), color-mix(in srgb, #e9b44c 22%, var(--bg-raised)));
-  }
-  .art.b {
-    background: linear-gradient(135deg, color-mix(in srgb, #e9b44c 26%, var(--bg-raised)), var(--brand-soft));
-  }
-  .art.c {
-    background: linear-gradient(200deg, var(--brand-soft), color-mix(in srgb, #7aa5ff 20%, var(--bg-raised)));
-  }
-  .fleet {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-  }
-  .fleet div {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border: 1px solid var(--rule);
-    border-radius: 12px;
-    padding: 10px 12px;
-    color: var(--brand);
-  }
-  .fleet span {
-    display: grid;
-    color: var(--ink);
-  }
-  .fleet b {
-    font-weight: 500;
-  }
-  .why {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 22px;
-    margin: 18px 20px 22px;
-    padding: 12px 16px;
-    border-radius: 12px;
-    background: var(--bg-sunk);
-    color: var(--ink-secondary);
-  }
-  .why span {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .a-top { display: flex; align-items: center; gap: 18px; padding: 14px 26px; color: var(--gold); }
+  .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; color: var(--ink); letter-spacing: -0.01em; }
+  .logo i { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--gold); background: radial-gradient(circle at 50% 62%, var(--ink) 0 6px, transparent 7px), conic-gradient(from 210deg, #0f3d33 0 120deg, transparent 120deg); }
+  .a-end { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+  .lang { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--gold); color: var(--ink); font-size: 12px; }
+  .me { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--gold); }
 
-  /* Before: everything present, nothing leading. */
-  .before {
-    padding: 14px 20px 24px;
-    text-align: center;
-    font-family: "Times New Roman", Times, serif;
-    font-size: 15px;
-    background: var(--bg-raised);
-  }
-  .before h3 {
-    font-size: 24px;
-    margin: 18px 0 8px;
-  }
-  .before h4 {
-    font-size: 18px;
-    margin: 20px 0 6px;
-  }
-  .before p {
-    margin: 4px auto;
-    max-width: 46ch;
-  }
-  .b-links {
-    color: color-mix(in srgb, #2f6bff 70%, var(--ink));
-    text-decoration: underline;
-    font-size: 13px;
-  }
-  .b-btn {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 6px 16px;
-    border: 1px solid var(--ink-muted);
-    border-radius: 4px;
-    background: var(--bg-sunk);
-  }
-  @media (max-width: 560px) {
-    .links {
-      display: none;
-    }
-    .book {
-      margin-left: auto;
-    }
-    .routes,
-    .fleet {
-      grid-template-columns: 1fr;
-    }
-    .route {
-      grid-template-columns: 74px 1fr;
-      align-items: center;
-    }
-    .art {
-      grid-row: span 2;
-      height: 56px;
-    }
-    .field + .field {
-      box-shadow: none;
-    }
-  }
+  .a-hero { position: relative; overflow: hidden; display: grid; grid-template-columns: 1.15fr 1fr; gap: 24px; margin: 0 22px; padding: 34px 0 34px 34px; border-radius: 24px; background: #f2f3f4; }
+  .arc { position: absolute; left: 22%; top: 8%; width: 520px; height: 520px; pointer-events: none; }
+  .arc circle { fill: none; stroke: #e7e3d8; stroke-width: 22; }
+  .a-left { position: relative; }
+  h5 { margin: 0 0 22px; font-size: 29px; font-weight: 550; line-height: 1.18; letter-spacing: -0.025em; max-width: 470px; }
+  .search { display: grid; gap: 12px 10px; max-width: 480px; grid-template-columns: 1fr 1fr 34px 1fr; grid-template-areas: "p b b w" "f f sw t" "g g g g"; }
+  .search > :nth-child(1) { grid-area: p; } .search > :nth-child(2) { grid-area: b; } .search > :nth-child(3) { grid-area: w; }
+  .search > :nth-child(4) { grid-area: f; } .search > :nth-child(5) { grid-area: sw; } .search > :nth-child(6) { grid-area: t; } .search > :nth-child(7) { grid-area: g; }
+  .search label { display: grid; gap: 5px; font-size: 11px; color: #45484d; }
+  .search label > span:first-child { display: flex; align-items: center; gap: 5px; }
+  .field, .step { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 11px; border-radius: 10px; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 0 0 1px #e8e8e6; color: var(--ink); font-size: 12.5px; }
+  .field :global(svg:last-child) { margin-left: auto; color: var(--mute); }
+  .field b { font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .step { justify-content: space-between; padding: 0 5px; }
+  .step b { font-size: 14px; }
+  .step button { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; border: 0; background: #f3f1ea; color: var(--gold); cursor: pointer; }
+  .swap { align-self: end; display: grid; place-items: center; height: 38px; border: 0; background: none; color: var(--ink); cursor: pointer; border-radius: 8px; }
+  .swap:hover { background: #e7e7e4; }
+  .go { display: flex; justify-content: center; align-items: center; gap: 9px; height: 44px; margin-top: 6px; border: 0; border-radius: 10px; background: linear-gradient(180deg, var(--gold2), var(--gold)); color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; box-shadow: 0 10px 22px -12px #8a6a1f; }
+
+  .mosaic { position: relative; display: grid; grid-template-columns: 1.6fr 1fr; grid-template-rows: 70px 200px 90px; gap: 10px; margin: -34px -22px -34px 0; padding: 0; }
+  .mosaic .art { border-radius: 20px; }
+  .t1 { grid-column: 1; grid-row: 1; margin-left: 30%; } .t2 { grid-column: 2; grid-row: 1; }
+  .t3 { grid-column: 1; grid-row: 2 / 4; margin-bottom: -40px; } .t4 { grid-column: 2; grid-row: 2; height: 96px; } .t5 { grid-column: 2; grid-row: 2 / 4; margin-top: 106px; }
+
+  .popular, .results { padding: 20px 26px 22px; }
+  .popular[hidden], .results[hidden] { display: none; }
+  .r-head { display: flex; align-items: baseline; gap: 10px; margin: 0 0 12px; }
+  .r-head b { font-size: 15px; font-weight: 600; }
+  .r-head span { color: var(--mute); font-size: 12px; }
+  .routes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .route { display: grid; gap: 4px; text-align: left; padding: 12px 14px; border: 0; border-radius: 14px; background: #faf8f3; box-shadow: 0 0 0 1px #efe9dc; cursor: pointer; color: var(--ink); }
+  .route:hover { box-shadow: 0 0 0 1.5px var(--gold); }
+  .route span { display: flex; align-items: center; gap: 6px; color: var(--gold); }
+  .route b { color: var(--ink); font-weight: 600; }
+  .route small { display: flex; align-items: center; gap: 4px; color: var(--mute); }
+  .cars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .car { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 8px 6px; padding: 8px 8px 11px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px #ebebea, 0 6px 16px -12px rgb(0 0 0 / 0.3); transition: opacity 0.25s, filter 0.25s; animation: rise 0.35s ease-out; }
+  .car .art { grid-column: 1 / -1; height: 74px; border-radius: 10px; }
+  .c-b { display: grid; padding-left: 4px; } .c-b b { font-weight: 600; }
+  .c-b small { display: flex; align-items: center; gap: 4px; color: var(--mute); }
+  .c-p { display: grid; text-align: right; padding-right: 4px; } .c-p small { color: var(--mute); font-size: 10.5px; } .c-p b { color: var(--gold); }
+  .why-not { display: none; }
+  .car.no { opacity: 0.45; filter: grayscale(1); }
+  .car.no .why-not { display: block; position: absolute; top: 14px; left: 14px; padding: 2px 8px; border-radius: 999px; background: #fff; font-size: 10.5px; font-weight: 600; color: #6b6e73; }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+  @media (prefers-reduced-motion: reduce) { .car { animation: none; } }
 </style>
