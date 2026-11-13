@@ -1,0 +1,295 @@
+---
+/* isTyme, the real screens exported from the design file. Two sides of the
+   marketplace, each in English and in Urdu. In Urdu the strip runs right to
+   left, the way the app does. */
+import Icon from "../Icon.astro";
+const journeys = [
+  {
+    id: "hire",
+    name: "Hiring",
+    screens: [
+      { key: "welcome", title: "Welcome", note: "The right person for the job, close by. The rings are the app's one motif: people near you." },
+      { key: "home", title: "Home", note: "Hire and Work are one switch apart. Four plain categories, and waiting offers rise to the top." },
+      { key: "price", title: "Set a price", note: "Set a price or ask for offers. The local range sits under the number, so a fair price is easy to find." },
+      { key: "offers", title: "Offers", note: "Best match first, with rating, jobs done and distance. One clear way to hire." },
+      { key: "rate", title: "Release payment", note: "The money waits until the job is done. Confirming releases it and asks for a quick rating." },
+    ],
+  },
+  {
+    id: "work",
+    name: "Working",
+    screens: [
+      { key: "cnic", title: "Card scan", note: "No skipping verification. The card goes in the frame, encrypted and never shown to customers." },
+      { key: "glare", title: "Photo not clear", note: "The frame turns red and the fix is named in both languages, not a generic error." },
+      { key: "thumb", title: "Thumb check", note: "A thumbprint through a NADRA partner links the card to the profile." },
+      { key: "verified", title: "Verified", note: "Mubarak ho. The badge lands on the profile and matching jobs are waiting." },
+      { key: "match", title: "Picked for you", note: "Jobs that fit the worker's skills, each tagged with why: close by, good pay, quick job." },
+    ],
+  },
+];
+---
+
+<div class="pt" data-pt data-lang="en">
+  <div class="bar">
+    <div class="tabs" role="tablist" aria-label="Side of the marketplace">
+      {journeys.map((j, i) => (
+        <button type="button" role="tab" data-journey={j.id} aria-selected={i === 0 ? "true" : "false"}>{j.name}</button>
+      ))}
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang-btn="en" aria-pressed="true">English</button>
+      <button type="button" data-lang-btn="ur" aria-pressed="false" lang="ur">اردو</button>
+    </div>
+  </div>
+
+  {journeys.map((j, ji) => (
+    <div class="panel" data-panel={j.id} hidden={ji !== 0}>
+      <ol class="strip" dir="ltr" aria-label={`${j.name}, ${j.screens.length} screens`}>
+        {j.screens.map((s, si) => (
+          <li class="item">
+            <figure>
+              <a class="shot" href={`/media/istyme/en-${s.key}.webp`} data-zoom={s.key} target="_blank" rel="noopener" aria-label={`Open ${s.title} full size`}>
+                <img class="en" src={`/media/istyme/en-${s.key}.webp`} alt={`isTyme, ${s.title}, English`} width="482" height="954" loading={ji === 0 && si < 2 ? "eager" : "lazy"} decoding="async" />
+                <img class="ur" src={`/media/istyme/ur-${s.key}.webp`} alt={`isTyme, ${s.title}, Urdu`} width="482" height="954" loading="lazy" decoding="async" />
+              </a>
+              <figcaption dir="ltr">
+                <span class="n tabular-nums">{String(si + 1).padStart(2, "0")}</span>
+                <b>{s.title}</b>
+                <span class="note">{s.note}</span>
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ol>
+    </div>
+  ))}
+
+  <div class="nav">
+    <p class="hint"><Icon name="hand-swipe-left" size={15} /><span data-hint>Swipe to follow the flow</span></p>
+    <div class="arrows">
+      <button type="button" data-step="-1" aria-label="Previous screen"><Icon name="arrow-left" size={16} /></button>
+      <button type="button" data-step="1" aria-label="Next screen"><Icon name="arrow-right" size={16} /></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-pt]").forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[data-journey]")];
+    const panels = [...root.querySelectorAll<HTMLElement>("[data-panel]")];
+    const langs = [...root.querySelectorAll<HTMLButtonElement>("[data-lang-btn]")];
+    const hint = root.querySelector<HTMLElement>("[data-hint]")!;
+    const strip = () => root.querySelector<HTMLElement>(".panel:not([hidden]) .strip")!;
+
+    const reset = () => {
+      const s = strip();
+      s.scrollTo({ left: 0, behavior: "instant" as ScrollBehavior });
+    };
+
+    tabs.forEach((t) =>
+      t.addEventListener("click", () => {
+        tabs.forEach((x) => x.setAttribute("aria-selected", String(x === t)));
+        panels.forEach((p) => (p.hidden = p.dataset.panel !== t.dataset.journey));
+        reset();
+      }),
+    );
+
+    langs.forEach((b) =>
+      b.addEventListener("click", () => {
+        const ur = b.dataset.langBtn === "ur";
+        root.dataset.lang = ur ? "ur" : "en";
+        langs.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+        root.querySelectorAll<HTMLElement>(".strip").forEach((s) => (s.dir = ur ? "rtl" : "ltr"));
+        root.querySelectorAll<HTMLAnchorElement>("[data-zoom]").forEach((a) => (a.href = `/media/istyme/${ur ? "ur" : "en"}-${a.dataset.zoom}.webp`));
+        hint.textContent = ur ? "In Urdu the flow runs right to left" : "Swipe to follow the flow";
+        reset();
+      }),
+    );
+
+    root.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((b) =>
+      b.addEventListener("click", () => {
+        const s = strip();
+        const item = s.querySelector<HTMLElement>(".item")!;
+        const gap = parseFloat(getComputedStyle(s).columnGap) || 0;
+        // In RTL the flow moves left; the arrows follow the reading direction.
+        const dir = s.dir === "rtl" ? -1 : 1;
+        s.scrollBy({ left: Number(b.dataset.step) * dir * (item.offsetWidth + gap), behavior: "smooth" });
+      }),
+    );
+  });
+</script>
+
+<style>
+  .pt {
+    --green: #1a5c3a;
+    --saffron: #ff9f1c;
+  }
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .tabs,
+  .lang {
+    display: inline-flex;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--bg-sunk);
+    border: 1px solid var(--rule);
+  }
+  .tabs button,
+  .lang button {
+    border: 0;
+    background: none;
+    font: inherit;
+    font-weight: 600;
+    font-size: var(--text-sm);
+    padding: 6px 16px;
+    border-radius: 999px;
+    color: var(--ink-muted);
+    cursor: pointer;
+  }
+  .lang [lang="ur"] {
+    font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", serif;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  .tabs [aria-selected="true"],
+  .lang [aria-pressed="true"] {
+    background: var(--bg-raised);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+  }
+  .lang [aria-pressed="true"] {
+    background: var(--green);
+    color: #fff;
+  }
+  :is(.tabs, .lang) button:focus-visible,
+  .arrows button:focus-visible,
+  .shot:focus-visible {
+    outline: 2px solid var(--saffron);
+    outline-offset: 2px;
+  }
+
+  .panel[hidden] {
+    display: none;
+  }
+  .strip {
+    list-style: none;
+    margin: 0;
+    padding: 6px 2px 4px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: clamp(200px, 64vw, 236px);
+    column-gap: 18px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .strip::-webkit-scrollbar {
+    display: none;
+  }
+  .item {
+    scroll-snap-align: start;
+  }
+  figure {
+    margin: 0;
+  }
+  .shot {
+    display: block;
+    border-radius: 34px;
+    cursor: zoom-in;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .shot:hover {
+    transform: translateY(-3px);
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    animation: in 0.35s ease;
+  }
+  .pt .ur,
+  .pt[data-lang="ur"] .en {
+    display: none;
+  }
+  .pt[data-lang="ur"] .ur {
+    display: block;
+  }
+  @keyframes in {
+    from {
+      opacity: 0;
+    }
+  }
+  figcaption {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2px 8px;
+    margin-top: 12px;
+    padding: 0 4px;
+    font-size: var(--text-sm);
+  }
+  .n {
+    color: var(--ink-muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  figcaption b {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .note {
+    grid-column: 2;
+    color: var(--ink-secondary);
+    line-height: 1.5;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+  }
+  .arrows {
+    display: inline-flex;
+    gap: 6px;
+  }
+  .arrows button {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: var(--bg-raised);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .pt[data-lang="ur"] .arrows {
+    flex-direction: row-reverse;
+  }
+  .pt[data-lang="ur"] .arrows :global(svg) {
+    transform: scaleX(-1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .shot,
+    .shot img {
+      transition: none;
+      animation: none;
+    }
+  }
+</style>
