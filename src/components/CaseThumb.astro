@@ -74,8 +74,16 @@ const { kind } = Astro.props;
     --ok: #1f8a4c;
     --warn: #b7791f;
     position: relative;
-    height: 190px;
-    margin: 8px 6px 0;
+    height: 146px;
+    max-width: 290px;
+    margin: 10px 0 0;
+    filter: drop-shadow(0 14px 18px rgb(20 20 24 / 0.16)) drop-shadow(0 2px 3px rgb(20 20 24 / 0.08));
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), filter 0.45s;
+  }
+  :global(.card:hover) .folder,
+  :global(.card:focus-visible) .folder {
+    transform: translateY(-4px);
+    filter: drop-shadow(0 22px 26px rgb(20 20 24 / 0.2)) drop-shadow(0 2px 3px rgb(20 20 24 / 0.08));
   }
   .back {
     position: absolute;
@@ -97,7 +105,7 @@ const { kind } = Astro.props;
     top: 24px;
     left: 50%;
     width: 58%;
-    height: 112px;
+    height: 96px;
     border-radius: 9px;
     background: var(--paper);
     color: var(--p-ink);
@@ -131,7 +139,7 @@ const { kind } = Astro.props;
     background: var(--f-front);
     box-shadow:
       0 1px 0 rgb(255 255 255 / 0.12) inset,
-      0 -8px 18px -10px rgb(0 0 0 / 0.5);
+      0 -6px 14px -10px rgb(0 0 0 / 0.45);
   }
   .seam {
     position: absolute;

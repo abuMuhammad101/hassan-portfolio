@@ -13,9 +13,9 @@ const nameOf = (id: string) => workIndex.find((w) => w.id === id)?.name ?? id;
 const featured = workIndex.filter((w) => w.page && w.id !== "hh-global");
 const rest = workIndex.filter((w) => !featured.includes(w));
 const markets = [
-  { name: "United States", tz: "America/New_York", note: "Clients" },
-  { name: "GCC", tz: "Asia/Dubai", note: "Clients" },
-  { name: "Pakistan", tz: "Asia/Karachi", note: "Based here", home: true },
+  { name: "United States", tz: "America/New_York", off: -5 },
+  { name: "GCC", tz: "Asia/Dubai", off: 4 },
+  { name: "Pakistan", tz: "Asia/Karachi", off: 5, home: true },
 ];
 const ways = [
   { icon: "user", title: "Start with the person", body: "And the rules they live under, before any screen." },
@@ -60,16 +60,17 @@ const earlier = [
         </div>
         <aside class="ledger" aria-label="At a glance">
           <p class="ledger-line"><b>8</b> products <i aria-hidden="true"></i> <b>5+</b> years in SaaS and mobile</p>
-          <ul class="markets">
+          <div class="zones" data-zones>
             {markets.map((m) => (
-              <li class={m.home ? "home" : ""}>
-                <span class="m-dot" aria-hidden="true"></span>
-                <span class="m-name">{m.name}</span>
-                <span class="m-note">{m.note}</span>
-                <time class="m-time tabular-nums" data-tz={m.tz}>--:--</time>
-              </li>
+              <div class={`zone ${m.home ? "home" : ""}`} data-tz={m.tz} data-off={m.off}>
+                <span class="z-name">{m.name}{m.home && <em>Based here</em>}</span>
+                <span class="z-bar" aria-hidden="true">{Array.from({ length: 24 }).map(() => <i></i>)}</span>
+                <time class="z-time tabular-nums">--:--</time>
+              </div>
             ))}
-          </ul>
+            <span class="z-now" aria-hidden="true"></span>
+          </div>
+          <p class="z-key"><i aria-hidden="true"></i> Working hours, 9 to 6 local. The line is now.</p>
         </aside>
       </div>
     </div>
@@ -81,18 +82,26 @@ const earlier = [
         <p class="section-label">What I believe</p>
         <h2 id="beliefs-h" class="band-title">Four things I don't trade away.</h2>
       </div>
-      <ul class="beliefs">
-        {beliefs.map((b) => (
-          <li class="surface reveal">
-            <span class="b-icon"><Icon name={b.icon} size={22} /></span>
+      <ol class="beliefs">
+        {beliefs.map((b, i) => (
+          <li class="reveal">
+            <span class="b-top">
+              <span class="b-num tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+              <svg class="b-art" viewBox="0 0 72 72" aria-hidden="true">
+                {i === 0 && (<g><path class="soft" d="M6 50c10-18 20 8 30-10s20 6 30-12" /><circle cx="36" cy="36" r="14" /><circle cx="36" cy="36" r="3.5" class="fill" /><path d="M36 14v8M36 50v8M14 36h8M50 36h8" /></g>)}
+                {i === 1 && (<g><path class="soft" d="M14 20h18M14 36h18M14 52h18" /><circle cx="12" cy="20" r="3" /><circle cx="12" cy="36" r="3" /><circle cx="12" cy="52" r="3" /><path d="M32 20c10 0 10 16 22 16M32 52c10 0 10-16 22-16M32 36h22" /><circle cx="58" cy="36" r="6" class="fill" /></g>)}
+                {i === 2 && (<g>{[[10,14],[22,22],[16,34],[30,12],[28,40],[40,26],[12,52],[36,54]].map(([x,y]) => <circle cx={x} cy={y} r="2" class="soft-dot" />)}<path d="M38 38c6-6 12-6 18-14" /><path d="M50 22l6 2-2 6" /></g>)}
+                {i === 3 && (<g><path d="M10 44c6-14 10-20 12-12s-6 16 2 10 8-14 12-6 4 8 10 2" /><path class="soft" d="M8 56h56" /><circle cx="62" cy="56" r="3" class="fill" /></g>)}
+              </svg>
+            </span>
             <p class="belief">{b.text}</p>
             <p class="note">{b.note}</p>
-            <p class="proof-links">
+            <p class="proof-links"><span>Seen in</span>
               {b.proof.map((id) => <a href={`#work-${id}`}>{nameOf(id)}</a>)}
             </p>
           </li>
         ))}
-      </ul>
+      </ol>
     </section>
 
     <section class="wrap-wide band" id="work" aria-labelledby="work-h">
@@ -102,7 +111,7 @@ const earlier = [
       </div>
       <div class="cards">
         {featured.map((w, i) => (
-          <a class="card surface reveal" href={`/work/${w.page}/`} id={`work-${w.id}`}>
+          <a class="card reveal" href={`/work/${w.page}/`} id={`work-${w.id}`}>
             <CaseThumb kind={w.id} />
             <span class="card-top">
               <span class="card-num">{String(i + 1).padStart(2, "0")}</span>
@@ -187,10 +196,29 @@ const earlier = [
 
   <Footer />
 <script>
-  const fmt = (tz: string) => new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(new Date());
-  const tick = () => document.querySelectorAll<HTMLElement>("[data-tz]").forEach((el) => (el.textContent = fmt(el.dataset.tz!)));
-  tick();
-  setInterval(tick, 30000);
+  // Each bar is the same 24 hours in UTC; filled cells are 9:00-18:00 local.
+  const offsetOf = (tz: string) => {
+    const d = new Date();
+    const local = new Date(d.toLocaleString("en-US", { timeZone: tz }));
+    const utc = new Date(d.toLocaleString("en-US", { timeZone: "UTC" }));
+    return Math.round((local.getTime() - utc.getTime()) / 3600000);
+  };
+  const draw = () => {
+    const now = new Date();
+    document.querySelectorAll<HTMLElement>("[data-zones] .zone").forEach((z) => {
+      const tz = z.dataset.tz!;
+      const off = offsetOf(tz);
+      z.querySelectorAll("i").forEach((cell, h) => {
+        const local = (((h + off) % 24) + 24) % 24;
+        cell.classList.toggle("on", local >= 9 && local < 18);
+      });
+      z.querySelector("time")!.textContent = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(now);
+    });
+    const zones = document.querySelector<HTMLElement>("[data-zones]");
+    if (zones) zones.style.setProperty("--now", `${((now.getUTCHours() + now.getUTCMinutes() / 60) / 24) * 100}%`);
+  };
+  draw();
+  setInterval(draw, 30000);
 </script>
 </Base>
 
@@ -252,44 +280,88 @@ const earlier = [
     background: var(--ink-muted);
     align-self: center;
   }
-  .markets {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .zones {
+    position: relative;
+    display: grid;
+    gap: 14px;
+    padding: 16px 0 4px;
     border-top: 1px solid var(--rule);
   }
-  .markets li {
+  .zone {
     display: grid;
-    grid-template-columns: 10px 1fr auto auto;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--rule);
+    grid-template-columns: 1fr auto;
+    gap: 7px 12px;
+    align-items: baseline;
   }
-  .m-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    box-shadow: inset 0 0 0 1.5px var(--ink-muted);
-  }
-  .home .m-dot {
-    background: var(--accent-warm);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-warm) 18%, transparent);
-  }
-  .m-name {
+  .z-name {
+    grid-row: 1;
+    font-size: var(--text-sm);
     color: var(--ink);
     font-weight: 500;
   }
-  .m-note {
-    font-size: var(--text-sm);
+  .z-name em {
+    font-style: normal;
+    font-weight: 400;
+    color: var(--ink-muted);
+    margin-left: 8px;
+  }
+  .z-time {
+    grid-row: 1;
+    grid-column: 2;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--ink);
+  }
+  .z-bar {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(24, 1fr);
+    gap: 2px;
+  }
+  .z-bar i {
+    height: 6px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+  .z-bar i.on {
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
+  }
+  .home .z-bar i.on {
+    background: var(--accent-warm);
+  }
+  .z-now {
+    position: absolute;
+    top: 10px;
+    bottom: 0;
+    left: var(--now, 50%);
+    width: 1px;
+    background: var(--ink);
+    opacity: 0.7;
+  }
+  .z-now::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+  .z-key {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
     color: var(--ink-muted);
   }
-  .m-time {
-    min-width: 5.5ch;
-    text-align: right;
-    font-family: var(--font-display);
-    font-size: 1.15rem;
-    color: var(--ink);
+  .z-key i {
+    width: 14px;
+    height: 6px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
   }
   @media (min-width: 900px) {
     .hero-grid {
@@ -332,75 +404,128 @@ const earlier = [
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
   }
   .beliefs li {
-    padding: 20px;
+    position: relative;
     display: flex;
     flex-direction: column;
+    min-height: 300px;
+    padding: 22px 22px 20px;
+    border-radius: 22px;
+    background:
+      radial-gradient(120% 70% at 100% 0%, color-mix(in srgb, var(--accent-warm) 7%, transparent), transparent 60%),
+      var(--bg-raised);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 6%, transparent), 0 1px 2px rgb(0 0 0 / 0.04);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
   }
-  .b-icon {
-    width: 44px;
-    height: 44px;
-    display: grid;
-    place-items: center;
-    border-radius: 12px;
-    background: var(--bg-sunk);
-    color: var(--ink);
-    margin-bottom: var(--space-4);
+  .beliefs li:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 9%, transparent), 0 24px 44px -28px rgb(0 0 0 / 0.35);
+  }
+  .b-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: auto;
+  }
+  .b-num {
+    font-family: var(--font-display);
+    font-size: 15px;
+    color: var(--ink-muted);
+  }
+  .b-art {
+    width: 72px;
+    height: 72px;
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .b-art .soft {
+    stroke: var(--ink-muted);
+    stroke-dasharray: 2 4;
+  }
+  .b-art .fill {
+    fill: var(--accent-warm);
+    stroke: none;
+  }
+  .b-art .soft-dot {
+    fill: var(--ink-muted);
+    stroke: none;
+    opacity: 0.55;
+  }
+  .beliefs li:hover .b-art .soft {
+    animation: dash 1.6s linear infinite;
+  }
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -12;
+    }
   }
   .belief {
     font-family: var(--font-display);
     font-size: var(--text-xl);
-    line-height: 1.25;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
     color: var(--ink);
-    margin: 0 0 6px;
+    margin: 28px 0 8px;
   }
   .note {
-    margin: 0 0 var(--space-2);
+    margin: 0 0 18px;
     color: var(--ink-secondary);
     font-size: var(--text-sm);
   }
   .proof-links {
-    margin: auto 0 0;
+    margin: 0;
+    padding-top: 14px;
+    border-top: 1px dashed color-mix(in srgb, var(--ink) 14%, transparent);
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    align-items: baseline;
+    gap: 4px 12px;
+    font-size: 12.5px;
+  }
+  .proof-links span {
+    color: var(--ink-muted);
+    width: 100%;
+    font-size: 11.5px;
   }
   .proof-links a {
-    font-size: 12px;
-    color: var(--ink-secondary);
-    text-decoration: none;
-    background: var(--bg-sunk);
-    border-radius: 8px;
-    padding: 3px 10px;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--ink) 25%, transparent);
+    text-underline-offset: 3px;
   }
   .proof-links a:hover {
-    color: var(--ink);
+    text-decoration-color: var(--accent-warm);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .beliefs li, .beliefs li:hover { transition: none; transform: none; }
+    .beliefs li:hover .b-art .soft { animation: none; }
   }
 
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 36px 28px;
   }
   .card {
     display: flex;
     flex-direction: column;
-    padding: 14px 12px 18px;
+    padding: 0;
     text-decoration: none;
     color: var(--ink);
     scroll-margin-top: 96px;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
   .card:hover {
-    transform: translateY(-3px);
-    border-color: color-mix(in srgb, var(--ink) 25%, transparent);
-    box-shadow: 0 18px 40px -24px rgb(0 0 0 / 0.35);
+    transform: none;
   }
   .card > span {
-    padding: 0 8px;
+    padding: 0 2px;
   }
   .card-top {
     display: flex;
