@@ -5,6 +5,7 @@ import TwoToneHeading from "./TwoToneHeading.astro";
 import BeforeAfter from "./widgets/BeforeAfter.astro";
 import RecordChain from "./widgets/RecordChain.astro";
 import Copilot from "./widgets/Copilot.astro";
+import AgentConsole from "./widgets/AgentConsole.astro";
 import Icon from "./Icon.astro";
 
 interface Props {
@@ -100,6 +101,7 @@ const rail = [
           {data.widget === "before-after" && <BeforeAfter />}
           {data.widget === "record-chain" && <RecordChain />}
           {data.widget === "copilot" && <Copilot />}
+          {data.widget === "agent-console" && <AgentConsole />}
         </div>
         <p class="caption">Re-created for this page. It shows the pattern, with sample data.</p>
       </section>

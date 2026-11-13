@@ -36,6 +36,7 @@ export const workIndex: WorkRow[] = [
     name: "Claims Agent Console",
     tags: ["Healthcare", "AI agents"],
     angle: "A multi-agent billing system kept legible and steerable for the people who answer for it.",
+    page: "claims-agent-console",
   },
   {
     id: "clicker",

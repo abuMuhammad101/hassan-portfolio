@@ -1,0 +1,45 @@
+title: Claims Agent
+titleRest: Console
+angle: Five agents move every claim. One screen keeps the people who answer for them in charge.
+order: 4
+meta:
+  - { label: Role, value: Product designer }
+  - { label: Platform, value: Web }
+  - { label: Scope, value: "Control room, agent pipeline, copilot" }
+  - { label: Domain, value: "GCC healthcare billing" }
+ndaRecreated: true
+widget: agent-console
+widgetIntro: "A claim is stuck in a denial loop. Open it, read what the agents tried, and decide: approve the suggested fix or take it over yourself."
+stats:
+  - { value: "5", unit: agents, label: "Intake, coding, eligibility, submission and denial follow-up" }
+  - { value: "1", unit: screen, label: Where a person sees all of it and steps in }
+problem:
+  - Behind the product, a chain of five agents takes each claim from the visit to the payer and back. They work fast and around the clock. The billing team is still the one that answers for every claim.
+  - The risk is an agent system that works and can't be read. When something goes wrong, nobody can see where, why, or whose move it is.
+constraints:
+  - Every design decision had to hold up against a detailed technical design of the agent pipeline.
+  - Payer rules, prior authorisation windows and appeal deadlines are fixed.
+  - People stay accountable for every claim the agents touch.
+decisionsIntro: Three decisions shaped the console.
+decisions:
+  - title: Show the pipeline, not a chat
+    body: "The agents' work is laid out as stages a claim moves through, with counts at each stage. Anyone can see where work is piling up without asking a bot."
+  - title: Rank by what's at stake
+    body: The priority queue orders claims by value and time left, so the most expensive, most urgent problem is always the first thing on screen.
+  - title: Stop the loop and hand it over
+    body: "When a claim keeps bouncing between the agents and the payer, the console raises it as a denial loop, shows what was tried and why, and puts the decision in front of a person, with a suggested fix they can accept or override."
+states:
+  - { name: Agent stuck, note: A stage stops moving and says why }
+  - { name: Denial loop, note: Raised to a person with what was tried }
+  - { name: Low confidence, note: The agent's certainty is shown, not hidden }
+  - { name: Human override, note: Logged under the person's name }
+  - { name: Window closing, note: Authorisations near their deadline rise to the top }
+evidence:
+  - Each component traces back to a part of the pipeline's technical design.
+  - The denial loop gets its own alert instead of hiding in a list.
+  - The copilot rail stays on screen, so getting help never means leaving the queue.
+measures:
+  - Time to resolve a denied claim
+  - Share of claims that needed a person
+  - First-pass approval rate
+next: Let teams tune when the system hands over, per payer, as trust in each agent grows.
