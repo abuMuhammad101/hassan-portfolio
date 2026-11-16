@@ -8,12 +8,14 @@ import "@fontsource/instrument-serif/latin-400-italic.css";
 import "@fontsource/caveat/latin-500.css";
 import "@fontsource/caveat/latin-600.css";
 import "../styles/global.css";
+import ChatWidget from "../components/ChatWidget.astro";
 
 interface Props {
   title: string;
   description?: string;
+  chat?: boolean;
 }
-const { title, description = "Muhammad Hassan Khan — Senior Product Designer." } = Astro.props;
+const { title, description = "Muhammad Hassan Khan — Senior Product Designer.", chat = true } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL("/og.png", Astro.site).href;
 ---
@@ -51,6 +53,7 @@ const ogImage = new URL("/og.png", Astro.site).href;
   </head>
   <body>
     <slot />
+    {chat && <ChatWidget />}
     <script>
       import "../scripts/motion.ts";
     </script>
