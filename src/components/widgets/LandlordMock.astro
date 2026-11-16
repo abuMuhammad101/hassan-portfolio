@@ -1,0 +1,384 @@
+---
+/* Landlord app, re-drawn from the design: a tenant reports a leak, and
+   everyone can see where the job stands. Sample names and data. */
+import Icon from "../Icon.astro";
+import "../../styles/story.css";
+
+const cats = [
+  ["drop", "Plumbing", true],
+  ["lightning", "Electrical", false],
+  ["thermometer-simple", "Heating", false],
+  ["door", "Doors & locks", false],
+] as const;
+const steps = [
+  ["Requested", "Tue 9:12 · by Sara, Unit 4B", "done"],
+  ["Scheduled", "Wed 10:00 · Rapid Plumbing", "done"],
+  ["In progress", "Technician on site", "now"],
+  ["Completed", "Photo and sign-off", ""],
+] as const;
+---
+
+<div class="ll">
+  <div class="s-canvas">
+    <span class="s-h tl" aria-hidden="true"></span><span class="s-h tr" aria-hidden="true"></span>
+    <span class="s-h bl" aria-hidden="true"></span><span class="s-h br" aria-hidden="true"></span>
+    <div class="pair">
+      <figure class="ph" aria-label="Report a problem">
+        <div class="scr">
+          <div class="sb"><b>9:41</b><span class="isl"></span><span class="sys"><Icon name="wifi-high" size={11} weight="bold" /><i class="bt"></i></span></div>
+          <div class="top"><Icon name="caret-left" size={16} /><b>Report a problem</b><span></span></div>
+          <p class="lbl">What needs fixing?</p>
+          <div class="cats">
+            {cats.map(([i, n, on]) => <span class:list={["cat", { on }]}><Icon name={i} size={18} weight={on ? "fill" : "regular"} />{n}</span>)}
+          </div>
+          <p class="lbl">Describe it</p>
+          <div class="ta">Water dripping under the kitchen sink since this morning.</div>
+          <p class="lbl">Photos</p>
+          <div class="photos"><span class="ph1"></span><span class="add"><Icon name="camera-plus" size={18} /></span></div>
+          <p class="lbl">How urgent?</p>
+          <div class="seg"><span>Can wait</span><span class="on">Soon</span><span>Emergency</span></div>
+          <span class="cta">Send request</span>
+        </div>
+      </figure>
+
+      <figure class="ph" aria-label="Request status">
+        <div class="scr">
+          <div class="sb"><b>9:41</b><span class="isl"></span><span class="sys"><Icon name="wifi-high" size={11} weight="bold" /><i class="bt"></i></span></div>
+          <div class="top"><Icon name="caret-left" size={16} /><b>Request #2318</b><span></span></div>
+          <div class="sum">
+            <span class="ic"><Icon name="drop" size={18} weight="fill" /></span>
+            <span><b>Leak under kitchen sink</b><small>Unit 4B · 12 Elm Court</small></span>
+          </div>
+          <ol class="tl">
+            {steps.map(([t, d, s]) => (
+              <li class={s}><i></i><span><b>{t}</b><small>{d}</small></span></li>
+            ))}
+          </ol>
+          <div class="tech">
+            <span class="av">RP</span>
+            <span><b>Rapid Plumbing</b><small>Arrived 9:58 · est. 1 hour</small></span>
+            <span class="call"><Icon name="phone" size={14} weight="fill" /></span>
+          </div>
+          <div class="hist"><Icon name="clock-counter-clockwise" size={14} />2 earlier jobs on this unit</div>
+        </div>
+      </figure>
+    </div>
+  </div>
+  <p class="cap">Re-drawn from the design with sample data.</p>
+</div>
+
+<style>
+  .ll {
+    container-type: inline-size;
+    --ink: #1c1b1a;
+    --mute: #8a8780;
+    --line: #ecebe7;
+    --brand: #b5533c;
+    --brand-soft: #fbece7;
+  }
+  .pair {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 34px;
+    padding: 34px 16px;
+  }
+  .ph {
+    margin: 0;
+    width: 250px;
+    padding: 8px;
+    border-radius: 38px;
+    background: #1c1c1e;
+    box-shadow:
+      inset 0 0 0 1.5px #3b3b3e,
+      0 30px 50px -30px rgb(0 0 0 / 0.5);
+  }
+  .ph + .ph {
+    margin-top: 40px;
+  }
+  .scr {
+    height: 500px;
+    padding: 0 14px;
+    border-radius: 31px;
+    background: #fbfaf8;
+    color: var(--ink);
+    font: 12px/1.4 var(--font-sans);
+    overflow: hidden;
+  }
+  .sb {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 34px;
+    padding: 0 8px;
+    font-size: 11px;
+  }
+  .isl {
+    width: 70px;
+    height: 20px;
+    border-radius: 12px;
+    background: #111;
+  }
+  .sys {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .bt {
+    width: 18px;
+    height: 9px;
+    border-radius: 2.5px;
+    border: 1.2px solid var(--ink);
+    background: linear-gradient(90deg, var(--ink) 70%, transparent 70%) content-box;
+    padding: 1px;
+  }
+  .top {
+    display: grid;
+    grid-template-columns: 20px 1fr 20px;
+    align-items: center;
+    padding: 6px 0 4px;
+    text-align: center;
+    font-size: 13.5px;
+  }
+  .top b {
+    font-weight: 600;
+  }
+  .lbl {
+    margin: 12px 0 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--mute);
+  }
+  .cats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .cat {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 10px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+    font-weight: 500;
+  }
+  .cat.on {
+    background: var(--brand-soft);
+    box-shadow: 0 0 0 1.5px var(--brand);
+    color: var(--brand);
+  }
+  .ta {
+    padding: 10px;
+    min-height: 54px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .photos {
+    display: flex;
+    gap: 6px;
+  }
+  .photos span {
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+  }
+  .ph1 {
+    background:
+      radial-gradient(circle at 60% 70%, #9fc2d6 0 8px, transparent 9px),
+      linear-gradient(160deg, #d9d2c6, #a89c8a);
+  }
+  .add {
+    display: grid;
+    place-items: center;
+    box-shadow: inset 0 0 0 1.5px var(--line);
+    border: 1px dashed #cfccc4;
+    color: var(--mute);
+  }
+  .seg {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 3px;
+    border-radius: 10px;
+    background: #efeee9;
+    text-align: center;
+    font-weight: 500;
+    color: #5d5a54;
+  }
+  .seg span {
+    padding: 6px 0;
+    border-radius: 8px;
+  }
+  .seg .on {
+    background: #fff;
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  }
+  .cta {
+    display: grid;
+    place-items: center;
+    height: 42px;
+    margin-top: 14px;
+    border-radius: 12px;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 600;
+  }
+  .sum {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .sum > span:last-child,
+  .tech > span:nth-child(2) {
+    display: grid;
+    flex: 1;
+  }
+  .sum small,
+  .tl small,
+  .tech small {
+    color: var(--mute);
+    font-size: 11px;
+  }
+  .ic {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    background: var(--brand-soft);
+    color: var(--brand);
+  }
+  .tl {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+  }
+  .tl li {
+    position: relative;
+    display: flex;
+    gap: 12px;
+    padding-bottom: 16px;
+  }
+  .tl li span {
+    display: grid;
+  }
+  .tl i {
+    position: relative;
+    z-index: 1;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    margin-top: 1px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: inset 0 0 0 1.5px #d6d3cc;
+  }
+  .tl li:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 7.25px;
+    top: 16px;
+    bottom: 0;
+    width: 1.5px;
+    background: #e3e1db;
+  }
+  .tl .done i {
+    background: var(--brand);
+    box-shadow: none;
+  }
+  .tl .done::before {
+    background: var(--brand) !important;
+  }
+  .tl .now i {
+    box-shadow:
+      inset 0 0 0 4.5px var(--brand),
+      0 0 0 4px var(--brand-soft);
+  }
+  .tl .now b {
+    color: var(--brand);
+  }
+  .tl li:not(.done, .now) b {
+    color: var(--mute);
+    font-weight: 500;
+  }
+  .tech {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .av {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e4ecf4;
+    color: #2d5a85;
+    font-size: 11px;
+    font-weight: 650;
+  }
+  .call {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e3f3e9;
+    color: #1f7a45;
+  }
+  .hist {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    color: var(--mute);
+  }
+  .cap {
+    margin: 12px 0 0;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    text-align: center;
+  }
+  @container (max-width: 600px) {
+    .pair {
+      gap: 14px;
+      padding: 22px 10px;
+    }
+    .ph {
+      width: 47%;
+      padding: 5px;
+      border-radius: 26px;
+    }
+    .scr {
+      height: 380px;
+      padding: 0 8px;
+      border-radius: 22px;
+      font-size: 10px;
+    }
+    .ph + .ph {
+      margin-top: 24px;
+    }
+    .cats {
+      grid-template-columns: 1fr;
+    }
+    .cat:nth-child(n + 3) {
+      display: none;
+    }
+    .isl {
+      width: 46px;
+      height: 14px;
+    }
+  }
+</style>

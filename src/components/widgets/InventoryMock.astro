@@ -1,0 +1,604 @@
+---
+/* Workshop inventory platform, re-created under NDA with a stand-in brand,
+   parts and data. Three screens of the shipped system: the parts list, a
+   point-of-sale invoice and a job card. */
+import Icon from "../Icon.astro";
+import "../../styles/story.css";
+
+const parts = [
+  ["BRK-0142", "Brake fluid DOT 4, 1 L", "Castrol", 46, 18.5, ""],
+  ["OIL-5W30", "Engine oil 5W-30, 4 L", "Mobil 1", 8, 42.0, "low"],
+  ["FLT-2210", "Oil filter", "Bosch", 64, 9.75, ""],
+  ["PAD-7731", "Front brake pads", "Brembo", 3, 58.0, "low"],
+  ["SPK-0904", "Spark plug, iridium", "NGK", 120, 11.2, ""],
+  ["BAT-6012", "Battery 12 V, 60 Ah", "Varta", 0, 129.0, "out"],
+  ["WPR-0450", "Wiper blade 22 in", "Valeo", 31, 14.9, ""],
+] as const;
+const tabs = [
+  { k: "parts", t: "Parts", i: "package" },
+  { k: "pos", t: "POS invoice", i: "receipt" },
+  { k: "job", t: "Job card", i: "wrench" },
+];
+const results = [
+  ["Brake fluid DOT 4", "BRK-0142", "18.50", 2],
+  ["Brake fluid DOT 4, 5 L", "BRK-0145", "79.00", 0],
+  ["Brake pads, front", "PAD-7731", "58.00", 1],
+];
+const sheet = [
+  ["12 Mar", "D. Silva", "08:30", "10:30", "2.0", "Charged"],
+  ["12 Mar", "A. Okafor", "10:45", "12:15", "1.5", "Internal"],
+  ["13 Mar", "D. Silva", "09:00", "11:30", "2.5", "Charged"],
+];
+---
+
+<div class="inv" data-inv data-tab="parts">
+  <div class="s-canvas">
+    <span class="s-h tl" aria-hidden="true"></span><span class="s-h tr" aria-hidden="true"></span>
+    <span class="s-h bl" aria-hidden="true"></span><span class="s-h br" aria-hidden="true"></span>
+    <div class="s-win">
+      <div class="s-bar">
+        <span class="s-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+        <ol class="s-tabs" aria-label="Screens">
+          {tabs.map((t, i) => (
+            <li class:list={[{ on: i === 0 }]} data-tab-btn={t.k}>
+              <button type="button"><Icon name={t.i} weight="duotone" size={16} /><span class="lbl">{t.t}</span></button>
+            </li>
+          ))}
+        </ol>
+        <span class="s-addr">app.gearline.example</span>
+      </div>
+
+      <div class="app">
+        <nav class="side" aria-hidden="true">
+          <span class="logo"><i></i>Gearline</span>
+          <span class="nv"><Icon name="squares-four" size={15} />Dashboard</span>
+          <span class="nv" data-on="parts"><Icon name="package" size={15} />Inventory</span>
+          <span class="nv" data-on="pos"><Icon name="cash-register" size={15} />Point of sale</span>
+          <span class="nv" data-on="job"><Icon name="wrench" size={15} />Jobs</span>
+          <span class="nv"><Icon name="calculator" size={15} />Accounting</span>
+          <span class="me"><b>NK</b>Bay 2 · Front desk</span>
+        </nav>
+
+        <!-- Parts -->
+        <section class="pane" data-pane="parts" aria-label="Parts inventory">
+          <header class="ph"><div><small>Inventory</small><h4>Parts</h4></div><span class="btn dark"><Icon name="plus" size={12} weight="bold" />Add part</span></header>
+          <div class="tools">
+            <span class="field grow"><Icon name="magnifying-glass" size={13} />Search by part, SKU or brand</span>
+            <span class="chip on">All 412</span><span class="chip warn">Low stock 9</span><span class="chip bad">Out 2</span>
+          </div>
+          <div class="table">
+            <div class="trow th"><span>SKU</span><span>Part</span><span>Brand</span><span class="r">In stock</span><span class="r">Price</span></div>
+            {parts.map(([sku, n, b, q, p, s]) => (
+              <div class="trow">
+                <span class="mono">{sku}</span><span class="nm">{n}</span><span class="mute">{b}</span>
+                <span class="r"><em class:list={["qty", s]}>{s === "out" ? "Out" : q}</em></span>
+                <span class="r num">${p.toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- POS -->
+        <section class="pane" data-pane="pos" aria-label="Point of sale invoice" hidden>
+          <header class="ph"><div><small>Point of sale</small><h4>New invoice</h4></div><span class="mute">Customer: Walk-in</span></header>
+          <div class="pos">
+            <div>
+              <span class="field"><Icon name="magnifying-glass" size={13} />brake</span>
+              <p class="lbl">3 results</p>
+              <div class="res">
+                {results.map(([n, sku, p, q]) => (
+                  <div class="card">
+                    <b>{n}</b><small class="mono">{sku}</small>
+                    <span class="row"><span class="num">${p}</span><span class="step"><i>−</i><b>{q}</b><i class="plus">+</i></span></span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <aside class="bill">
+              <p class="lbl">Invoice</p>
+              <div class="li"><span>Brake fluid DOT 4 × 2</span><b class="num">$37.00</b></div>
+              <div class="li"><span>Brake pads, front × 1</span><b class="num">$58.00</b></div>
+              <div class="li mute"><span>Tax 5%</span><span class="num">$4.75</span></div>
+              <div class="li tot"><span>Total</span><b class="num">$99.75</b></div>
+              <div class="pay"><span class="on"><Icon name="money" size={14} />Cash</span><span><Icon name="credit-card" size={14} />Card</span><span><Icon name="globe" size={14} />Online</span></div>
+              <span class="btn dark wide">Charge $99.75</span>
+            </aside>
+          </div>
+        </section>
+
+        <!-- Job -->
+        <section class="pane" data-pane="job" aria-label="Job card" hidden>
+          <header class="ph"><div><small>Jobs · #1042</small><h4>2019 Corolla · brake service</h4></div><span class="status">In progress</span></header>
+          <div class="jt"><span>Overview</span><span>Parts</span><span>Quotes</span><span class="on">Timesheet</span><span>Invoice</span></div>
+          <div class="job">
+            <div class="timer">
+              <small>Time on this job</small>
+              <b class="num">02:14:36</b>
+              <span class="field"><Icon name="user" size={13} />D. Silva</span>
+              <span class="row2"><span class="btn ghost">Pause</span><span class="btn dark">Stop</span></span>
+            </div>
+            <div>
+              <div class="kp"><div><small>Logged</small><b>6.0 h</b></div><div><small>Charged</small><b>4.5 h</b></div><div><small>Internal</small><b>1.5 h</b></div></div>
+              <div class="table">
+                <div class="trow th t6"><span>Date</span><span>Mechanic</span><span>Start</span><span>End</span><span class="r">Hours</span><span class="r">Type</span></div>
+                {sheet.map(([d, m, a, b, h, t]) => (
+                  <div class="trow t6"><span class="mute">{d}</span><span class="nm">{m}</span><span class="num">{a}</span><span class="num">{b}</span><span class="r num">{h}</span><span class="r"><em class:list={["tag", t === "Charged" ? "ok" : "int"]}>{t}</em></span></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <p class="cap">Re-created with a stand-in brand, parts and data. The structure and patterns are the shipped ones.</p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-inv]").forEach((root) => {
+    const show = (k: string) => {
+      root.dataset.tab = k;
+      root.querySelectorAll<HTMLElement>("[data-tab-btn]").forEach((b) => b.classList.toggle("on", b.dataset.tabBtn === k));
+      root.querySelectorAll<HTMLElement>("[data-pane]").forEach((p) => (p.hidden = p.dataset.pane !== k));
+    };
+    root.querySelectorAll<HTMLElement>("[data-tab-btn]").forEach((b) => b.querySelector("button")!.addEventListener("click", () => show(b.dataset.tabBtn!)));
+  });
+</script>
+
+<style>
+  .inv {
+    container-type: inline-size;
+    --story-accent: #2e8c96;
+    --ink: #17191c;
+    --ink2: #4f555d;
+    --mute: #8b9097;
+    --line: #ebecee;
+    --soft: #f7f7f8;
+    --acc: #1f6f78;
+  }
+  .app {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    min-height: 470px;
+    background: #fff;
+    color: var(--ink);
+    font: 12.5px/1.4 var(--font-sans);
+  }
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 10px;
+    background: var(--soft);
+    border-right: 1px solid var(--line);
+    color: var(--ink2);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 6px 12px;
+    font-weight: 650;
+    color: var(--ink);
+  }
+  .logo i {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: var(--acc);
+    box-shadow: inset 0 0 0 5px #3fa7b1;
+  }
+  .nv {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 29px;
+    padding: 0 8px;
+    border-radius: 7px;
+  }
+  .inv[data-tab="parts"] [data-on="parts"],
+  .inv[data-tab="pos"] [data-on="pos"],
+  .inv[data-tab="job"] [data-on="job"] {
+    background: #fff;
+    color: var(--ink);
+    font-weight: 550;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding: 8px 6px 0;
+    font-size: 11.5px;
+  }
+  .me b {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #dcefed;
+    color: var(--acc);
+    font-size: 10px;
+  }
+  .pane {
+    min-width: 0;
+    padding: 14px 18px 18px;
+  }
+  .pane[hidden] {
+    display: none;
+  }
+  .ph {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .ph small {
+    color: var(--mute);
+  }
+  h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: -0.015em;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 8px;
+    font-weight: 550;
+    white-space: nowrap;
+  }
+  .btn.dark {
+    background: var(--ink);
+    color: #fff;
+  }
+  .btn.ghost {
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .btn.wide {
+    width: 100%;
+    height: 36px;
+  }
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .field {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px var(--line);
+    color: var(--mute);
+  }
+  .field.grow {
+    flex: 1;
+    min-width: 180px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px var(--line);
+    color: var(--ink2);
+  }
+  .chip.on {
+    background: var(--ink);
+    color: #fff;
+    box-shadow: none;
+  }
+  .chip.warn {
+    color: #9a6412;
+  }
+  .chip.bad {
+    color: #b42318;
+  }
+  .table {
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px var(--line);
+    overflow: hidden;
+  }
+  .trow {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1.6fr) minmax(0, 0.8fr) 70px 70px;
+    gap: 10px;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 12px;
+  }
+  .trow.t6 {
+    grid-template-columns: 52px minmax(0, 1fr) 46px 46px 44px 70px;
+  }
+  .trow + .trow {
+    border-top: 1px solid var(--line);
+  }
+  .th {
+    min-height: 30px;
+    background: var(--soft);
+    color: var(--mute);
+    font-size: 11.5px;
+    font-weight: 550;
+  }
+  .r {
+    justify-self: end;
+    text-align: right;
+  }
+  .mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink2);
+  }
+  .nm {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mute {
+    color: var(--mute);
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .qty {
+    display: inline-block;
+    min-width: 30px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    background: var(--soft);
+  }
+  .qty.low {
+    background: #fdf3e1;
+    color: #9a6412;
+  }
+  .qty.out {
+    background: #fdebea;
+    color: #b42318;
+  }
+
+  .pos {
+    display: grid;
+    grid-template-columns: 1fr 230px;
+    gap: 16px;
+  }
+  .lbl {
+    margin: 12px 0 8px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--mute);
+  }
+  .res {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+  }
+  .card {
+    display: grid;
+    gap: 2px;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  .step {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step i {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    box-shadow: 0 0 0 1px var(--line);
+    font-style: normal;
+  }
+  .step i.plus {
+    background: var(--acc);
+    color: #fff;
+    box-shadow: none;
+  }
+  .bill {
+    padding: 0 0 0 16px;
+    border-left: 1px solid var(--line);
+  }
+  .bill .lbl {
+    margin-top: 0;
+  }
+  .li {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .li b {
+    font-weight: 550;
+  }
+  .li.tot {
+    border-bottom: 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .pay {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin: 6px 0 10px;
+  }
+  .pay span {
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+    padding: 7px 0;
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px var(--line);
+    font-size: 11.5px;
+    color: var(--ink2);
+  }
+  .pay .on {
+    box-shadow: 0 0 0 1.5px var(--acc);
+    color: var(--acc);
+    background: #f1f8f8;
+  }
+
+  .status {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #e6f2fb;
+    color: #175c8f;
+    font-weight: 550;
+    font-size: 11.5px;
+  }
+  .jt {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    color: var(--mute);
+  }
+  .jt span {
+    padding: 6px 0;
+  }
+  .jt .on {
+    color: var(--ink);
+    font-weight: 550;
+    box-shadow: inset 0 -2px 0 var(--ink);
+  }
+  .job {
+    display: grid;
+    grid-template-columns: 190px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .timer {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--soft);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .timer small {
+    color: var(--mute);
+  }
+  .timer > b {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .timer .field {
+    background: #fff;
+  }
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .row2 .ghost {
+    background: #fff;
+  }
+  .kp {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .kp div {
+    display: grid;
+    padding: 8px 12px;
+  }
+  .kp div + div {
+    border-left: 1px solid var(--line);
+  }
+  .kp small {
+    color: var(--mute);
+  }
+  .kp b {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .tag {
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 550;
+  }
+  .tag.ok {
+    background: #e3f3e9;
+    color: #1f7a45;
+  }
+  .tag.int {
+    background: #eef0f3;
+    color: var(--ink2);
+  }
+  .cap {
+    margin: 12px 0 0;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    text-align: center;
+  }
+
+  @container (max-width: 700px) {
+    .app {
+      grid-template-columns: 1fr;
+    }
+    .side {
+      display: none;
+    }
+    .pane {
+      padding: 12px;
+    }
+    .trow {
+      grid-template-columns: minmax(0, 1fr) 54px 60px;
+    }
+    .trow > :nth-child(1),
+    .trow > :nth-child(3) {
+      display: none;
+    }
+    .trow.t6 {
+      grid-template-columns: minmax(0, 1fr) 44px 64px;
+    }
+    .trow.t6 > :nth-child(3),
+    .trow.t6 > :nth-child(4) {
+      display: none;
+    }
+    .pos,
+    .job {
+      grid-template-columns: 1fr;
+    }
+    .bill {
+      padding: 14px 0 0;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .s-addr {
+      display: none;
+    }
+  }
+</style>

@@ -15,6 +15,9 @@ const work = defineCollection({
     category: z.enum(["ai-adapted", "product-design"]),
     image: z.string().optional(),
     imageAlt: z.string().optional(),
+    nda: z.boolean().optional(),
+    widget: z.enum(["inventory", "landlord", "exam"]).optional(),
+    phone: z.boolean().optional(),
   }),
 });
 

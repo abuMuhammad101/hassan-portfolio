@@ -7,6 +7,7 @@ status: "Feb – Apr 2025 · Solo"
 stack: ["Figma", "Design Systems", "Prototyping"]
 order: 3
 category: "product-design"
+widget: landlord
 ---
 
 ## The brief
@@ -23,5 +24,3 @@ On top of that, the core end-to-end flows: submit a maintenance request → trac
 
 Clear status visibility at every stage — requested, scheduled, in progress, completed — so nobody has to ask "where is this?" A record-first approach, since history that's hard to find is history that doesn't help anyone. Consistent component patterns throughout, so the app stays learnable as it grows.
 
----
-Stack: Figma · Mobile design system · Interactive prototyping
