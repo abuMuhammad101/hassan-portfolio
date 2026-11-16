@@ -41,28 +41,27 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan" } = Astro.props
     <p class="yours" data-yours hidden><span></span>Your turn. Press play to watch again.</p>
   </div>
 
-  <div class="sd-caps" aria-live="polite">
-    {chapters.map((c, i) => <p class:list={["cap", { on: i === 0 }]} data-cap={i}><b>{c.title}.</b> {c.note}</p>)}
-  </div>
-
-  <ol class="sd-line" style={`--n:${chapters.length}`}>
-    {chapters.map((c, i) => (
-      <li class:list={[{ on: i === 0 }]} data-chi={i}>
-        <span class="timer" aria-hidden="true"><i></i></span>
-        <button type="button"><span class="num tabular-nums">{String(i + 1).padStart(2, "0")}</span><span class="title">{c.title}</span></button>
-      </li>
-    ))}
-  </ol>
-
-  <div class="sd-controls">
+  <!-- Under the stage: one control, one line, and a thin track of chapters. -->
+  <div class="sd-foot">
     <button type="button" class="s-play" data-sd-play aria-label="Play the story">
       <span class="knob">
         <svg viewBox="0 0 42 42" aria-hidden="true"><circle class="track" cx="21" cy="21" r="19" /><circle class="prog" cx="21" cy="21" r="19" pathLength="100" /></svg>
         <span class="icon" aria-hidden="true"><i></i><i></i></span>
       </span>
-      <span class="count" data-sd-count>01 / {String(chapters.length).padStart(2, "0")}</span>
+      <span class="count" data-sd-count hidden>01</span>
     </button>
-    <p class="hint"><span class="dot" aria-hidden="true"></span>Watch, or take over at any time</p>
+    <div class="sd-text">
+      <div class="sd-caps" aria-live="polite">
+        {chapters.map((c, i) => <p class:list={["cap", { on: i === 0 }]} data-cap={i}><b>{c.title}.</b> {c.note}</p>)}
+      </div>
+      <ol class="sd-line">
+        {chapters.map((c, i) => (
+          <li class:list={[{ on: i === 0 }]} data-chi={i}>
+            <button type="button" aria-label={`Chapter ${i + 1}: ${c.title}`} title={c.title}><span class="timer"><i></i></span></button>
+          </li>
+        ))}
+      </ol>
+    </div>
   </div>
 </div>
 
@@ -348,68 +347,85 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan" } = Astro.props
     }
   }
 
-  /* Caption and timeline. */
+  /* Under the stage: the play control beside one line of caption, and a
+     thin track of chapters under the caption. */
+  .sd-foot {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    max-width: 600px;
+    margin: 24px auto 0;
+  }
+  .sd-text {
+    flex: 1;
+    min-width: 0;
+    padding-top: 2px;
+  }
   .sd-caps {
     display: grid;
-    max-width: 640px;
-    margin: 28px auto 0;
-    text-align: center;
   }
   .cap {
     grid-area: 1 / 1;
     margin: 0;
     font-size: var(--text-sm);
-    line-height: 1.6;
+    line-height: 1.55;
     color: var(--ink-secondary);
     opacity: 0;
-    transform: translateY(6px);
-    transition:
-      opacity 0.2s,
-      transform 0.3s var(--ease);
+    transition: opacity 0.2s;
   }
   .cap.on {
     opacity: 1;
-    transform: none;
-    transition:
-      opacity 0.4s 0.18s,
-      transform 0.5s 0.18s var(--ease);
+    transition: opacity 0.4s 0.15s;
   }
   .cap b {
     color: var(--ink);
     font-weight: 600;
   }
   .sd-line {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 1fr;
-    align-items: start;
-    gap: 6px;
-    margin: 24px 0 0;
+    display: flex;
+    gap: 4px;
+    margin: 12px 0 0;
     padding: 0;
     list-style: none;
   }
+  .sd-line li {
+    flex: 1;
+  }
   .sd-line button {
-    display: none;
+    display: block;
+    width: 100%;
+    padding: 6px 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .sd-line button:focus-visible {
+    outline: 2px solid var(--story-accent);
+    outline-offset: 1px;
   }
   .timer {
     display: block;
-    height: 3px;
-    border-radius: 3px;
+    height: 2px;
+    border-radius: 2px;
     background: color-mix(in srgb, var(--ink) 12%, transparent);
     overflow: hidden;
+    transition: height 0.2s;
+  }
+  .sd-line button:hover .timer {
+    height: 4px;
   }
   .timer i {
     display: block;
     width: 0;
     height: 100%;
-    background: var(--ink);
+    background: var(--ink-muted);
   }
   .done .timer i,
   .on .timer i {
     width: 100%;
   }
   .on .timer i {
-    background: var(--story-accent);
+    background: var(--ink);
   }
   .tick[data-playing="true"] .on .timer i {
     animation: fill var(--dur) linear forwards;
@@ -420,73 +436,6 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan" } = Astro.props
     }
     to {
       width: 100%;
-    }
-  }
-  .sd-controls {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 10px 18px;
-    margin-top: 26px;
-  }
-  .hint {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-    font-size: var(--text-sm);
-    color: var(--ink-muted);
-  }
-  .hint .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--story-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--story-accent) 25%, transparent);
-  }
-
-  @media (min-width: 760px) {
-    .sd-line {
-      gap: 16px;
-    }
-    .sd-line li {
-      display: grid;
-      align-content: start;
-      gap: 10px;
-    }
-    .timer {
-      height: 2px;
-    }
-    .sd-line button {
-      display: grid;
-      gap: 2px;
-      padding: 0;
-      border: 0;
-      background: none;
-      font: inherit;
-      text-align: left;
-      cursor: pointer;
-    }
-    .num {
-      font-size: 11px;
-      color: var(--ink-muted);
-    }
-    .title {
-      font-size: 13px;
-      line-height: 1.35;
-      color: var(--ink-muted);
-    }
-    .on .title {
-      color: var(--ink);
-      font-weight: 600;
-    }
-    .sd-line button:hover .title {
-      color: var(--ink);
-    }
-    .sd-line button:focus-visible {
-      outline: 2px solid var(--story-accent);
-      outline-offset: 2px;
     }
   }
 

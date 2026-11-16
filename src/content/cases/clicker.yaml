@@ -9,7 +9,7 @@ meta:
   - { label: Stack, value: "Django, Postgres, React" }
 ndaRecreated: false
 widget: tour
-widgetIntro: "Each chapter pairs a real excerpt of the model code with the real screen it produced, captured from the running demo. The numbered pins tie a line to what it draws. Let it play, or click where you would click next."
+widgetIntro: "The real app, captured from the running demo, beside the few lines of model code that drew each screen. The tabs are the chapters."
 stats:
   - { value: "0", unit: module screens drawn by hand, label: "Every list and form is generated from the model's schema" }
   - { value: "16", unit: field types, label: "Each with a form control, a list cell and eight states" }
