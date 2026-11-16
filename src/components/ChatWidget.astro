@@ -1,0 +1,407 @@
+---
+/* "Message Hassan": a one-way note that lands in his inbox. He answers by
+   email. Sent through Web3Forms when PUBLIC_WEB3FORMS_KEY is set; without a
+   key it falls back to opening the visitor's mail app, so it never breaks. */
+import Icon from "./Icon.astro";
+const key = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
+const email = "hassank.uiux@gmail.com";
+---
+
+<div class="chat" data-chat data-state="closed" data-key={key} data-email={email}>
+  <section class="panel" id="chat-panel" role="dialog" aria-modal="false" aria-labelledby="chat-h" hidden>
+    <header class="ph">
+      <span class="av" aria-hidden="true">H<i></i></span>
+      <div>
+        <h2 id="chat-h">Message Hassan</h2>
+        <p>Goes straight to my inbox. I reply by email, usually within a day.</p>
+      </div>
+      <button type="button" class="x" data-chat-close aria-label="Close"><Icon name="x" size={15} /></button>
+    </header>
+
+    <form class="form" data-chat-form novalidate>
+      <label class="fld">
+        <span>Message</span>
+        <textarea name="message" rows="4" required maxlength="2000" placeholder="A role, a product, a question…"></textarea>
+      </label>
+      <div class="two">
+        <label class="fld">
+          <span>Your name</span>
+          <input name="name" autocomplete="name" placeholder="Optional" />
+        </label>
+        <label class="fld">
+          <span>Your email</span>
+          <input name="email" type="email" autocomplete="email" required placeholder="So I can reply" />
+        </label>
+      </div>
+      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <p class="err" data-chat-err role="alert" hidden></p>
+      <button type="submit" class="send"><span>Send message</span><Icon name="paper-plane-tilt" size={15} weight="fill" /></button>
+    </form>
+
+    <div class="done" data-chat-done hidden>
+      <span class="tick"><Icon name="check" size={18} weight="bold" /></span>
+      <p><b>Sent.</b> Thanks, I'll reply to <span data-chat-to></span>.</p>
+      <button type="button" class="again" data-chat-again>Write another</button>
+    </div>
+  </section>
+
+  <button type="button" class="fab" data-chat-open aria-expanded="false" aria-controls="chat-panel">
+    <span class="av sm" aria-hidden="true">H<i></i></span>
+    <span class="lbl">Message me</span>
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-chat]").forEach((root) => {
+    const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const panel = $("#chat-panel"), fab = $<HTMLButtonElement>("[data-chat-open]");
+    const form = $<HTMLFormElement>("[data-chat-form]"), err = $("[data-chat-err]"), done = $("[data-chat-done]");
+    const send = form.querySelector<HTMLButtonElement>(".send")!;
+    const draftKey = "chat-draft";
+
+    const set = (open: boolean) => {
+      root.dataset.state = open ? "open" : "closed";
+      panel.hidden = !open;
+      fab.setAttribute("aria-expanded", String(open));
+      if (open) form.querySelector<HTMLTextAreaElement>("textarea")!.focus({ preventScroll: true });
+      else fab.focus({ preventScroll: true });
+    };
+    fab.addEventListener("click", () => set(root.dataset.state !== "open"));
+    $("[data-chat-close]").addEventListener("click", () => set(false));
+    root.addEventListener("keydown", (e) => { if ((e as KeyboardEvent).key === "Escape" && root.dataset.state === "open") set(false); });
+    // Any "contact" link on the page can open it too.
+    document.querySelectorAll<HTMLElement>("[data-open-chat]").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); set(true); }));
+
+    // Keep an unsent draft for this visitor.
+    const ta = form.querySelector<HTMLTextAreaElement>("textarea")!;
+    try { ta.value = localStorage.getItem(draftKey) ?? ""; } catch {}
+    ta.addEventListener("input", () => { try { localStorage.setItem(draftKey, ta.value); } catch {} });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      err.hidden = true;
+      const data = new FormData(form);
+      const message = String(data.get("message") ?? "").trim();
+      const email = String(data.get("email") ?? "").trim();
+      if (!message) return show("Write a message first.");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return show("Add an email I can reply to.");
+      if (data.get("botcheck")) return;
+
+      const key = root.dataset.key;
+      if (!key) {
+        // No key configured: hand over to the visitor's mail app.
+        const body = encodeURIComponent(`${message}\n\n${data.get("name") ?? ""} <${email}>`);
+        location.href = `mailto:${root.dataset.email}?subject=${encodeURIComponent("Hello from hassank.space")}&body=${body}`;
+        return;
+      }
+      send.disabled = true;
+      root.dataset.sending = "true";
+      try {
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            access_key: key,
+            subject: `New message from ${data.get("name") || email} via hassank.space`,
+            from_name: "hassank.space",
+            name: data.get("name") || "",
+            email,
+            replyto: email,
+            message,
+            page: location.pathname,
+          }),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || json.success === false) throw new Error();
+        $("[data-chat-to]").textContent = email;
+        form.hidden = true;
+        done.hidden = false;
+        form.reset();
+        try { localStorage.removeItem(draftKey); } catch {}
+      } catch {
+        show(`It didn't go through. Try again, or email ${root.dataset.email}.`);
+      } finally {
+        send.disabled = false;
+        delete root.dataset.sending;
+      }
+    });
+    const show = (m: string) => { err.textContent = m; err.hidden = false; };
+    $("[data-chat-again]").addEventListener("click", () => { done.hidden = true; form.hidden = false; ta.focus(); });
+  });
+</script>
+
+<style>
+  .chat {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 60;
+    display: grid;
+    justify-items: end;
+    gap: 12px;
+    font-family: var(--font-sans);
+    pointer-events: none;
+  }
+  .chat > * {
+    pointer-events: auto;
+  }
+  .fab {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    height: 44px;
+    padding: 0 16px 0 6px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--bg);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 550;
+    box-shadow: var(--lift-2);
+    cursor: pointer;
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.25s;
+  }
+  .fab:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--lift-3);
+  }
+  .fab:focus-visible,
+  .x:focus-visible,
+  .send:focus-visible,
+  .again:focus-visible {
+    outline: 2px solid var(--accent-warm);
+    outline-offset: 2px;
+  }
+  .chat[data-state="open"] .fab .lbl {
+    display: none;
+  }
+  .chat[data-state="open"] .fab {
+    padding: 0 6px;
+  }
+  .av {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f1e3c8;
+    color: #6b4a10;
+    font-family: var(--font-hand);
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .av.sm {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+  .av i {
+    position: absolute;
+    right: -1px;
+    bottom: -1px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2f9e5b;
+    box-shadow: 0 0 0 2px var(--ink);
+  }
+  .panel .av i {
+    box-shadow: 0 0 0 2px var(--bg-raised);
+  }
+
+  .panel {
+    width: min(360px, calc(100vw - 32px));
+    border-radius: 20px;
+    background: var(--bg-raised);
+    color: var(--ink);
+    box-shadow: var(--lift-3);
+    overflow: hidden;
+    transform-origin: 100% 100%;
+    animation: pop 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .panel[hidden] {
+    display: none;
+  }
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.97);
+    }
+  }
+  .ph {
+    display: flex;
+    gap: 12px;
+    padding: 16px 16px 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .ph div {
+    flex: 1;
+  }
+  h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .ph p {
+    margin: 2px 0 0;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--ink-secondary);
+  }
+  .x {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--bg-sunk);
+    color: var(--ink-secondary);
+    cursor: pointer;
+  }
+  .form {
+    display: grid;
+    gap: 10px;
+    padding: 14px 16px 16px;
+  }
+  .form[hidden],
+  .done[hidden],
+  .err[hidden] {
+    display: none;
+  }
+  .two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .fld {
+    display: grid;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .fld textarea,
+  .fld input {
+    width: 100%;
+    padding: 9px 11px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--bg);
+    box-shadow: inset 0 0 0 1px var(--rule);
+    color: var(--ink);
+    font: inherit;
+    font-size: 14px;
+    resize: none;
+    transition: box-shadow 0.2s;
+  }
+  .fld textarea:focus,
+  .fld input:focus {
+    outline: none;
+    box-shadow:
+      inset 0 0 0 1px var(--ink),
+      0 0 0 3px color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+  }
+  .err {
+    margin: 0;
+    font-size: 12.5px;
+    color: #c0392b;
+  }
+  .send {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 40px;
+    border: 0;
+    border-radius: 11px;
+    background: var(--ink);
+    color: var(--bg);
+    font: inherit;
+    font-weight: 550;
+    cursor: pointer;
+  }
+  .send:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .chat[data-sending] .send span::after {
+    content: "…";
+  }
+  .done {
+    display: grid;
+    justify-items: start;
+    gap: 10px;
+    padding: 18px 16px 18px;
+  }
+  .done p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-secondary);
+  }
+  .done b {
+    color: var(--ink);
+  }
+  .tick {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: color-mix(in srgb, #2f9e5b 14%, transparent);
+    color: #2f9e5b;
+  }
+  .again {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-size: 13px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 560px) {
+    .chat {
+      right: 12px;
+      bottom: 12px;
+      left: 12px;
+    }
+    .panel {
+      width: 100%;
+    }
+    .two {
+      grid-template-columns: 1fr;
+    }
+    .fab .lbl {
+      display: none;
+    }
+    .fab {
+      padding: 0 6px;
+    }
+  }
+  @media print {
+    .chat {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .panel {
+      animation: none;
+    }
+    .fab {
+      transition: none;
+    }
+  }
+</style>
