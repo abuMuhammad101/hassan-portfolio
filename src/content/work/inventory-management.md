@@ -7,8 +7,8 @@ status: "Sep 2025 → Ongoing · Solo"
 stack: ["Figma", "FigJam", "Design Systems"]
 order: 1
 category: "product-design"
-image: "/media/agency/inventory-before-after-1.png"
-imageAlt: "Before vs after — the legacy inventory screen redesigned"
+nda: true
+widget: inventory
 ---
 
 ## The brief
@@ -19,19 +19,11 @@ Car workshop owners were running their business on an inventory platform that ha
 
 An atomic design system first — typography, spacing, color, radius, and shadow tokens, then core components (buttons, inputs, tables, filters, modals, badges, tabs) and patterns for empty states, loading, validation, and errors. Only once that foundation existed did I move into screens: consistent navigation across Inventory, Sales, POS, and Accounting modules, each designed against the same component set so nothing drifted.
 
-![Before vs after — the same workflow, redesigned](/media/agency/inventory-before-after-2.png)
+## Point of sale and jobs
 
-## Point of sale
-
-![The redesigned POS screen](/media/agency/inventory-pos.png)
-
-## Job tracking
-
-![Job management, rebuilt on the same component system](/media/agency/inventory-jobs.png)
+The same components carry the counter and the workshop floor: a point-of-sale invoice built for speed at the desk, and job cards with a running timer and a timesheet that separates charged hours from internal ones.
 
 ## What I'd improve next
 
 Lightweight usability testing with actual workshop owners, an accessibility checklist applied to every new screen as it ships, and a release-by-module plan with a real changelog — this is a live, ongoing rollout, not a one-time redesign.
 
----
-Stack: Figma · FigJam · Atomic design system
