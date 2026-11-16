@@ -64,7 +64,7 @@ const story = stories[data.widget];
     </div>
     <div class="widget">
       {story ? (
-        <StoryDirector chapters={story.chapters} reset={story.reset} accent={story.accent}>
+        <StoryDirector chapters={story.chapters} reset={story.reset} accent={story.accent} address={story.address} pad={story.pad}>
           {data.widget === "before-after" && <BeforeAfter />}
           {data.widget === "record-chain" && <RecordChain />}
           {data.widget === "copilot" && <Copilot />}

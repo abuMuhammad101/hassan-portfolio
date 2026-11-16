@@ -7,16 +7,25 @@
    Each chapter lists steps run against the widget in the slot:
      { click: selector }  the cursor moves there and clicks it
      { point: selector }  the cursor moves there and rests
+     { run: selector }    clicked silently, without the cursor
+     { tab: true }        the cursor clicks this chapter's own tab
      settle               ms to wait after a step when replaying silently
-   `reset` is a selector clicked silently before chapter one. */
+   `reset` is a selector clicked silently before chapter one.
+   The prototype sits in a window on a quiet canvas; the window's tabs are
+   the chapters. */
+import Icon from "./Icon.astro";
 import "../styles/story.css";
 
 export interface Step {
+  tab?: boolean;
   click?: string;
   point?: string;
+  run?: string;
   settle?: number;
 }
 export interface Chapter {
+  tab: string;
+  icon: string;
   title: string;
   note: string;
   steps: Step[];
@@ -26,47 +35,55 @@ interface Props {
   reset?: string;
   accent?: string;
   who?: string;
+  address?: string;
+  pad?: boolean;
 }
-const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan" } = Astro.props;
+const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan", address = "", pad = false } = Astro.props;
 ---
 
 <div class="sd" data-sd data-playing="false" data-reset={reset} data-chapters={JSON.stringify(chapters)} style={`--story-accent:${accent}`}>
-  <div class="sd-stage" data-stage>
-    <slot />
-    <span class="ghost" data-ghost aria-hidden="true">
-      <svg viewBox="0 0 16 18"><path d="M1 1l13 6.5-5.6 1.7L6 15z" /></svg>
-      <b>{who}</b>
-      <i class="burst"></i>
-    </span>
-    <p class="yours" data-yours hidden><span></span>Your turn. Press play to watch again.</p>
+  <div class="s-canvas">
+    <span class="s-h tl" aria-hidden="true"></span><span class="s-h tr" aria-hidden="true"></span>
+    <span class="s-h bl" aria-hidden="true"></span><span class="s-h br" aria-hidden="true"></span>
+    <div class="s-win">
+      <div class="s-bar">
+        <span class="s-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+        <ol class="s-tabs" aria-label="Chapters">
+          {chapters.map((c, i) => (
+            <li class:list={[{ on: i === 0 }]} data-chi={i}>
+              <button type="button" title={c.title}><Icon name={c.icon} weight="duotone" size={16} /><span class="lbl">{c.tab}</span><span class="fill"></span></button>
+            </li>
+          ))}
+        </ol>
+        {address && <span class="s-addr">{address}</span>}
+      </div>
+      <div class:list={["sd-stage", { pad }]} data-stage>
+        <slot />
+      </div>
+      <span class="s-ghost" data-ghost aria-hidden="true">
+        <svg viewBox="0 0 18 20"><path d="M2 1.6 15.4 8.5 9.6 10.2 6.9 16.2Z" /></svg>
+        <b><i>{who.slice(0, 1)}</i>{who}</b>
+        <span class="s-burst"></span>
+      </span>
+      <p class="yours" data-yours hidden><span></span>Your turn. Press play to watch again.</p>
+    </div>
   </div>
 
-  <!-- Under the stage: one control, one line, and a thin track of chapters. -->
-  <div class="sd-foot">
+  <div class="s-foot">
     <button type="button" class="s-play" data-sd-play aria-label="Play the story">
       <span class="knob">
         <svg viewBox="0 0 42 42" aria-hidden="true"><circle class="track" cx="21" cy="21" r="19" /><circle class="prog" cx="21" cy="21" r="19" pathLength="100" /></svg>
         <span class="icon" aria-hidden="true"><i></i><i></i></span>
       </span>
-      <span class="count" data-sd-count hidden>01</span>
     </button>
-    <div class="sd-text">
-      <div class="sd-caps" aria-live="polite">
-        {chapters.map((c, i) => <p class:list={["cap", { on: i === 0 }]} data-cap={i}><b>{c.title}.</b> {c.note}</p>)}
-      </div>
-      <ol class="sd-line">
-        {chapters.map((c, i) => (
-          <li class:list={[{ on: i === 0 }]} data-chi={i}>
-            <button type="button" aria-label={`Chapter ${i + 1}: ${c.title}`} title={c.title}><span class="timer"><i></i></span></button>
-          </li>
-        ))}
-      </ol>
+    <div class="s-caps" aria-live="polite">
+      {chapters.map((c, i) => <p class:list={["s-cap", { on: i === 0 }]} data-cap={i}><b>{c.title}.</b> {c.note}</p>)}
     </div>
   </div>
 </div>
 
 <script>
-  type Step = { click?: string; point?: string; settle?: number };
+  type Step = { click?: string; point?: string; run?: string; tab?: boolean; settle?: number };
   type Chapter = { title: string; steps: Step[] };
   const MOVE = 850;
   const HOLD = 2600;
@@ -75,6 +92,7 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan" } = Astro.props
   document.querySelectorAll<HTMLElement>("[data-sd]").forEach((root) => {
     const chapters: Chapter[] = JSON.parse(root.dataset.chapters!);
     const stage = root.querySelector<HTMLElement>("[data-stage]")!;
+    const win = root.querySelector<HTMLElement>(".s-win")!;
     const ghost = root.querySelector<HTMLElement>("[data-ghost]")!;
     const yours = root.querySelector<HTMLElement>("[data-yours]")!;
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -109,25 +127,47 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan" } = Astro.props
       }
     };
 
+    // The cursor glides to a target, and the target answers with a soft ring.
+    let lit: HTMLElement | null = null;
+    const light = (el: HTMLElement | null) => {
+      lit?.removeAttribute("data-ghost-on");
+      lit = el;
+      el?.setAttribute("data-ghost-on", "");
+    };
     const moveTo = (el: HTMLElement) => {
       reveal(el);
       const r = el.getBoundingClientRect();
-      const s = stage.getBoundingClientRect();
-      const x = r.left - s.left + Math.min(r.width * 0.5, 60);
-      const y = r.top - s.top + r.height * 0.55;
+      const w = win.getBoundingClientRect();
+      const x = r.left - w.left + Math.min(r.width * 0.5, 56);
+      const y = r.top - w.top + Math.min(r.height * 0.6, 22);
       ghost.style.transform = `translate(${x}px, ${y}px)`;
       ghost.classList.add("on");
+      window.setTimeout(() => light(el), MOVE - 260);
+    };
+    const tap = async (el: HTMLElement) => {
+      ghost.classList.remove("click");
+      void ghost.offsetWidth;
+      ghost.classList.add("click");
+      el.setAttribute("data-ghost-press", "");
+      await wait(170);
+      press(el);
+      window.setTimeout(() => el.removeAttribute("data-ghost-press"), 180);
     };
 
-    const mark = (i: number) => {
-      idx = i;
-      root.querySelectorAll<HTMLElement>("[data-cap]").forEach((c) => c.classList.toggle("on", Number(c.dataset.cap) === i));
+    const markTabs = (i: number) =>
       root.querySelectorAll<HTMLElement>("[data-chi]").forEach((c) => {
         const k = Number(c.dataset.chi);
         c.classList.toggle("on", k === i);
         c.classList.toggle("done", k < i);
       });
-      root.querySelector("[data-sd-count]")!.textContent = `${String(i + 1).padStart(2, "0")} / ${String(chapters.length).padStart(2, "0")}`;
+    const mark = (i: number, tabs = true) => {
+      idx = i;
+      root.querySelectorAll<HTMLElement>("[data-cap]").forEach((c) => c.classList.toggle("on", Number(c.dataset.cap) === i));
+      if (tabs) markTabs(i);
+      // Keep the open tab in view when the strip scrolls (narrow screens).
+      const tab = root.querySelector<HTMLElement>(`[data-chi="${i}"]`);
+      const strip = tab?.parentElement;
+      if (tab && strip) strip.scrollTo({ left: tab.offsetLeft - strip.clientWidth / 2 + tab.clientWidth / 2, behavior: "smooth" });
     };
 
     const chapterTime = (c: Chapter) => c.steps.length * (MOVE + 350) + HOLD;
@@ -139,7 +179,8 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan" } = Astro.props
       for (let k = 0; k < i; k++) {
         for (const st of chapters[k].steps) {
           if (my !== run) return false;
-          if (st.click) press(find(st.click));
+          const sel = st.click ?? st.run;
+          if (sel) press(find(sel));
           await wait(st.settle ?? 90);
         }
       }
@@ -158,29 +199,31 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan" } = Astro.props
           press(find(root.dataset.reset));
           await wait(250);
         }
-        mark(i);
         const c = chapters[i];
+        mark(i, !c.steps[0]?.tab);
         root.style.setProperty("--dur", `${chapterTime(c)}ms`);
         root.classList.remove("tick");
         void root.offsetWidth;
         root.classList.add("tick");
         for (const st of c.steps) {
           if (my !== run) return;
-          const el = find((st.click ?? st.point)!);
+          if (st.run) {
+            press(find(st.run));
+            await wait(st.settle ?? 60);
+            continue;
+          }
+          // `tab` sends the cursor to this chapter's own tab in the window.
+          const el = st.tab ? root.querySelector<HTMLElement>(`[data-chi="${i}"] button`) : find((st.click ?? st.point)!);
           if (!el) continue;
           moveTo(el);
           await wait(MOVE);
           if (my !== run) return;
-          if (st.click) {
-            ghost.classList.remove("click");
-            void ghost.offsetWidth;
-            ghost.classList.add("click");
-            await wait(160);
-            press(el);
-          }
+          if (st.click || st.tab) await tap(el);
+          if (st.tab) markTabs(i);
           await wait(350);
         }
         await wait(HOLD);
+        light(null);
       }
     };
 
@@ -190,6 +233,7 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan" } = Astro.props
       root.classList.remove("tick");
       root.querySelector("[data-sd-play]")!.setAttribute("aria-label", "Play the story");
       ghost.classList.remove("on");
+      light(null);
       if (byHand) yours.hidden = false;
     };
 
@@ -215,6 +259,7 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan" } = Astro.props
     });
     root.querySelectorAll<HTMLElement>("[data-chi] button").forEach((b) =>
       b.addEventListener("click", () => {
+        if (driving) return;
         const i = Number(b.closest<HTMLElement>("[data-chi]")!.dataset.chi);
         userStopped = false;
         play(i, true);
@@ -240,77 +285,17 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan" } = Astro.props
   .sd {
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
+  .sd {
+    container-type: inline-size;
+  }
   .sd-stage {
     position: relative;
   }
+  .sd-stage.pad {
+    padding: 28px 22px;
+    background: #f3f2ee;
+  }
 
-  /* The cursor that walks the story. */
-  .ghost {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 40;
-    display: inline-flex;
-    align-items: flex-start;
-    pointer-events: none;
-    opacity: 0;
-    transition:
-      transform 0.85s var(--ease),
-      opacity 0.3s;
-  }
-  .ghost.on {
-    opacity: 1;
-  }
-  .ghost svg {
-    width: 17px;
-    height: 19px;
-    fill: var(--story-accent);
-    stroke: #fff;
-    stroke-width: 1.3;
-    filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.3));
-  }
-  .ghost b {
-    margin: 15px 0 0 -3px;
-    padding: 3px 8px;
-    border-radius: 6px 10px 10px 10px;
-    background: var(--story-accent);
-    color: #fff;
-    font-size: 11.5px;
-    font-weight: 600;
-    white-space: nowrap;
-    box-shadow: 0 4px 10px -4px rgb(0 0 0 / 0.4);
-  }
-  .burst {
-    position: absolute;
-    top: -14px;
-    left: -14px;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 2px solid var(--story-accent);
-    opacity: 0;
-  }
-  .ghost.click .burst {
-    animation: burst 0.5s ease-out;
-  }
-  .ghost.click svg {
-    animation: tap 0.3s ease-out;
-  }
-  @keyframes burst {
-    from {
-      opacity: 0.9;
-      transform: scale(0.3);
-    }
-    to {
-      opacity: 0;
-      transform: scale(1.4);
-    }
-  }
-  @keyframes tap {
-    50% {
-      transform: scale(0.82);
-    }
-  }
   .yours {
     position: absolute;
     left: 50%;
@@ -347,102 +332,5 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan" } = Astro.props
     }
   }
 
-  /* Under the stage: the play control beside one line of caption, and a
-     thin track of chapters under the caption. */
-  .sd-foot {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    max-width: 600px;
-    margin: 24px auto 0;
-  }
-  .sd-text {
-    flex: 1;
-    min-width: 0;
-    padding-top: 2px;
-  }
-  .sd-caps {
-    display: grid;
-  }
-  .cap {
-    grid-area: 1 / 1;
-    margin: 0;
-    font-size: var(--text-sm);
-    line-height: 1.55;
-    color: var(--ink-secondary);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .cap.on {
-    opacity: 1;
-    transition: opacity 0.4s 0.15s;
-  }
-  .cap b {
-    color: var(--ink);
-    font-weight: 600;
-  }
-  .sd-line {
-    display: flex;
-    gap: 4px;
-    margin: 12px 0 0;
-    padding: 0;
-    list-style: none;
-  }
-  .sd-line li {
-    flex: 1;
-  }
-  .sd-line button {
-    display: block;
-    width: 100%;
-    padding: 6px 0;
-    border: 0;
-    background: none;
-    cursor: pointer;
-  }
-  .sd-line button:focus-visible {
-    outline: 2px solid var(--story-accent);
-    outline-offset: 1px;
-  }
-  .timer {
-    display: block;
-    height: 2px;
-    border-radius: 2px;
-    background: color-mix(in srgb, var(--ink) 12%, transparent);
-    overflow: hidden;
-    transition: height 0.2s;
-  }
-  .sd-line button:hover .timer {
-    height: 4px;
-  }
-  .timer i {
-    display: block;
-    width: 0;
-    height: 100%;
-    background: var(--ink-muted);
-  }
-  .done .timer i,
-  .on .timer i {
-    width: 100%;
-  }
-  .on .timer i {
-    background: var(--ink);
-  }
-  .tick[data-playing="true"] .on .timer i {
-    animation: fill var(--dur) linear forwards;
-  }
-  @keyframes fill {
-    from {
-      width: 0;
-    }
-    to {
-      width: 100%;
-    }
-  }
 
-  @media (prefers-reduced-motion: reduce) {
-    .ghost,
-    .cap {
-      transition: none;
-    }
-  }
 </style>

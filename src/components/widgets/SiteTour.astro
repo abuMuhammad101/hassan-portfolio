@@ -14,7 +14,7 @@ const screens = [
 ---
 
 <div class="st" data-st>
-  <div class="chips" role="group" aria-label="Screens">
+  <div class="chips" role="group" aria-label="Screens" data-chips>
     {screens.map((s, i) => <button type="button" data-k={s.key} aria-pressed={i === 0 ? "true" : "false"}>{s.title}</button>)}
   </div>
   <div class="row">

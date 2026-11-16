@@ -35,9 +35,54 @@ export function initStory(root: HTMLElement, opts: Options = {}): Story {
   const panel = () => root.querySelector<HTMLElement>("[data-panel]:not([hidden])") ?? root;
   const total = () => panel().querySelectorAll("[data-ch]").length || 1;
 
+  // The named cursor, when the story has one: before each chapter ends it
+  // glides to what the person would tap next, rests, and taps it.
+  const ghost = root.querySelector<HTMLElement>("[data-ghost]");
+  let gt: number[] = [];
+  let lit: HTMLElement | null = null;
+  const light = (el: HTMLElement | null) => {
+    lit?.removeAttribute("data-ghost-on");
+    lit = el;
+    el?.setAttribute("data-ghost-on", "");
+  };
+  const hideGhost = () => {
+    gt.forEach(clearTimeout);
+    gt = [];
+    ghost?.classList.remove("on");
+    light(null);
+  };
+  const target = () =>
+    [...panel().querySelectorAll<HTMLElement>("[data-hot]")]
+      .filter((el) => el.closest(".on, [data-hot].on") && el.getClientRects().length && getComputedStyle(el).visibility !== "hidden")
+      .pop() ?? null;
+  const glide = () => {
+    const el = target();
+    const host = ghost?.offsetParent as HTMLElement | null;
+    if (!ghost || !el || !host) return;
+    const r = el.getBoundingClientRect();
+    const h = host.getBoundingClientRect();
+    ghost.style.transform = `translate(${r.left - h.left + r.width / 2}px, ${r.top - h.top + r.height / 2}px)`;
+    ghost.classList.add("on");
+    gt.push(window.setTimeout(() => light(el), 600));
+    gt.push(
+      window.setTimeout(() => {
+        ghost.classList.remove("click");
+        void ghost.offsetWidth;
+        ghost.classList.add("click");
+        el.setAttribute("data-ghost-press", "");
+        window.setTimeout(() => el.removeAttribute("data-ghost-press"), 200);
+      }, 1100),
+    );
+  };
+
   const schedule = () => {
     clearTimeout(timer);
-    if (root.dataset.playing === "true") timer = window.setTimeout(next, dur);
+    gt.forEach(clearTimeout);
+    gt = [];
+    light(null);
+    if (root.dataset.playing !== "true") return;
+    timer = window.setTimeout(next, dur);
+    if (ghost) gt.push(window.setTimeout(glide, Math.max(400, dur - 1500)));
   };
 
   function show(i: number) {
@@ -76,6 +121,7 @@ export function initStory(root: HTMLElement, opts: Options = {}): Story {
     if (on) show(idx);
     else {
       clearTimeout(timer);
+      hideGhost();
       root.classList.remove("tick");
     }
   };
