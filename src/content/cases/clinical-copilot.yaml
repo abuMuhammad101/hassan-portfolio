@@ -30,10 +30,10 @@ decisions:
   - title: Monochrome on purpose
     body: With no colour of its own, the overlay can ship as one kit across product lines without clashing with any of them.
 states:
-  - { name: Wrong suggestion, note: The clinician can correct it }
-  - { name: Cut-off answer, note: Marked clearly, with a retry }
-  - { name: Low confidence, note: Shown, not hidden }
-  - { name: Changed my mind, note: Every action can be undone }
+  - { icon: pencil-simple, name: Wrong suggestion, note: The clinician can correct it }
+  - { icon: scissors, name: Cut-off answer, note: Marked clearly, with a retry }
+  - { icon: gauge, name: Low confidence, note: Shown, not hidden }
+  - { icon: arrow-u-up-left, name: Changed my mind, note: Every action can be undone }
 evidence:
   - One component covers every flow it has been placed in.
   - It adds to existing screens without changing what was already shipped.

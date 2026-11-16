@@ -33,11 +33,11 @@ decisions:
   - title: Keep the tokens, cut the drift
     body: "Measured across 25 screens: 14 corner radii, 12 font sizes, 8 button heights, 5 shadow recipes. Each roughly halved: one accent per screen, type for hierarchy, elevation instead of outlines."
 states:
-  - { name: Out of range, note: Said on open, not at the cart }
-  - { name: Between 1 and 3 km, note: Pickup by default }
-  - { name: Too far for anything, note: "A waitlist, not a refusal" }
-  - { name: Address changed, note: Re-checked without clearing the cart }
-  - { name: Partner hand-off, note: Disclosed honestly and tracked }
+  - { icon: map-trifold, name: Out of range, note: Said on open, not at the cart }
+  - { icon: storefront, name: Between 1 and 3 km, note: Pickup by default }
+  - { icon: bell-ringing, name: Too far for anything, note: "A waitlist, not a refusal" }
+  - { icon: map-pin, name: Address changed, note: Re-checked without clearing the cart }
+  - { icon: arrow-square-out, name: Partner hand-off, note: Disclosed honestly and tracked }
 evidence:
   - "Scores by flow, weighted by business impact: rider sign-up 8.0, account and rewards 7.5, browse and order 7.0, rider deliveries 6.5, cart and checkout 6.0."
   - "Eight redesigned screens that put the strategy into the product, built on the existing tokens."

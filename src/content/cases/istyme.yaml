@@ -37,12 +37,12 @@ decisions:
   - title: One motif, used sparingly
     body: "Proximity rings, for people near you: hairline circles, a dotted outer ring and a single saffron arc. Only on welcome, location, success and empty moments, and never behind text."
 states:
-  - { name: Wrong code, note: "Says how many tries are left, with a new code one tap away" }
-  - { name: Photo not clear, note: Names the fix in both languages }
-  - { name: No internet, note: Shows saved information and a retry }
-  - { name: No offers yet, note: "Says how many have seen it, then suggests a better price or a photo" }
-  - { name: Payment didn't go through, note: "Confirms no money left the wallet, offers another wallet" }
-  - { name: Job already taken, note: "Nothing counts against the worker, with similar jobs to look at" }
+  - { icon: password, name: Wrong code, note: "Says how many tries are left, with a new code one tap away" }
+  - { icon: camera-slash, name: Photo not clear, note: Names the fix in both languages }
+  - { icon: wifi-slash, name: No internet, note: Shows saved information and a retry }
+  - { icon: hourglass-medium, name: No offers yet, note: "Says how many have seen it, then suggests a better price or a photo" }
+  - { icon: credit-card, name: Payment didn't go through, note: "Confirms no money left the wallet, offers another wallet" }
+  - { icon: prohibit, name: Job already taken, note: "Nothing counts against the worker, with similar jobs to look at" }
 evidence:
   - "The full app in Figma: eight flows and 47 screens, each in English and in Urdu."
   - "A style and copy sheet: colour roles, the one decorative motif, and a glossary of formal Urdu next to the words Karachi actually uses."

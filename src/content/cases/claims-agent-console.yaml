@@ -29,11 +29,11 @@ decisions:
   - title: Stop the loop and hand it over
     body: "When a claim keeps bouncing between the agents and the payer, the console raises it as a denial loop, shows what was tried and why, and puts the decision in front of a person, with a suggested fix they can accept or override."
 states:
-  - { name: Agent stuck, note: A stage stops moving and says why }
-  - { name: Denial loop, note: Raised to a person with what was tried }
-  - { name: Low confidence, note: The agent's certainty is shown, not hidden }
-  - { name: Human override, note: Logged under the person's name }
-  - { name: Window closing, note: Authorisations near their deadline rise to the top }
+  - { icon: pause-circle, name: Agent stuck, note: A stage stops moving and says why }
+  - { icon: arrows-clockwise, name: Denial loop, note: Raised to a person with what was tried }
+  - { icon: gauge, name: Low confidence, note: The agent's certainty is shown, not hidden }
+  - { icon: hand, name: Human override, note: Logged under the person's name }
+  - { icon: hourglass-medium, name: Window closing, note: Authorisations near their deadline rise to the top }
 evidence:
   - Each component traces back to a part of the pipeline's technical design.
   - The denial loop gets its own alert instead of hiding in a list.

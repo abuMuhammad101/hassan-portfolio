@@ -120,17 +120,23 @@ const rail = [
         <p class="section-label">Beyond the happy path</p>
         <p>The states I check on work like this, because nobody asks for them until they break.</p>
         <ul class="states">
-          {data.states.map((s: any) => (
-            <li><b>{s.name}</b><span>{s.note}</span></li>
+          {data.states.map((s: any, i: number) => (
+            <li style={`--i:${i}`}>
+              <span class="st-ic"><Icon name={s.icon ?? "circle-dashed"} weight="duotone" size={19} /></span>
+              <span class="st-tx"><b>{s.name}</b><span>{s.note}</span></span>
+              <span class="st-n tabular-nums" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+            </li>
           ))}
         </ul>
       </section>
 
       <section id="evidence" class="reveal">
         <p class="section-label">Evidence</p>
-        <ul class="plain">
-          {data.evidence.map((e: string) => <li>{e}</li>)}
-        </ul>
+        <ol class="evidence">
+          {data.evidence.map((e: string, i: number) => (
+            <li><span class="ev-n tabular-nums" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span><p>{e}</p></li>
+          ))}
+        </ol>
       </section>
 
       {data.measures?.length && (
@@ -436,26 +442,119 @@ const rail = [
     font-size: var(--text-sm);
     color: var(--ink-muted);
   }
+  /* Edge states, as a set of small system notices. */
   .states {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+    gap: 10px;
+    margin-top: var(--space-2);
   }
   .states li {
-    border: 1px solid var(--rule);
-    border-radius: 8px;
-    padding: 10px 12px;
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: 12px;
+    padding: 14px 34px 16px 14px;
+    border-radius: 16px;
     background: var(--bg-raised);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--ink) 7%, transparent),
+      0 1px 2px rgb(0 0 0 / 0.04);
+    transition:
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.35s;
   }
-  .states b {
-    display: block;
-    font-weight: 500;
-    color: var(--ink);
-    font-size: var(--text-sm);
+  .states li:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent),
+      0 14px 28px -18px rgb(0 0 0 / 0.35);
   }
-  .states span {
-    font-size: var(--text-sm);
+  .st-ic {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--bg-sunk);
     color: var(--ink-secondary);
+    transition:
+      background 0.3s,
+      color 0.3s,
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .states li:hover .st-ic {
+    background: color-mix(in srgb, var(--accent-warm) 14%, var(--bg-raised));
+    color: var(--accent-warm);
+    transform: rotate(-6deg) scale(1.05);
+  }
+  .st-tx {
+    display: grid;
+    gap: 2px;
+    padding-top: 1px;
+  }
+  .st-tx b {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--ink);
+  }
+  .st-tx span {
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--ink-secondary);
+  }
+  .st-n {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+  }
+
+  /* Evidence, as a numbered ledger. */
+  .evidence {
+    list-style: none;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .evidence li {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    align-items: baseline;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .ev-n {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: color-mix(in srgb, var(--ink) 28%, transparent);
+    transition: color 0.3s;
+  }
+  .evidence li:hover .ev-n {
+    color: var(--accent-warm);
+  }
+  .evidence p {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .states li,
+    .st-ic {
+      transition: none;
+    }
+    .states li:hover,
+    .states li:hover .st-ic {
+      transform: none;
+    }
   }
   .measures {
     display: flex;

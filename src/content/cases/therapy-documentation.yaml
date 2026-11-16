@@ -31,11 +31,11 @@ decisions:
   - title: Comfortable by default
     body: Compliance stays strict underneath. On the surface the work is short steps, plain language and nothing to configure every session.
 states:
-  - { name: Unsigned note, note: Work saved but not yet signed }
-  - { name: Certification expired, note: The plan has lapsed }
-  - { name: Review due, note: A periodic re-certification is coming up }
-  - { name: Co-signature pending, note: Waiting on a second clinician }
-  - { name: Missing link, note: A record with nothing to tie back to }
+  - { icon: signature, name: Unsigned note, note: Work saved but not yet signed }
+  - { icon: calendar-x, name: Certification expired, note: The plan has lapsed }
+  - { icon: clock-countdown, name: Review due, note: A periodic re-certification is coming up }
+  - { icon: users, name: Co-signature pending, note: Waiting on a second clinician }
+  - { icon: link-break, name: Missing link, note: A record with nothing to tie back to }
 evidence:
   - Out-of-order records are designed out. The product won't let them be created.
   - Three template structures were explored and compared before one was chosen.

@@ -28,10 +28,10 @@ decisions:
   - title: Real content, not new copy
     body: The content and logic come from the existing code. The redesign changes how things are presented, so nothing the business already relied on had to be rewritten.
 states:
-  - { name: Nothing available, note: No vehicle free on the chosen date }
-  - { name: Booking interrupted, note: The request fails part-way through }
-  - { name: Slow connection, note: A phone on weak signal }
-  - { name: Empty search, note: No route matches what was typed }
+  - { icon: calendar-x, name: Nothing available, note: No vehicle free on the chosen date }
+  - { icon: warning-octagon, name: Booking interrupted, note: The request fails part-way through }
+  - { icon: cell-signal-low, name: Slow connection, note: A phone on weak signal }
+  - { icon: magnifying-glass-minus, name: Empty search, note: No route matches what was typed }
 evidence:
   - Nothing was removed. The same content sits on the same backend in a clearer shape.
   - The home page was rebuilt section by section from the existing code.
