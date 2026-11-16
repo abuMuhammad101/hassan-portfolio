@@ -7,8 +7,7 @@ status: "Mar – Apr 2026 · 0 → 1, end-to-end"
 stack: ["Figma", "Design Systems", "Localization"]
 order: 4
 category: "product-design"
-image: "/media/earlier/meal-wallet.webp"
-imageAlt: "Pure Prep — the wallet, browse, and redemption screens"
+widget: meal
 ---
 
 ## The brief

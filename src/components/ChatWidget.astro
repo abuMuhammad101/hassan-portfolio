@@ -163,6 +163,13 @@ const email = "hassank.uiux@gmail.com";
     transition:
       transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
       box-shadow 0.25s;
+    animation: fab-in 0.5s 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes fab-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
   }
   .fab:hover {
     transform: translateY(-2px);
@@ -397,7 +404,8 @@ const email = "hassank.uiux@gmail.com";
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .panel {
+    .panel,
+    .fab {
       animation: none;
     }
     .fab {

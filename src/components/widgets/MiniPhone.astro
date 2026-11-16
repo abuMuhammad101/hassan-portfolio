@@ -1,0 +1,88 @@
+---
+/* A plain phone body for re-drawn mobile screens: bezel, island and status
+   bar. The screen's own background and type come from the slot. */
+import Icon from "../Icon.astro";
+interface Props {
+  label: string;
+  bg?: string;
+  dark?: boolean;
+  class?: string;
+}
+const { label, bg = "#fbfaf8", dark = false, class: cls = "" } = Astro.props;
+---
+
+<figure class={`mp ${cls}`} aria-label={label} style={`--scr:${bg}`} data-dark={dark ? "" : undefined}>
+  <div class="scr">
+    <div class="sb" aria-hidden="true"><b>9:41</b><span class="isl"></span><span class="sys"><Icon name="cell-signal-full" size={11} weight="fill" /><Icon name="wifi-high" size={11} weight="bold" /><i class="bt"></i></span></div>
+    <slot />
+  </div>
+</figure>
+
+<style>
+  .mp {
+    flex: none;
+    margin: 0;
+    width: 230px;
+    padding: 7px;
+    border-radius: 36px;
+    background: #1c1c1e;
+    box-shadow:
+      inset 0 0 0 1.5px #3b3b3e,
+      0 1px 2px rgb(0 0 0 / 0.1),
+      0 30px 50px -30px rgb(0 0 0 / 0.5);
+  }
+  .scr {
+    position: relative;
+    height: 470px;
+    border-radius: 29px;
+    background: var(--scr);
+    color: #1c1b1a;
+    font: 11.5px/1.4 var(--font-sans);
+    overflow: hidden;
+  }
+  [data-dark] .scr {
+    color: #fff;
+  }
+  .sb {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 32px;
+    padding: 0 18px 0 22px;
+    font-size: 11px;
+  }
+  .isl {
+    width: 66px;
+    height: 19px;
+    border-radius: 12px;
+    background: #111;
+  }
+  .sys {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .bt {
+    width: 18px;
+    height: 9px;
+    margin-left: 2px;
+    border-radius: 2.5px;
+    border: 1.2px solid currentColor;
+    background: linear-gradient(90deg, currentColor 70%, transparent 70%) content-box;
+    padding: 1px;
+  }
+  @container (max-width: 640px) {
+    .mp {
+      width: 200px;
+      padding: 6px;
+      border-radius: 32px;
+    }
+    .scr {
+      height: 410px;
+      border-radius: 26px;
+      font-size: 10.5px;
+    }
+  }
+</style>

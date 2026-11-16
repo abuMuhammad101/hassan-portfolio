@@ -314,6 +314,27 @@
 .s-h.bl { bottom: -4px; left: -4px; }
 .s-h.br { bottom: -4px; right: -4px; }
 
+/* Dark site: the canvas dims with the page, so the light product windows
+   sit on it like lit screens instead of a bright slab. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .s-canvas {
+    --paper: #1b1a17;
+    --paper-line: #2c2b26;
+  }
+  :root:not([data-theme="light"]) .s-h {
+    border-color: #4a4840;
+    background: #121210;
+  }
+}
+:root[data-theme="dark"] .s-canvas {
+  --paper: #1b1a17;
+  --paper-line: #2c2b26;
+}
+:root[data-theme="dark"] .s-h {
+  border-color: #4a4840;
+  background: #121210;
+}
+
 .s-win {
   position: relative;
   border-radius: 12px;

@@ -16,7 +16,7 @@ const work = defineCollection({
     image: z.string().optional(),
     imageAlt: z.string().optional(),
     nda: z.boolean().optional(),
-    widget: z.enum(["inventory", "landlord", "exam"]).optional(),
+    widget: z.enum(["inventory", "landlord", "exam", "meal", "cookiya"]).optional(),
     phone: z.boolean().optional(),
   }),
 });

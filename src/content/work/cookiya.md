@@ -7,8 +7,7 @@ status: "Early-stage · working app tour"
 stack: ["Expo 54", "React Native", "TypeScript", "React 19"]
 order: 4
 category: "ai-adapted"
-image: "/media/cookiya-app-tour.gif"
-imageAlt: "A real walkthrough of the app running on device"
+widget: cookiya
 ---
 
 ## What it is
