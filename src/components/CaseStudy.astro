@@ -40,27 +40,30 @@ const story = stories[data.widget];
 
 <article class="case">
   <header class="wrap-wide hero">
-    <p class="eyebrow">
-      <span>Case study</span>
-      {data.ndaRecreated ? <span class="nda"><Icon name="lock-simple" size={12} /> Under NDA, names and screens re-created</span> : <span class="real"><i></i>Real product, real screens</span>}
-    </p>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/#work"><Icon name="arrow-left" size={14} /><span>Work</span></a>
+      <span class="slash" aria-hidden="true">/</span>
+      <span aria-current="page">{data.title}</span>
+      {data.ndaRecreated
+        ? <span class="badge nda"><Icon name="lock-simple" size={12} />Under NDA, re-created</span>
+        : <span class="badge real"><i></i>Live product</span>}
+    </nav>
     <TwoToneHeading as="h1" size="hero" lead={data.title} rest={data.titleRest} />
-    <div class="hero-row">
-      <p class="angle">{data.angle}</p>
-      <dl class="facts">
-        {data.meta.map((m: any) => (
-          <div><dt>{m.label}</dt><dd>{m.value}</dd></div>
-        ))}
-      </dl>
-    </div>
+    <p class="angle">{data.angle}</p>
+    <dl class="facts">
+      {data.meta.map((m: any) => (
+        <div><dt>{m.label}</dt><dd>{m.value}</dd></div>
+      ))}
+    </dl>
   </header>
 
   <!-- The proof comes first: read it after you've tried it. -->
   <section id="proof" class="wrap-wide proof">
     <div class="proof-head">
-      <p class="hand" aria-hidden="true">go on, try it</p>
       <p class="proof-intro">{data.widgetIntro}</p>
-      <svg class="arrow" viewBox="0 0 40 56" fill="none" aria-hidden="true"><path d="M14 3c-9 12-8 28 8 44" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><path d="M13 44l9 4 2-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      <p class="hand" aria-hidden="true">go on, try it
+        <svg class="arrow" viewBox="0 0 40 56" fill="none"><path d="M14 3c-9 12-8 28 8 44" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><path d="M13 44l9 4 2-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </p>
     </div>
     <div class="widget">
       {story ? (
@@ -227,122 +230,157 @@ const story = stories[data.widget];
 
 <style>
   /* Hero ----------------------------------------------------------------- */
+  /* One column, one voice: a breadcrumb, the title as a single statement,
+     a line of why, and the facts on a single hairline. */
   .hero {
     padding-top: var(--space-6);
-    padding-bottom: var(--space-4);
+    padding-bottom: 0;
   }
-  .eyebrow {
+  .crumbs {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px 14px;
-    margin: 0 0 var(--space-2);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
+    gap: 6px 10px;
+    margin: 0 0 var(--space-4);
+    font-size: 13.5px;
     color: var(--ink-muted);
   }
-  .eyebrow > span {
+  .crumbs a {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    color: var(--ink-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
   }
-  .eyebrow .nda,
-  .eyebrow .real {
-    text-transform: none;
-    letter-spacing: 0;
-    font-family: var(--font-sans);
-    font-size: 12.5px;
+  .crumbs a:hover {
+    color: var(--ink);
+  }
+  .crumbs a :global(svg) {
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .crumbs a:hover :global(svg) {
+    transform: translateX(-3px);
+  }
+  .slash {
+    color: var(--construct);
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 24px;
+    margin-left: auto;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: var(--bg-raised);
+    box-shadow: var(--lift-1);
+    font-size: 12px;
+    color: var(--ink-secondary);
   }
   .real i {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: #2f9e5b;
-    box-shadow: 0 0 0 3px rgb(47 158 91 / 0.18);
+    box-shadow: 0 0 0 3px rgb(47 158 91 / 0.16);
   }
-  .hero-row {
-    display: grid;
-    gap: var(--space-4);
-    margin-top: var(--space-4);
+  .hero :global(.two-tone) {
+    max-width: 20ch;
+    font-size: clamp(2.4rem, 5.6vw, 4.1rem);
+    line-height: 1.04;
+  }
+  .hero :global(.two-tone .lead),
+  .hero :global(.two-tone .rest) {
+    display: inline;
   }
   .angle {
-    margin: 0;
-    max-width: 46ch;
+    margin: var(--space-3) 0 0;
+    max-width: 44ch;
     font-family: var(--font-editorial);
-    font-size: clamp(1.3rem, 2.6vw, 1.65rem);
+    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
     line-height: 1.3;
     color: var(--ink-secondary);
   }
   .facts {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px 28px;
-    margin: 0;
-    align-content: start;
-  }
-  .facts div {
-    padding-top: 10px;
+    gap: 16px 24px;
+    margin: var(--space-6) 0 0;
+    padding-top: var(--space-2);
     border-top: 1px solid var(--rule);
   }
   .facts dt {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    font-size: 12px;
     color: var(--ink-muted);
   }
   .facts dd {
-    margin: 3px 0 0;
+    margin: 2px 0 0;
     font-size: var(--text-sm);
     line-height: 1.4;
     color: var(--ink);
   }
-  @media (min-width: 900px) {
-    .hero-row {
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-      gap: var(--space-8);
-      align-items: start;
+  @media (min-width: 760px) {
+    .facts {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .facts div + div {
+      padding-left: 24px;
+      border-left: 1px solid var(--rule);
+    }
+  }
+  @media (max-width: 560px) {
+    .crumbs .slash,
+    .crumbs [aria-current] {
+      display: none;
     }
   }
 
   /* Proof ---------------------------------------------------------------- */
-  /* A centred invitation, then the stage, with room on every side. */
+  /* The invitation sits on one line with the stage: what you'll see on the
+     left, a handwritten nudge on the right pointing down into it. */
   .proof {
     padding-top: var(--space-8);
     padding-bottom: var(--space-8);
     scroll-margin-top: 90px;
   }
   .proof-head {
-    display: grid;
-    justify-items: center;
-    gap: 10px;
-    max-width: 560px;
-    margin: 0 auto var(--space-4);
-    text-align: center;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin: 0 0 var(--space-3);
   }
   .proof-intro {
     margin: 0;
+    max-width: 52ch;
     font-size: var(--text-base);
-    line-height: 1.65;
+    line-height: 1.6;
     color: var(--ink-secondary);
   }
   .hand {
-    margin: 0;
+    position: relative;
+    flex: none;
+    margin: 0 8px 0 0;
+    padding-right: 34px;
     font-family: var(--font-hand);
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     font-weight: 500;
     line-height: 1;
     color: var(--accent-warm);
-    transform: rotate(-3deg);
   }
   .arrow {
-    width: 30px;
-    height: 42px;
-    margin-top: 6px;
+    position: absolute;
+    right: 0;
+    top: 6px;
+    width: 26px;
+    height: 38px;
     color: var(--accent-warm);
-    transform: rotate(-8deg);
+  }
+  @media (max-width: 640px) {
+    .hand {
+      display: none;
+    }
   }
   .widget {
     position: relative;
