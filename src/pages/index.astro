@@ -10,7 +10,7 @@ import { beliefs, workIndex } from "../data/work-index";
 import { resume } from "../data/resume";
 
 const nameOf = (id: string) => workIndex.find((w) => w.id === id)?.name ?? id;
-const featured = workIndex.filter((w) => w.page && w.id !== "hh-global");
+const featured = workIndex.filter((w) => w.page);
 const rest = workIndex.filter((w) => !featured.includes(w));
 const markets = [
   { name: "United States" },

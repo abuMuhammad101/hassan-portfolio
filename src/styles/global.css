@@ -3,9 +3,9 @@
   --bg-raised: #ffffff;
   --ink: #1a1a18;
   --ink-secondary: #55534c;
-  --ink-muted: #8c8a81;
+  --ink-muted: #75736b;
   --rule: #e5e3dc;
-  --ink-tone2: #8f8c82;
+  --ink-tone2: #7c7a71;
   --construct: #d9d6cc;
   --accent-site: #2f4bd8;
   --accent-warm: #e4572e;
@@ -22,13 +22,11 @@
   --landlord: #b5533c;
   --meal-wallet: #7a8c2e;
 
-  --font-display: "Instrument Sans", "Inter", -apple-system, "Segoe UI", sans-serif;
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Instrument Sans Variable", "Instrument Sans", "Inter Variable", -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Consolas, monospace;
-  --font-serif-display: "Playfair Display", Georgia, "Times New Roman", serif;
   --font-editorial: "Instrument Serif", Georgia, "Times New Roman", serif;
   --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
-  --font-serif-body: "Lora", Georgia, "Times New Roman", serif;
   --resume-accent: #7c3aed;
 
   --text-xs: 0.75rem;
@@ -40,6 +38,11 @@
   --text-3xl: 2.5rem;
   --text-hero: clamp(2.5rem, 7vw, 4.5rem);
   --wide-width: 1080px;
+
+  /* Elevation: a hairline plus soft, layered light. Never one hard drop. */
+  --lift-1: 0 0 0 1px rgb(20 18 12 / 0.06), 0 1px 2px rgb(20 18 12 / 0.05);
+  --lift-2: 0 0 0 1px rgb(20 18 12 / 0.06), 0 2px 4px rgb(20 18 12 / 0.04), 0 12px 24px -12px rgb(20 18 12 / 0.12);
+  --lift-3: 0 0 0 1px rgb(20 18 12 / 0.07), 0 4px 8px rgb(20 18 12 / 0.04), 0 24px 48px -20px rgb(20 18 12 / 0.18);
 
   --content-width: 680px;
   --space-1: 8px;
@@ -59,9 +62,9 @@
     --bg-raised: #1b1a17;
     --ink: #f2f1ea;
     --ink-secondary: #b8b6ac;
-    --ink-muted: #706e64;
+    --ink-muted: #8c8a80;
     --rule: #2a2924;
-    --ink-tone2: #77756b;
+    --ink-tone2: #85837a;
     --construct: #2e2d28;
     --accent-site: #8fa2ff;
     --accent-warm: #ff7a50;
@@ -77,9 +80,9 @@
   --bg-raised: #1b1a17;
   --ink: #f2f1ea;
   --ink-secondary: #b8b6ac;
-  --ink-muted: #706e64;
+  --ink-muted: #8c8a80;
   --rule: #2a2924;
-  --ink-tone2: #77756b;
+  --ink-tone2: #85837a;
   --construct: #2e2d28;
   --accent-site: #8fa2ff;
   --accent-warm: #ff7a50;
@@ -94,9 +97,9 @@
   --bg-raised: #ffffff;
   --ink: #1a1a18;
   --ink-secondary: #55534c;
-  --ink-muted: #8c8a81;
+  --ink-muted: #75736b;
   --rule: #e5e3dc;
-  --ink-tone2: #8f8c82;
+  --ink-tone2: #7c7a71;
   --construct: #d9d6cc;
   --accent-site: #2f4bd8;
   --accent-warm: #e4572e;
@@ -115,6 +118,23 @@
 }
 html {
   -webkit-text-size-adjust: 100%;
+  /* Crisp, even type on every screen. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
+  font-kerning: normal;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+img {
+  image-rendering: auto;
 }
 body {
   margin: 0;
@@ -124,16 +144,6 @@ body {
   font-size: var(--text-base);
   line-height: 1.7;
   transition: background 0.2s ease, color 0.2s ease;
-}
-/* Faint paper grain over the page ground. Purely decorative. */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 body > * {
   position: relative;

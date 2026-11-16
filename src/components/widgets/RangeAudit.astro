@@ -294,7 +294,7 @@ const menu = [
     display: flex;
     justify-content: space-between;
     color: #2a1d33;
-    font: 600 11px/1 Inter, var(--font-sans);
+    font: 600 11px/1 var(--font-sans);
   }
   .sb span {
     display: inline-flex;
@@ -311,20 +311,17 @@ const menu = [
     border-radius: 33px;
     background: var(--cream);
     color: #2a1d33;
-    font: 11px/1.35 Inter, var(--font-sans);
+    font: 11px/1.35 var(--font-sans);
     overflow: hidden;
     opacity: 0;
-    filter: blur(8px);
     transform: translateY(12px) scale(0.98);
     pointer-events: none;
     transition:
       opacity 0.5s var(--ease),
-      filter 0.5s var(--ease),
       transform 0.65s var(--ease);
   }
   .scr.on {
     opacity: 1;
-    filter: none;
     transform: none;
   }
   /* Screens sit above the half-taps; only their tap targets catch clicks. */
