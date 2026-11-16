@@ -319,10 +319,10 @@
   border-radius: 12px;
   background: #fff;
   color: #1d1c19;
-  box-shadow:
-    0 0 0 1px rgb(0 0 0 / 0.08),
-    0 18px 40px -24px rgb(0 0 0 / 0.28);
+  box-shadow: var(--lift-3);
   overflow: hidden;
+  /* Clean rounded clipping for the screens inside, no jagged corners. */
+  isolation: isolate;
 }
 .s-bar {
   display: flex;

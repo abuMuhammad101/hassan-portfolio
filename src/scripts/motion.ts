@@ -19,10 +19,18 @@ const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 if (!reduced) {
   gsap.registerPlugin(ScrollTrigger);
 
-  const lenis = new Lenis({ duration: 1.05 });
-  lenis.on("scroll", ScrollTrigger.update);
-  gsap.ticker.add((time) => lenis.raf(time * 1000));
-  gsap.ticker.lagSmoothing(0);
+  // Smooth wheel scrolling on desktop only. Phones and tablets keep their own
+  // momentum scrolling, which is smoother than anything layered on top of it.
+  const touch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+  if (!touch) {
+    const lenis = new Lenis({ duration: 1.05 });
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+  } else {
+    // Keeps scroll-linked reveals steady when the mobile address bar resizes the page.
+    ScrollTrigger.config({ ignoreMobileResize: true });
+  }
 
   // Reveal: only elements below the first screen animate, so the first view
   // is complete at rest.
