@@ -1,30 +1,38 @@
 ---
 /* The audit's central finding as a story, re-created with a stand-in brand
    and menu. The same customer, 4.6 km from the nearest branch, goes through
-   four moments twice: before the audit and after it. */
+   four moments twice: before the audit and after it. Both apps share one
+   visual language, so the only thing that differs is the decision. */
 import Icon from "../Icon.astro";
+import "../../styles/story.css";
 
 const chapters = [
   {
     title: "The app opens",
     before: "Nothing says they're 4.6 km away, far outside the 1 km delivery zone.",
-    after: "The header tells the truth in the first second, and offers pickup right there.",
+    after: "The truth in the first second: pickup is chosen for them, ready in about 15 minutes.",
   },
   {
     title: "They choose dinner",
     before: "Appetite builds. They customise the order and the intent peaks.",
-    after: "Every item carries a pickup tag and its points, so the choice is already made.",
+    after: "The item already says where and when they'll get it, and the points they'll earn.",
   },
   {
     title: "They tap Add to cart",
     before: "Only now does the range check fire: a refusal, then four equal partner links.",
-    after: "If they still want delivery: one recommended option, two alternatives, and the cart is kept.",
+    after: "Still want delivery? One recommended option, two alternatives, and the cart is kept.",
   },
   {
     title: "What happens next",
     before: "They leave, and the order, their data and the loyalty points go with them.",
-    after: "The order stays in the app: ready in about 15 minutes, points earned.",
+    after: "The order stays in the app: ready in about 15 minutes, with points earned.",
   },
+];
+const menu = [
+  { name: "Crispy chicken", price: 26, icon: "hamburger", tone: "p1" },
+  { name: "Rice bowl", price: 24, icon: "bowl-food", tone: "p2" },
+  { name: "Spiced tea", price: 6, icon: "coffee", tone: "p3" },
+  { name: "Cookie box", price: 12, icon: "cookie", tone: "p4" },
 ];
 ---
 
@@ -42,130 +50,127 @@ const chapters = [
       </li>
     ))}
   </ol>
+
   <div class="stage">
-      <!-- Before ------------------------------------------------------- -->
-      <figure class="dev before" aria-label="Before the audit">
-        <figcaption><i></i>Before</figcaption>
+    {(["before", "after"] as const).map((v) => (
+      <figure class:list={["dev", v]} aria-label={v === "before" ? "Before the audit" : "After the audit"}>
+        <figcaption><i></i>{v === "before" ? "Before" : "After"}</figcaption>
         <div class="phone">
+          <div class="sb" aria-hidden="true"><b>9:41</b><span><Icon name="cell-signal-full" weight="fill" size={11} /><Icon name="wifi-high" weight="fill" size={11} /><Icon name="battery-full" weight="fill" size={13} /></span></div>
+
+          <!-- 1. Home -->
           <div class="scr" data-shot="0">
-            <div class="bar-top"><span class="addr-empty"><Icon name="map-pin" size={13} /> Deliver to <b>Set your address</b> <Icon name="caret-down" size={11} /></span></div>
+            <p class="hello">Good evening</p>
+            {v === "before" ? (
+              <p class="addr"><Icon name="map-pin" weight="duotone" size={14} /><span><small>Deliver to</small><b>Set your address <Icon name="caret-down" size={10} /></b></span></p>
+            ) : (
+              <>
+                <div class="seg"><span><Icon name="moped" size={12} /> Delivery</span><span class="on"><Icon name="storefront" size={12} /> Pickup</span></div>
+                <p class="addr"><Icon name="map-pin" weight="duotone" size={14} /><span><small>Home · Villa 4 · 4.6 km away</small><b>Pick up at Gate Branch <Icon name="caret-down" size={10} /></b></span></p>
+                <p class="status"><i></i>Ready in ~15 min<em>Outside delivery zone</em></p>
+              </>
+            )}
             <div class="search"><Icon name="magnifying-glass" size={13} /> Search the menu</div>
             <p class="h">Most loved</p>
             <div class="grid">
-              <div class="item"><span class="plate p1"><Icon name="hamburger" size={22} /></span><b>Crispy chicken</b><small>SAR 26</small></div>
-              <div class="item"><span class="plate p2"><Icon name="bowl-food" size={22} /></span><b>Rice bowl</b><small>SAR 24</small></div>
-              <div class="item"><span class="plate p3"><Icon name="coffee" size={22} /></span><b>Spiced tea</b><small>SAR 6</small></div>
-              <div class="item"><span class="plate p1"><Icon name="hamburger" size={22} /></span><b>Wrap meal</b><small>SAR 21</small></div>
+              {menu.map((m, k) => (
+                <div class:list={["item", { "s-target": k === 0 }]} data-hot={k === 0 ? "" : undefined}>
+                  <span class:list={["plate", m.tone]}><Icon name={m.icon} weight="duotone" size={26} /></span>
+                  <b>{m.name}</b>
+                  <small>SAR {m.price}{v === "after" && <em> · +{m.price} pts</em>}</small>
+                  {v === "after" && <span class="tag">Pickup</span>}
+                </div>
+              ))}
             </div>
+            <nav class="tabs" aria-hidden="true"><span class="on"><Icon name="house" weight="fill" size={15} />Home</span><span><Icon name="receipt" size={15} />Orders</span><span><Icon name="gift" size={15} />Rewards</span><span><Icon name="user" size={15} />Account</span></nav>
           </div>
 
+          <!-- 2. Item -->
           <div class="scr" data-shot="1">
-            <div class="hero-plate"><span class="plate big p1"><Icon name="hamburger" size={44} /></span></div>
-            <b class="dish">Crispy chicken, 4 pcs</b>
+            <span class="plate big p1"><Icon name="hamburger" weight="duotone" size={56} /></span>
+            <div class="row"><b class="dish">Crispy chicken, 4 pcs</b><b class="pr">SAR 26</b></div>
             <small class="sub">With fries, bun and garlic sauce</small>
+            {v === "after" && <p class="status sm"><i></i>Pickup at Gate Branch · ~15 min<em>+28 pts</em></p>}
             <p class="h sm">Spice</p>
-            <div class="radio on">Classic</div>
-            <div class="radio">Spicy</div>
+            <div class="radios"><span class="radio on">Classic</span><span class="radio">Spicy</span></div>
             <p class="h sm">Extras</p>
             <div class="radio check on">Extra garlic sauce <em>+2</em></div>
-            <div class="cta coral">Add to cart · SAR 28</div>
+            <div class="radio check">Cheese slice <em>+3</em></div>
+            <span class="cta s-target" data-hot>{v === "before" ? "Add to cart · SAR 28" : "Add for pickup · SAR 28"}</span>
           </div>
 
-          <div class="scr dim" data-shot="2">
-            <div class="modal">
-              <span class="ic bad"><Icon name="x-circle" size={22} /></span>
-              <b>Sorry, we don't deliver to your area</b>
-              <small>Order from us on:</small>
-              <div class="eq4"><span>Partner A</span><span>Partner B</span><span>Partner C</span><span>Partner D</span></div>
+          <!-- 3. Add to cart -->
+          {v === "before" ? (
+            <div class="scr dim" data-shot="2">
+              <div class="modal">
+                <span class="ic bad"><Icon name="x-circle" size={22} /></span>
+                <b>Sorry, we don't deliver to your area</b>
+                <small>Order from us on:</small>
+                <div class="eq4"><span class="s-target" data-hot>Partner A</span><span>Partner B</span><span>Partner C</span><span>Partner D</span></div>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div class="scr dim" data-shot="2">
+              <div class="sheet">
+                <span class="grab"></span>
+                <b class="st-h">We can't deliver to Villa 4 yet</b>
+                <small class="sub">Your crispy chicken is saved. How would you like it?</small>
+                <div class="opt on"><span class="oi"><Icon name="storefront" weight="duotone" size={15} /></span><span><b>Pick up at Gate Branch</b><small><em class="best">Best value</em> ~15 min · +350 pts</small></span><i class="rd"></i></div>
+                <div class="opt"><span class="oi"><Icon name="moped" weight="duotone" size={15} /></span><span><b>Deliver with a partner</b><small>Their fees apply · no points</small></span><i class="rd"></i></div>
+                <div class="opt"><span class="oi"><Icon name="bell-simple" weight="duotone" size={15} /></span><span><b>Tell me when you deliver here</b><small>One message when it opens</small></span><i class="rd"></i></div>
+                <span class="cta s-target" data-hot>Continue with pickup</span>
+              </div>
+            </div>
+          )}
 
-          <div class="scr dim" data-shot="3">
-            <div class="lost">
-              <span class="ic"><Icon name="sign-out" size={20} /></span>
-              <b>Left for a partner app</b>
-              <ul>
-                <li><Icon name="x" size={11} /> The order</li>
-                <li><Icon name="x" size={11} /> Their details</li>
-                <li><Icon name="x" size={11} /> 260 points</li>
-              </ul>
+          <!-- 4. What happens next -->
+          {v === "before" ? (
+            <div class="scr" data-shot="3">
+              <div class="gone">
+                <span class="ic"><Icon name="sign-out" size={20} /></span>
+                <b>They left for a partner app</b>
+                <small>And took with them:</small>
+                <ul>
+                  <li><Icon name="receipt" weight="duotone" size={14} /><span>The order</span><s>SAR 28</s></li>
+                  <li><Icon name="user" weight="duotone" size={14} /><span>Their details</span><s>Lost</s></li>
+                  <li><Icon name="gift" weight="duotone" size={14} /><span>Loyalty points</span><s>+260</s></li>
+                </ul>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div class="scr" data-shot="3">
+              <div class="placed">
+                <span class="ring"><Icon name="check-circle" weight="fill" size={34} /></span>
+                <b>Order placed</b>
+                <small>Pick it up at Gate Branch</small>
+                <div class="eta"><span><small>Ready in</small><b>~15 min</b></span><span><small>Points</small><b>+350</b></span></div>
+                <div class="steps"><i class="on"></i><i></i><i></i></div>
+                <span class="cta s-target" data-hot>Track my order</span>
+              </div>
+            </div>
+          )}
+
           <button type="button" class="tap prev" data-go="-1" aria-label="Previous chapter"></button>
           <button type="button" class="tap next" data-go="1" aria-label="Next chapter"></button>
         </div>
-        <div class="caps">{chapters.map((c, i) => <p class:list={["cap", { on: i === 0 }]} data-shot={i}>{c.before}</p>)}</div>
+        <div class="caps">{chapters.map((c, i) => <p class:list={["cap", { on: i === 0 }]} data-shot={i}>{v === "before" ? c.before : c.after}</p>)}</div>
       </figure>
-
-      <!-- After -------------------------------------------------------- -->
-      <figure class="dev after" aria-label="After the audit">
-        <figcaption><i></i>After</figcaption>
-        <div class="phone">
-          <div class="scr" data-shot="0">
-            <div class="seg"><span><Icon name="moped" size={12} /> Delivery</span><span class="on"><Icon name="storefront" size={12} /> Pickup</span></div>
-            <div class="loc"><span class="pin"><Icon name="map-pin" weight="fill" size={13} /></span><span><b>Home · Villa 4 <Icon name="caret-down" size={10} /></b><small>4.6 km from the nearest branch</small></span></div>
-            <span class="chip warn"><Icon name="warning-circle" size={11} /> Outside our delivery zone</span>
-            <div class="card-plum">
-              <b>Near the old town? Order ahead</b>
-              <small>Pick up at Gate Branch. Ready in about 15 min, and you earn points.</small>
-              <span class="cta sm">Order for pickup</span>
-            </div>
-            <p class="h">Most loved</p>
-            <div class="grid two">
-              <div class="item"><span class="plate p1"><Icon name="hamburger" size={22} /></span><b>Crispy chicken</b><small>SAR 26</small></div>
-              <div class="item"><span class="plate p2"><Icon name="bowl-food" size={22} /></span><b>Rice bowl</b><small>SAR 24</small></div>
-            </div>
-          </div>
-
-          <div class="scr" data-shot="1">
-            <span class="status"><i></i>Pickup · Gate Branch · ready in ~15 min</span>
-            <p class="h">Most loved</p>
-            <div class="grid">
-              <div class="item"><span class="plate p1"><Icon name="hamburger" size={22} /></span><b>Crispy chicken</b><small>SAR 26 <em>+26 pts</em></small><span class="tag">Pickup</span></div>
-              <div class="item"><span class="plate p2"><Icon name="bowl-food" size={22} /></span><b>Rice bowl</b><small>SAR 24 <em>+24 pts</em></small><span class="tag">Pickup</span></div>
-              <div class="item"><span class="plate p3"><Icon name="coffee" size={22} /></span><b>Spiced tea</b><small>SAR 6 <em>+6 pts</em></small><span class="tag">Pickup</span></div>
-              <div class="item"><span class="plate p1"><Icon name="hamburger" size={22} /></span><b>Wrap meal</b><small>SAR 21 <em>+21 pts</em></small><span class="tag">Pickup</span></div>
-            </div>
-          </div>
-
-          <div class="scr dim" data-shot="2">
-            <div class="sheet">
-              <span class="grab"></span>
-              <b class="st-h">We can't deliver to Villa 4 yet</b>
-              <small class="sub">Your crispy chicken is saved. How would you like it?</small>
-              <div class="opt on"><span class="oi"><Icon name="storefront" size={14} /></span><span><b>Pick up at Gate Branch</b><small><em class="best">Best value</em> Ready in ~15 min · +350 pts</small></span><i class="rd"></i></div>
-              <div class="opt"><span class="oi"><Icon name="arrow-square-out" size={14} /></span><span><b>Deliver with a partner</b><small>Their fees apply · no points</small></span><i class="rd"></i></div>
-              <div class="opt"><span class="oi"><Icon name="bell-ringing" size={14} /></span><span><b>Tell me when you deliver here</b><small>One message when it opens</small></span><i class="rd"></i></div>
-              <span class="cta">Continue with pickup</span>
-            </div>
-          </div>
-
-          <div class="scr" data-shot="3">
-            <div class="done">
-              <span class="ring"><Icon name="check-circle" weight="fill" size={34} /></span>
-              <b>Order placed</b>
-              <small>Pick it up at Gate Branch</small>
-              <div class="eta"><span><small>Ready in</small><b>~15 min</b></span><span><small>Points</small><b>+350</b></span></div>
-              <span class="cta ghost">Directions to Gate Branch</span>
-            </div>
-          </div>
-          <button type="button" class="tap prev" data-go="-1" aria-label="Previous chapter"></button>
-          <button type="button" class="tap next" data-go="1" aria-label="Next chapter"></button>
-        </div>
-        <div class="caps">{chapters.map((c, i) => <p class:list={["cap", { on: i === 0 }]} data-shot={i}>{c.after}</p>)}</div>
-      </figure>
+    ))}
   </div>
 
-  <div class="dock" role="toolbar" aria-label="Story controls">
-    <div class="seg-d" role="group" aria-label="Before or after the audit">
+  <div class="controls">
+    <button type="button" class="s-play" data-play aria-label="Play the story">
+      <span class="knob">
+        <svg viewBox="0 0 42 42" aria-hidden="true"><circle class="track" cx="21" cy="21" r="19" /><circle class="prog" cx="21" cy="21" r="19" pathLength="100" /></svg>
+        <span class="icon" aria-hidden="true"><i></i><i></i></span>
+      </span>
+      <span class="count" data-count>01 / 04</span>
+    </button>
+    <div class="view" role="group" aria-label="Before or after the audit">
       <button type="button" data-view-btn="before" aria-pressed="false">Before</button>
       <button type="button" data-view-btn="after" aria-pressed="true">After</button>
     </div>
-    <span class="div" aria-hidden="true"></span>
-    <button type="button" class="play" data-play aria-label="Play the story">
-      <span class="i-play"><Icon name="play" weight="fill" size={14} /></span>
-      <span class="i-pause"><Icon name="pause" weight="fill" size={14} /></span>
-    </button>
+    <p class="hint"><span class="dot" aria-hidden="true"></span>Tap what they'd tap</p>
   </div>
 </div>
 
@@ -184,22 +189,27 @@ const chapters = [
 
 <style>
   .ks {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    --story-accent: #ff6b4a;
     --plum: #4b2a5e;
     --coral: #ff6b4a;
     --cream: #fbf6ef;
     --ok: #1f8a4c;
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
-  /* Stage: one phone on a narrow screen (switched in the dock), two beside each other when there is room. */
+
+  /* Stage: one phone on a narrow screen, both side by side when there's room. */
   .stage {
     position: relative;
     display: grid;
     justify-items: center;
-    padding: 26px 0 6px;
+    padding: 22px 0 6px;
     border-radius: 28px;
     background:
       radial-gradient(60% 55% at 50% 45%, color-mix(in srgb, var(--coral) 9%, transparent), transparent 70%),
-      repeating-radial-gradient(circle at 50% 46%, transparent 0 69px, color-mix(in srgb, var(--ink) 7%, transparent) 69px 70px);
+      repeating-radial-gradient(circle at 50% 46%, transparent 0 69px, color-mix(in srgb, var(--ink) 6%, transparent) 69px 70px);
     overflow: hidden;
   }
   .dev {
@@ -210,8 +220,7 @@ const chapters = [
     gap: 10px;
     transition:
       opacity 0.5s var(--ease),
-      transform 0.6s var(--ease),
-      filter 0.5s var(--ease);
+      transform 0.6s var(--ease);
   }
   .ks[data-view="after"] .before,
   .ks[data-view="before"] .after {
@@ -244,7 +253,7 @@ const chapters = [
     position: relative;
     width: min(272px, 72vw);
     aspect-ratio: 9 / 19;
-    border-radius: 40px;
+    border-radius: 42px;
     padding: 9px;
     background: #fff;
     box-shadow:
@@ -254,23 +263,39 @@ const chapters = [
   .phone::before {
     content: "";
     position: absolute;
-    top: 17px;
+    top: 18px;
     left: 50%;
     z-index: 4;
-    width: 62px;
-    height: 17px;
+    width: 66px;
+    height: 18px;
     border-radius: 10px;
     background: #111;
     transform: translateX(-50%);
   }
+  .sb {
+    position: absolute;
+    top: 19px;
+    left: 30px;
+    right: 26px;
+    z-index: 4;
+    display: flex;
+    justify-content: space-between;
+    color: #2a1d33;
+    font: 600 11px/1 Inter, var(--font-sans);
+  }
+  .sb span {
+    display: inline-flex;
+    gap: 3px;
+  }
   .scr {
     position: absolute;
     inset: 9px;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     gap: 9px;
-    padding: 40px 12px 12px;
-    border-radius: 31px;
+    padding: 40px 13px 12px;
+    border-radius: 33px;
     background: var(--cream);
     color: #2a1d33;
     font: 11px/1.35 Inter, var(--font-sans);
@@ -278,6 +303,7 @@ const chapters = [
     opacity: 0;
     filter: blur(8px);
     transform: translateY(12px) scale(0.98);
+    pointer-events: none;
     transition:
       opacity 0.5s var(--ease),
       filter 0.5s var(--ease),
@@ -288,222 +314,60 @@ const chapters = [
     filter: none;
     transform: none;
   }
+  /* Screens sit above the half-taps; only their tap targets catch clicks. */
+  .scr.on .s-target {
+    pointer-events: auto;
+  }
   .scr b {
     font-weight: 600;
   }
   .scr small {
     color: #85758d;
   }
+  .scr em {
+    font-style: normal;
+  }
+  .hello {
+    margin: 2px 0 -4px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
   .h {
-    margin: 4px 0 0;
+    margin: 2px 0 0;
     font-weight: 700;
     font-size: 12.5px;
   }
   .h.sm {
     font-size: 11px;
-    margin-top: 2px;
+    margin: 0;
   }
 
-  /* Shared app parts */
-  .search,
-  .bar-top {
+  /* Home */
+  .addr {
     display: flex;
     align-items: center;
-    gap: 6px;
-  }
-  .search {
-    padding: 8px 10px;
-    border-radius: 12px;
-    background: #fff;
-    color: #9a8ca1;
-  }
-  .addr-empty {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    color: #85758d;
-  }
-  .addr-empty b {
-    color: #2a1d33;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: 8px;
+    margin: 0;
   }
-  .item {
-    position: relative;
-    display: grid;
-    gap: 2px;
-    padding: 7px;
-    border-radius: 14px;
-    background: #fff;
-  }
-  .item em {
-    font-style: normal;
-    color: var(--plum);
-    font-weight: 600;
-  }
-  .plate {
-    display: grid;
-    place-items: center;
-    height: 58px;
-    margin-bottom: 4px;
-    border-radius: 10px;
-    color: rgb(42 29 51 / 0.55);
-  }
-  .p1 {
+  .addr > :global(svg) {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    padding: 6px;
+    border-radius: 9px;
     background: #fde3d6;
+    color: var(--coral);
   }
-  .p2 {
-    background: #f3e7c9;
-  }
-  .p3 {
-    background: #e8ddf0;
-  }
-  .plate.big {
-    height: 130px;
-    border-radius: 18px;
-  }
-  .tag {
-    position: absolute;
-    top: 11px;
-    left: 11px;
-    padding: 1px 6px;
-    border-radius: 999px;
-    background: #fff;
-    color: var(--plum);
-    font-size: 9px;
-    font-weight: 700;
-  }
-  .cta {
-    display: block;
-    margin-top: auto;
-    padding: 10px;
-    border-radius: 14px;
-    background: var(--plum);
-    color: #fff;
-    text-align: center;
-    font-weight: 600;
-  }
-  .cta.coral {
-    background: var(--coral);
-  }
-  .cta.sm {
-    display: inline-block;
-    margin: 6px 0 0;
-    padding: 6px 10px;
-    border-radius: 10px;
-    background: var(--coral);
-  }
-  .cta.ghost {
-    background: none;
-    color: var(--plum);
-    box-shadow: inset 0 0 0 1px rgb(75 42 94 / 0.25);
-  }
-
-  /* Before screens */
-  .dish {
-    font-size: 13px;
-  }
-  .sub {
-    margin-top: -6px;
-  }
-  .radio {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 9px;
-    border-radius: 10px;
-    background: #fff;
-  }
-  .radio::before {
-    content: "";
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    box-shadow: inset 0 0 0 1.5px #c9bccf;
-  }
-  .radio.check::before {
-    border-radius: 3px;
-  }
-  .radio.on::before {
-    box-shadow: inset 0 0 0 3.5px var(--coral);
-  }
-  .radio em {
-    margin-left: auto;
-    font-style: normal;
-    color: #85758d;
-  }
-  .dim::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgb(42 29 51 / 0.45);
-    z-index: 0;
-  }
-  .modal,
-  .lost {
-    position: relative;
-    z-index: 1;
-    margin: auto 0;
+  .addr span {
     display: grid;
-    justify-items: center;
-    gap: 6px;
-    padding: 18px 14px;
-    border-radius: 20px;
-    background: #fff;
-    text-align: center;
   }
-  .modal b,
-  .lost b {
-    font-size: 13px;
-  }
-  .ic {
-    display: grid;
-    place-items: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #f2ebf4;
-    color: var(--plum);
-  }
-  .ic.bad {
-    background: #fde6e1;
-    color: #d64545;
-  }
-  .eq4 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    width: 100%;
-    margin-top: 4px;
-  }
-  .eq4 span {
-    padding: 8px 0;
-    border-radius: 10px;
-    background: #f4efe9;
-    font-weight: 600;
-  }
-  .lost ul {
-    list-style: none;
-    margin: 4px 0 0;
-    padding: 0;
-    display: grid;
-    gap: 5px;
-  }
-  .lost li {
+  .addr b {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    color: #85758d;
-    text-decoration: line-through;
+    gap: 3px;
+    font-size: 12px;
   }
-  .lost li :global(svg) {
-    color: #d64545;
-  }
-
-  /* After screens */
   .seg {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -522,77 +386,277 @@ const chapters = [
     color: #85758d;
   }
   .seg .on {
-    background: var(--plum);
-    color: #fff;
-  }
-  .loc {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-  .loc > span:last-child {
-    display: grid;
-  }
-  .pin {
-    display: grid;
-    place-items: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 9px;
-    background: #fde3d6;
-    color: var(--coral);
-  }
-  .chip {
-    align-self: flex-start;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
-    border-radius: 999px;
-    font-size: 10px;
-    font-weight: 600;
-  }
-  .chip.warn {
-    background: #fbefd2;
-    color: #8a5a00;
-  }
-  .card-plum {
-    display: grid;
-    gap: 3px;
-    padding: 12px;
-    border-radius: 16px;
-    background: var(--plum);
-    color: #fff;
-  }
-  .card-plum small {
-    color: rgb(255 255 255 / 0.75);
-  }
-  .grid.two .plate {
-    height: 48px;
+    background: #fff;
+    color: var(--plum);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
   }
   .status {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 6px;
-    padding: 7px 10px;
+    margin: 0;
+    padding: 8px 10px;
     border-radius: 12px;
     background: #fff;
     font-weight: 600;
   }
   .status i {
+    flex: none;
     width: 7px;
     height: 7px;
     border-radius: 50%;
     background: var(--ok);
+    box-shadow: 0 0 0 3px rgb(31 138 76 / 0.15);
   }
+  .status em {
+    margin-left: auto;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: #8a5a00;
+  }
+  .status.sm {
+    padding: 7px 9px;
+    font-size: 10.5px;
+  }
+  .status.sm em {
+    color: var(--plum);
+  }
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: #fff;
+    color: #9a8ca1;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .item {
+    position: relative;
+    display: grid;
+    gap: 1px;
+    padding: 6px 6px 8px;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 6px 14px -12px rgb(75 42 94 / 0.5);
+  }
+  .item em {
+    color: var(--plum);
+    font-weight: 600;
+  }
+  .plate {
+    display: grid;
+    place-items: center;
+    height: 58px;
+    margin-bottom: 5px;
+    border-radius: 11px;
+  }
+  .p1 {
+    background: #fde3d6;
+    color: #e2582f;
+  }
+  .p2 {
+    background: #f6ead0;
+    color: #b7791f;
+  }
+  .p3 {
+    background: #ece2f3;
+    color: var(--plum);
+  }
+  .p4 {
+    background: #f1e6dc;
+    color: #8b5a3c;
+  }
+  .plate.big {
+    height: 140px;
+    border-radius: 20px;
+    flex: none;
+  }
+  .tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--plum);
+    font-size: 9px;
+    font-weight: 700;
+  }
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: auto -13px -12px;
+    padding: 8px 6px 14px;
+    background: #fff;
+    border-top: 1px solid #f0e8e0;
+  }
+  .tabs span {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    font-size: 9px;
+    color: #a597ab;
+  }
+  .tabs .on {
+    color: var(--coral);
+    font-weight: 600;
+  }
+
+  /* Item */
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .dish {
+    font-size: 13.5px;
+  }
+  .pr {
+    color: var(--plum);
+  }
+  .sub {
+    margin-top: -6px;
+  }
+  .radios {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .radio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 9px;
+    border-radius: 11px;
+    background: #fff;
+  }
+  .radio::before {
+    content: "";
+    flex: none;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px #c9bccf;
+  }
+  .radio.check::before {
+    border-radius: 3px;
+  }
+  .radio.on::before {
+    box-shadow: inset 0 0 0 3.5px var(--coral);
+  }
+  .radio em {
+    margin-left: auto;
+    color: #85758d;
+  }
+  .cta {
+    display: block;
+    margin-top: auto;
+    padding: 11px;
+    border-radius: 15px;
+    background: var(--coral);
+    color: #fff;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  /* Overlays */
+  .dim::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgb(42 29 51 / 0.42);
+  }
+  .modal,
+  .gone,
   .sheet {
     position: relative;
     z-index: 1;
-    margin: auto -12px -12px;
+  }
+  .modal,
+  .gone {
+    margin: auto 0;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 18px 14px;
+    border-radius: 22px;
+    background: #fff;
+    text-align: center;
+  }
+  .modal b,
+  .gone > b {
+    font-size: 13px;
+  }
+  .ic {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #f2ebf4;
+    color: var(--plum);
+  }
+  .ic.bad {
+    background: #fde6e1;
+    color: #d64545;
+  }
+  .eq4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .eq4 span {
+    padding: 9px 0;
+    border-radius: 11px;
+    background: #f4efe9;
+    font-weight: 600;
+  }
+  .gone {
+    background: none;
+    padding: 0 6px;
+  }
+  .gone ul {
+    list-style: none;
+    width: 100%;
+    margin: 8px 0 0;
+    padding: 4px 10px;
+    border-radius: 16px;
+    background: #fff;
+  }
+  .gone li {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    text-align: left;
+    color: #85758d;
+  }
+  .gone li + li {
+    border-top: 1px solid #f2ebe4;
+  }
+  .gone li :global(svg) {
+    color: #c9bccf;
+  }
+  .gone s {
+    color: #d64545;
+    font-weight: 600;
+  }
+
+  .sheet {
+    margin: auto -13px -12px;
     display: grid;
     gap: 7px;
-    padding: 10px 12px 14px;
-    border-radius: 22px 22px 31px 31px;
+    padding: 10px 13px 16px;
+    border-radius: 24px 24px 33px 33px;
     background: #fff;
   }
   .grab {
@@ -611,24 +675,24 @@ const chapters = [
     align-items: center;
     gap: 8px;
     padding: 8px;
-    border-radius: 12px;
+    border-radius: 13px;
     box-shadow: inset 0 0 0 1px #ece4ee;
   }
   .opt > span:nth-child(2) {
     display: grid;
   }
   .opt.on {
-    background: #f6f0f8;
-    box-shadow: inset 0 0 0 1.5px var(--plum);
+    background: #fff6f3;
+    box-shadow: inset 0 0 0 1.5px var(--coral);
   }
   .oi {
     display: grid;
     place-items: center;
-    width: 26px;
-    height: 26px;
-    border-radius: 8px;
-    background: #f2ebf4;
-    color: var(--plum);
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    background: #fde3d6;
+    color: var(--coral);
   }
   .best {
     margin-right: 3px;
@@ -636,8 +700,8 @@ const chapters = [
     border-radius: 999px;
     background: var(--ok);
     color: #fff;
-    font-style: normal;
     font-size: 8.5px;
+    font-weight: 600;
   }
   .rd {
     width: 12px;
@@ -646,19 +710,19 @@ const chapters = [
     box-shadow: inset 0 0 0 1.5px #c9bccf;
   }
   .opt.on .rd {
-    box-shadow: inset 0 0 0 3.5px var(--plum);
+    box-shadow: inset 0 0 0 3.5px var(--coral);
   }
-  .sheet .cta {
-    margin-top: 2px;
-  }
-  .done {
-    margin: auto 0;
-    display: grid;
-    justify-items: center;
+
+  .placed {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 6px;
     text-align: center;
   }
-  .done > b {
+  .placed > b {
     font-size: 15px;
   }
   .ring {
@@ -679,7 +743,7 @@ const chapters = [
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     width: 100%;
-    margin: 10px 0 14px;
+    margin: 10px 0 4px;
   }
   .eta span {
     display: grid;
@@ -690,7 +754,22 @@ const chapters = [
   .eta b {
     font-size: 15px;
   }
-  .done .cta {
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .steps i {
+    height: 4px;
+    border-radius: 4px;
+    background: #ece2f3;
+  }
+  .steps .on {
+    background: var(--ok);
+  }
+  .placed .cta {
     width: 100%;
     margin-top: 0;
   }
@@ -699,7 +778,7 @@ const chapters = [
     position: absolute;
     top: 0;
     bottom: 0;
-    z-index: 5;
+    z-index: 0;
     width: 50%;
     border: 0;
     background: none;
@@ -708,24 +787,16 @@ const chapters = [
   }
   .tap.prev {
     left: 0;
-    cursor: w-resize;
   }
   .tap.next {
     right: 0;
-    cursor: e-resize;
   }
-  .tap:focus-visible {
+  .phone:has(.tap:focus-visible) {
     outline: 2px solid var(--coral);
-    outline-offset: -6px;
-    border-radius: 36px;
+    outline-offset: 4px;
   }
 
-  /* Story text. Mobile order: kicker, bars, moment, phone, caption, dock. */
-  .ks {
-    container-type: inline-size;
-    display: flex;
-    flex-direction: column;
-  }
+  /* Story text. Mobile order: kicker, bars, moment, phone, caption, controls. */
   .kicker {
     margin: 0 0 14px;
     font-family: var(--font-display);
@@ -820,56 +891,53 @@ const chapters = [
     transform: none;
   }
 
-  .dock {
+  .controls {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 4px;
-    width: max-content;
-    margin: 22px auto 0;
-    padding: 5px;
-    border-radius: 999px;
-    background: #141414;
-    box-shadow:
-      0 12px 30px -12px rgb(0 0 0 / 0.45),
-      inset 0 0 0 1px rgb(255 255 255 / 0.06);
+    justify-content: center;
+    gap: 10px 16px;
+    margin-top: 20px;
   }
-  .seg-d {
+  .view {
     display: inline-flex;
-  }
-  .seg-d button,
-  .play {
-    border: 0;
-    background: none;
-    color: rgb(255 255 255 / 0.62);
-    font: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 7px 14px;
+    padding: 3px;
     border-radius: 999px;
+    background: var(--bg-sunk);
+    box-shadow: inset 0 0 0 1px var(--rule);
+  }
+  .view button {
+    padding: 7px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ink-muted);
     cursor: pointer;
   }
-  .seg-d [aria-pressed="true"] {
-    background: rgb(255 255 255 / 0.14);
-    color: #fff;
+  .view [aria-pressed="true"] {
+    background: var(--bg-raised);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
   }
-  .div {
-    width: 1px;
-    height: 18px;
-    background: rgb(255 255 255 / 0.14);
+  .hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
   }
-  .play {
-    display: grid;
-    place-items: center;
-    width: 34px;
-    height: 32px;
-    padding: 0;
-    color: var(--coral);
+  .hint .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--coral);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--coral) 25%, transparent);
   }
-  .ks[data-playing="true"] .i-play,
-  .ks[data-playing="false"] .i-pause {
-    display: none;
-  }
-  :is(.seg-d button, .play, .chapters button):focus-visible {
+  :is(.view button, .chapters button):focus-visible {
     outline: 2px solid var(--coral);
     outline-offset: 2px;
   }
@@ -897,14 +965,13 @@ const chapters = [
       transform: none;
     }
     .ks .before .phone {
-      filter: saturate(0.35);
-      opacity: 0.85;
+      filter: saturate(0.4);
+      opacity: 0.88;
     }
     .phone {
-      width: min(250px, 100%);
+      width: min(256px, 100%);
     }
-    .seg-d,
-    .seg-d + .div,
+    .view,
     .bars {
       display: none;
     }
@@ -957,7 +1024,7 @@ const chapters = [
     .ks.tick[data-playing="true"] .on .timer i {
       animation: fill var(--dur) linear forwards;
     }
-    .dock {
+    .controls {
       order: 3;
     }
   }

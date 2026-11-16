@@ -1,42 +1,51 @@
 ---
-/* isTyme told as two short stories, using the real screens exported from the
-   design file. The brand's one motif, proximity rings, sits behind the phone,
-   and its saffron arc doubles as the chapter timer. In Urdu the whole stage
-   mirrors, as the app does. */
+/* isTyme told as two connected stories, using the real screens exported from
+   the design file: Ayesha hires a plumber, then Imran, the plumber, gets
+   verified and finds work. The reader moves the story by tapping where the
+   person would tap. The brand's proximity rings sit behind the phone. */
 import Icon from "../Icon.astro";
+import "../../styles/story.css";
 
-const sides = [
+type Ch = { key: string; title: string; note: string; hot: [number, number]; call: [number, number, "left" | "right", string] };
+const sides: { id: string; role: string; icon: string; kicker: string; chapters: Ch[] }[] = [
   {
     id: "hire",
-    tab: "Hire",
+    role: "Customer",
+    icon: "house",
     kicker: "Ayesha's kitchen sink is leaking.",
     chapters: [
-      { key: "welcome", title: "A promise in one line", note: "The right person for the job, close by. The rings mean people near you, and they only appear at moments like this.", ur: "کام کا بندہ، آپ کے قریب" },
-      { key: "home", title: "She asks in her own words", note: "Search, or pick one of four plain categories. The offers already waiting for her rise to the top.", ur: "آج کیا کام کروانا ہے؟" },
-      { key: "price", title: "She knows what's fair", note: "She sets a price or asks for offers. Plumbers nearby charge Rs 900 to 1,400, so Rs 1,100 is in range.", ur: "ریٹ آپ بتائیں یا آفرز منگوائیں" },
-      { key: "offers", title: "She picks with confidence", note: "Best match first, with rating, jobs done and distance. One clear button to hire Imran.", ur: "پیسے محفوظ ہیں، ٹینشن نہ لیں" },
-      { key: "rate", title: "She pays when it's done", note: "isTyme held the money. Confirming the job releases Rs 1,100 to Imran and asks for a quick rating.", ur: "کام ہو گیا؟ پیمنٹ ریلیز کریں" },
+      { key: "welcome", title: "A promise in one line", note: "The right person for the job, close by. The rings mean people near you, and they only appear at moments like this.", hot: [70, 81.1], call: [62, 26, "left", "Rings mean people near you"] },
+      { key: "home", title: "She asks in her own words", note: "Search, or pick one of four plain categories. The offers already waiting for her rise to the top.", hot: [69.3, 46.4], call: [50, 70.4, "left", "Waiting offers rise to the top"] },
+      { key: "price", title: "She knows what's fair", note: "She sets a price or asks for offers. Plumbers nearby charge Rs 900 to 1,400, so Rs 1,100 is in range.", hot: [72, 87.3], call: [36, 43.3, "left", "Rs 900 to 1,400 nearby: she's in range"] },
+      { key: "offers", title: "She picks with confidence", note: "Best match first, with rating, jobs done and distance. One clear button to hire Imran.", hot: [80, 37.3], call: [66, 30.1, "right", "Best match first"] },
+      { key: "rate", title: "She pays when it's done", note: "isTyme held the money. Confirming the job releases Rs 1,100 to Imran and asks for a quick rating.", hot: [78, 80.3], call: [50, 58.3, "left", "Held until the job is done"] },
     ],
   },
   {
     id: "work",
-    tab: "Work",
-    kicker: "Imran, a plumber, wants to find work.",
+    role: "Worker",
+    icon: "briefcase",
+    kicker: "Imran, the plumber, wants more work.",
     chapters: [
-      { key: "cnic", title: "He shows who he is", note: "Verification can't be skipped. His card goes in the frame, encrypted and never shown to customers.", ur: "شناختی کارڈ کا سامنے والا حصہ فریم میں رکھیں" },
-      { key: "glare", title: "He's told how to fix it", note: "Not a generic error. The frame turns red and names the problem, too much light on the card, in his language.", ur: "روشنی زیادہ ہے، کارڈ تھوڑا ترچھا کریں" },
-      { key: "thumb", title: "He confirms with his thumb", note: "A thumbprint check through a NADRA partner links the card to his profile.", ur: "انگوٹھا لگا کر کنفرم کریں" },
-      { key: "verified", title: "Mubarak ho, Imran", note: "The Verified badge lands on his profile, and jobs that match his skills are waiting.", ur: "مبارک ہو! آپ ویریفائیڈ ہیں" },
-      { key: "match", title: "Work that fits him", note: "Three jobs picked for his skills, each tagged with why: close by, good pay, quick job.", ur: "آپ کے لیے بہترین کام" },
+      { key: "cnic", title: "He shows who he is", note: "Verification can't be skipped. His card goes in the frame, encrypted and never shown to customers.", hot: [50, 79.7], call: [50, 39.8, "right", "Encrypted, never shown to customers"] },
+      { key: "glare", title: "He's told how to fix it", note: "Not a generic error. The frame turns red and names the problem: too much light on the card.", hot: [50, 79.7], call: [39.4, 66.8, "right", "The fix is named, not just the error"] },
+      { key: "thumb", title: "He confirms with his thumb", note: "A thumbprint check through a NADRA partner links the card to his profile.", hot: [50, 47.7], call: [37.3, 18.1, "right", "Checked with a NADRA partner"] },
+      { key: "verified", title: "Mubarak ho, Imran", note: "The Verified badge lands on his profile, and jobs that match his skills are waiting.", hot: [68, 88], call: [50, 30.4, "right", "The badge goes on his profile"] },
+      { key: "match", title: "Work that fits him", note: "Three jobs picked for his skills, each tagged with why: close by, good pay, quick job.", hot: [50, 30.9], call: [37.3, 34, "right", "Each job says why it fits"] },
     ],
   },
 ];
 ---
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@500&display=swap" />
+<div class="st" data-st data-side="hire" data-playing="false">
+  <div class="roles" role="group" aria-label="Whose story">
+    {sides.map((s, i) => (
+      <button type="button" data-side-btn={s.id} aria-pressed={i === 0 ? "true" : "false"}>
+        <Icon name={s.icon} weight="fill" size={15} />{s.role}
+      </button>
+    ))}
+  </div>
 
-<div class="st" data-st data-lang="en" data-side="hire" data-playing="false">
   {sides.map((s, si) => (
     <div class="side" data-panel data-side-panel={s.id} hidden={si !== 0}>
       <div class="layout">
@@ -48,14 +57,11 @@ const sides = [
           <ol class="chapters">
             {s.chapters.map((c, ci) => (
               <li data-ch class:list={[{ on: ci === 0 }]}>
-                <button type="button" aria-current={ci === 0 ? "step" : undefined}>
+                <button type="button">
                   <span class="num tabular-nums">{String(ci + 1).padStart(2, "0")}</span>
                   <span class="title">{c.title}</span>
                 </button>
-                <div class="more"><div>
-                  <p class="note">{c.note}</p>
-                  <p class="ur" lang="ur" dir="rtl">{c.ur}</p>
-                </div></div>
+                <div class="more"><div><p class="note">{c.note}</p></div></div>
                 <span class="timer" aria-hidden="true"><i></i></span>
               </li>
             ))}
@@ -78,53 +84,54 @@ const sides = [
           </svg>
           <div class="phone">
             {s.chapters.map((c, ci) => (
-              <>
-                <img class:list={["shot en", { on: ci === 0 }]} data-shot={ci} src={`/media/istyme/en-${c.key}.webp`} alt={`isTyme, ${c.title}, in English`} width="482" height="954" loading={si === 0 && ci === 0 ? "eager" : "lazy"} decoding="async" />
-                <img class:list={["shot ur", { on: ci === 0 }]} data-shot={ci} src={`/media/istyme/ur-${c.key}.webp`} alt={`isTyme, ${c.title}, in Urdu`} width="482" height="954" loading="lazy" decoding="async" />
-              </>
+              <img class:list={["shot", { on: ci === 0 }]} data-shot={ci} src={`/media/istyme/en-${c.key}.webp`} alt={`isTyme, ${c.title}`} width="482" height="954" loading={si === 0 && ci < 2 ? "eager" : "lazy"} decoding="async" />
             ))}
             <button type="button" class="tap prev" data-go="-1" aria-label="Previous chapter"></button>
             <button type="button" class="tap next" data-go="1" aria-label="Next chapter"></button>
+            {s.chapters.map((c, ci) => (
+              <>
+                <button type="button" class:list={["s-hot", { on: ci === 0 }]} data-shot={ci} data-hot style={`--x:${c.hot[0]}%;--y:${c.hot[1]}%`} aria-label="Tap to continue the story"><b></b></button>
+                <p class:list={["s-call", c.call[2], { on: ci === 0 }]} data-shot={ci} style={`--x:${c.call[0]}%;--y:${c.call[1]}%`}><i></i><span>{c.call[3]}</span></p>
+              </>
+            ))}
           </div>
         </div>
       </div>
     </div>
   ))}
 
-  <div class="dock" role="toolbar" aria-label="Story controls">
-    <div class="seg" role="group" aria-label="Side of the marketplace">
-      {sides.map((s, i) => <button type="button" data-side-btn={s.id} aria-pressed={i === 0 ? "true" : "false"}>{s.tab}</button>)}
-    </div>
-    <span class="div" aria-hidden="true"></span>
-    <div class="seg" role="group" aria-label="Language">
-      <button type="button" data-lang-btn="en" aria-pressed="true">EN</button>
-      <button type="button" data-lang-btn="ur" aria-pressed="false" lang="ur" class="urb">اردو</button>
-    </div>
-    <span class="div" aria-hidden="true"></span>
-    <button type="button" class="play" data-play aria-label="Play the story">
-      <span class="i-play"><Icon name="play" weight="fill" size={14} /></span>
-      <span class="i-pause"><Icon name="pause" weight="fill" size={14} /></span>
+  <div class="controls">
+    <button type="button" class="s-play" data-play aria-label="Play the story">
+      <span class="knob">
+        <svg viewBox="0 0 42 42" aria-hidden="true"><circle class="track" cx="21" cy="21" r="19" /><circle class="prog" cx="21" cy="21" r="19" pathLength="100" /></svg>
+        <span class="icon" aria-hidden="true"><i></i><i></i></span>
+      </span>
+      <span class="count" data-count>01 / 05</span>
     </button>
+    <p class="hint"><span class="dot" aria-hidden="true"></span>Tap the glowing spot to move the story on</p>
   </div>
 </div>
 
 <script>
   import { initStory } from "../../scripts/story";
   document.querySelectorAll<HTMLElement>("[data-st]").forEach((root) => {
-    const story = initStory(root, { mirrored: () => root.dataset.lang === "ur" });
+    const setSide = (id: string) => {
+      root.dataset.side = id;
+      root.querySelectorAll<HTMLElement>("[data-side-btn]").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.sideBtn === id)));
+      root.querySelectorAll<HTMLElement>("[data-side-panel]").forEach((p) => (p.hidden = p.dataset.sidePanel !== id));
+    };
+    // The two stories are one: when Ayesha's ends, Imran's begins, and back.
+    const story = initStory(root, {
+      onEnd: () => {
+        setSide(root.dataset.side === "hire" ? "work" : "hire");
+        story.show(0);
+        return true;
+      },
+    });
     root.querySelectorAll<HTMLButtonElement>("[data-side-btn]").forEach((b) =>
       b.addEventListener("click", () => {
-        root.dataset.side = b.dataset.sideBtn;
-        root.querySelectorAll("[data-side-btn]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-        root.querySelectorAll<HTMLElement>("[data-side-panel]").forEach((p) => (p.hidden = p.dataset.sidePanel !== root.dataset.side));
+        setSide(b.dataset.sideBtn!);
         story.show(0);
-      }),
-    );
-    root.querySelectorAll<HTMLButtonElement>("[data-lang-btn]").forEach((b) =>
-      b.addEventListener("click", () => {
-        root.dataset.lang = b.dataset.langBtn;
-        root.querySelectorAll("[data-lang-btn]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-        story.show(story.index);
       }),
     );
   });
@@ -133,9 +140,9 @@ const sides = [
 <style>
   .st {
     container-type: inline-size;
+    --story-accent: #ff9f1c;
     --saffron: #ff9f1c;
     --green: #1a5c3a;
-    --dur: 5.2s;
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
     position: relative;
   }
@@ -143,19 +150,63 @@ const sides = [
     display: none;
   }
 
+  /* Role switch, in the app's own Hire / Work style. */
+  .roles {
+    display: flex;
+    width: max-content;
+    margin: 0 auto 6px;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--bg-sunk);
+    box-shadow: inset 0 0 0 1px var(--rule);
+  }
+  .roles button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 18px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition:
+      background 0.25s,
+      color 0.25s,
+      box-shadow 0.25s;
+  }
+  .roles button :global(svg) {
+    opacity: 0.6;
+  }
+  .roles [aria-pressed="true"] {
+    background: var(--bg-raised);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+  }
+  .roles [aria-pressed="true"] :global(svg) {
+    color: var(--green);
+    opacity: 1;
+  }
+  .roles button:focus-visible {
+    outline: 2px solid var(--saffron);
+    outline-offset: 2px;
+  }
+
   /* Mobile first: phone, then the story under it. */
   .layout {
     display: grid;
-    gap: 22px;
+    gap: 18px;
   }
   .stage {
     order: -1;
     position: relative;
     display: grid;
     place-items: center;
-    padding: 18px 0 8px;
+    padding: 18px 0 10px;
     overflow: hidden;
-    border-radius: 28px;
   }
   .rings {
     position: absolute;
@@ -169,7 +220,6 @@ const sides = [
   .hair {
     fill: none;
     stroke: color-mix(in srgb, var(--ink) 9%, transparent);
-    stroke-width: 1;
   }
   .dots {
     fill: none;
@@ -183,18 +233,12 @@ const sides = [
     stroke: var(--saffron);
     stroke-width: 2.5;
     stroke-linecap: round;
-    stroke-dasharray: 0 100;
+    stroke-dasharray: 22 100;
     transform: rotate(-90deg);
-  }
-  .st[data-lang="ur"] .arc {
-    transform: rotate(-90deg) scaleY(-1);
+    transition: stroke-dasharray 0.6s var(--ease);
   }
   .st.tick[data-playing="true"] .arc {
     animation: arc var(--dur) linear forwards;
-  }
-  .st[data-playing="false"] .arc {
-    stroke-dasharray: 22 100;
-    transition: stroke-dasharray 0.6s var(--ease);
   }
   @keyframes arc {
     from {
@@ -223,15 +267,6 @@ const sides = [
       filter 0.55s var(--ease),
       transform 0.7s var(--ease);
   }
-  .shot.ur {
-    display: none;
-  }
-  .st[data-lang="ur"] .shot.ur {
-    display: block;
-  }
-  .st[data-lang="ur"] .shot.en {
-    display: none;
-  }
   .shot.on {
     opacity: 1;
     filter: none;
@@ -241,6 +276,7 @@ const sides = [
     position: absolute;
     top: 0;
     bottom: 0;
+    z-index: 2;
     width: 50%;
     border: 0;
     background: none;
@@ -249,16 +285,17 @@ const sides = [
   }
   .tap.prev {
     left: 0;
-    cursor: w-resize;
   }
   .tap.next {
     right: 0;
-    cursor: e-resize;
   }
   .tap:focus-visible {
     outline: 2px solid var(--saffron);
     outline-offset: -6px;
     border-radius: 36px;
+  }
+  .s-call {
+    margin: 0;
   }
 
   .kicker {
@@ -287,17 +324,12 @@ const sides = [
     width: 0;
     background: var(--ink);
   }
-  .bars .done i {
-    width: 100%;
-  }
+  .bars .done i,
   .bars .on i {
     width: 100%;
   }
   .st.tick[data-playing="true"] .bars .on i {
     animation: fill var(--dur) linear forwards;
-  }
-  .st[data-lang="ur"] .bars {
-    direction: rtl;
   }
   @keyframes fill {
     from {
@@ -313,7 +345,6 @@ const sides = [
     margin: 0;
     padding: 0;
   }
-  /* On a phone only the current chapter is shown; the bars carry the rest. */
   .chapters li:not(.on) {
     display: none;
   }
@@ -353,86 +384,43 @@ const sides = [
     line-height: 1.55;
     font-size: var(--text-sm);
   }
-  .ur {
-    margin: 8px 0 2px;
-    font-family: "Noto Nastaliq Urdu", serif;
-    font-size: 15px;
-    line-height: 2;
-    color: var(--ink-muted);
-    text-align: left;
-  }
   .timer {
     display: none;
   }
-
-  /* Floating dock, centred under the stage. */
-  .dock {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    width: max-content;
-    max-width: 100%;
-    margin: 22px auto 0;
-    padding: 5px;
-    border-radius: 999px;
-    background: #141414;
-    color: #fff;
-    box-shadow:
-      0 12px 30px -12px rgb(0 0 0 / 0.45),
-      inset 0 0 0 1px rgb(255 255 255 / 0.06);
-  }
-  .seg {
-    display: inline-flex;
-  }
-  .seg button,
-  .play {
-    border: 0;
-    background: none;
-    color: rgb(255 255 255 / 0.62);
-    font: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 7px 13px;
-    border-radius: 999px;
-    cursor: pointer;
-    transition:
-      background 0.2s,
-      color 0.2s;
-  }
-  .seg [aria-pressed="true"] {
-    background: rgb(255 255 255 / 0.14);
-    color: #fff;
-  }
-  .urb {
-    font-family: "Noto Nastaliq Urdu", serif;
-    font-weight: 500;
-    line-height: 1;
-    padding-block: 4px 9px !important;
-  }
-  .div {
-    width: 1px;
-    height: 18px;
-    background: rgb(255 255 255 / 0.14);
-  }
-  .play {
-    display: grid;
-    place-items: center;
-    width: 34px;
-    height: 32px;
-    padding: 0;
-    color: var(--saffron);
-  }
-  .st[data-playing="true"] .i-play,
-  .st[data-playing="false"] .i-pause {
-    display: none;
-  }
-  :is(.seg button, .play, .chapters button):focus-visible {
+  .chapters button:focus-visible {
     outline: 2px solid var(--saffron);
     outline-offset: 2px;
   }
 
-  /* Wider screens: the chapters become a list beside the phone. */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 20px;
+    margin-top: 22px;
+  }
+  .hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+  .hint .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--saffron);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--saffron) 25%, transparent);
+  }
+
+  /* Wider: the chapters become a list beside the phone. */
   @container (min-width: 720px) {
+    .roles {
+      margin: 0 0 4px;
+    }
     .layout {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
       align-items: center;
@@ -444,12 +432,6 @@ const sides = [
     }
     .phone {
       width: 286px;
-    }
-    .st[data-lang="ur"] .layout {
-      direction: rtl;
-    }
-    .st[data-lang="ur"] .story {
-      direction: ltr;
     }
     .bars {
       display: none;
@@ -494,6 +476,10 @@ const sides = [
     }
     .st.tick[data-playing="true"] .on .timer i {
       animation: fill var(--dur) linear forwards;
+    }
+    .controls {
+      justify-content: flex-start;
+      margin-top: 0;
     }
   }
 

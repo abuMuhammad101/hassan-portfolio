@@ -1,0 +1,286 @@
+/* Shared pieces of the story widgets (see src/scripts/story.ts).
+   Each widget sets --story-accent; --dur comes from the script. */
+
+/* Play / pause: the icon morphs between two bars and a triangle, and a ring
+   around it fills as the chapter plays. */
+.s-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+.s-play .knob {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--bg-raised);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent),
+    0 8px 18px -10px rgb(0 0 0 / 0.35);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.s-play:hover .knob {
+  transform: scale(1.06);
+}
+.s-play:active .knob {
+  transform: scale(0.94);
+}
+.s-play svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+.s-play circle {
+  fill: none;
+  stroke-width: 2;
+}
+.s-play .track {
+  stroke: color-mix(in srgb, var(--ink) 9%, transparent);
+}
+.s-play .prog {
+  stroke: var(--story-accent);
+  stroke-linecap: round;
+  stroke-dasharray: 0 100;
+}
+.tick[data-playing="true"] .s-play .prog {
+  animation: s-ring var(--dur) linear forwards;
+}
+@keyframes s-ring {
+  to {
+    stroke-dasharray: 100 100;
+  }
+}
+.s-play .icon {
+  position: relative;
+  width: 11px;
+  height: 13px;
+  margin-left: 1px;
+}
+.s-play .icon i {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  transition: clip-path 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Paused: show the play triangle. */
+.s-play .icon i:first-child {
+  clip-path: polygon(0 0, 50% 25%, 50% 75%, 0 100%);
+}
+.s-play .icon i:last-child {
+  clip-path: polygon(50% 25%, 100% 50%, 100% 50%, 50% 75%);
+}
+/* Playing: two bars. */
+[data-playing="true"] .s-play .icon {
+  margin-left: 0;
+}
+[data-playing="true"] .s-play .icon i:first-child {
+  clip-path: polygon(0 0, 34% 0, 34% 100%, 0 100%);
+}
+[data-playing="true"] .s-play .icon i:last-child {
+  clip-path: polygon(66% 0, 100% 0, 100% 100%, 66% 100%);
+}
+.s-play .count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
+}
+.s-play:focus-visible {
+  outline: none;
+}
+.s-play:focus-visible .knob {
+  outline: 2px solid var(--story-accent);
+  outline-offset: 3px;
+}
+
+/* The tap spot: where the person would tap next. It breathes to invite a
+   tap, and taps itself just before an autoplaying chapter moves on. */
+.s-hot {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 6;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s 0.35s;
+  -webkit-tap-highlight-color: transparent;
+}
+.s-hot.on {
+  opacity: 1;
+  pointer-events: auto;
+}
+.s-hot::before,
+.s-hot::after,
+.s-hot b {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border-radius: 50%;
+}
+.s-hot b {
+  width: 14px;
+  height: 14px;
+  background: var(--story-accent);
+  box-shadow:
+    0 0 0 4px rgb(255 255 255 / 0.9),
+    0 4px 12px rgb(0 0 0 / 0.25);
+  transition: transform 0.2s;
+}
+.s-hot:hover b {
+  transform: scale(1.2);
+}
+.s-hot::before {
+  width: 14px;
+  height: 14px;
+  background: color-mix(in srgb, var(--story-accent) 45%, transparent);
+  animation: s-breathe 1.8s ease-out infinite;
+}
+.s-hot::after {
+  width: 46px;
+  height: 46px;
+  background: rgb(0 0 0 / 0.16);
+  opacity: 0;
+  transform: scale(0.3);
+}
+.tick[data-playing="true"] .s-hot.on::after {
+  animation: s-tap 0.55s ease-out both;
+  animation-delay: calc(var(--dur) - 650ms);
+}
+@keyframes s-breathe {
+  from {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+@keyframes s-tap {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+}
+.s-hot:focus-visible {
+  outline: 2px solid var(--story-accent);
+  outline-offset: 2px;
+}
+
+/* An element inside a coded screen that is itself the tap target. */
+.s-target {
+  cursor: pointer;
+  animation: s-glow 1.8s ease-out infinite;
+}
+@keyframes s-glow {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--story-accent) 55%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 12px color-mix(in srgb, var(--story-accent) 0%, transparent);
+  }
+}
+.tick[data-playing="true"] .on .s-target {
+  animation:
+    s-glow 1.8s ease-out infinite,
+    s-press 0.45s ease-out both calc(var(--dur) - 600ms);
+}
+@keyframes s-press {
+  50% {
+    transform: scale(0.95);
+    filter: brightness(0.92);
+  }
+}
+
+/* A note pinned to a point on the screen. */
+.s-call {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(4px, -50%);
+  transition:
+    opacity 0.4s,
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.s-call.left {
+  flex-direction: row-reverse;
+  transform: translate(calc(-100% - 4px), -50%);
+}
+.s-call.on {
+  opacity: 1;
+  transform: translate(-5px, -50%);
+  transition-delay: 0.6s;
+}
+.s-call.left.on {
+  transform: translate(calc(-100% + 5px), -50%);
+}
+.s-call i {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 0 2px var(--ink),
+    0 2px 6px rgb(0 0 0 / 0.25);
+}
+.s-call span {
+  max-width: 168px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #141414;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  box-shadow: 0 10px 24px -10px rgb(0 0 0 / 0.5);
+}
+
+@media (max-width: 520px) {
+  .s-call span {
+    max-width: 120px;
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-hot::before,
+  .s-target {
+    animation: none !important;
+  }
+  .s-play .prog {
+    animation: none !important;
+  }
+}

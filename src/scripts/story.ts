@@ -1,13 +1,16 @@
 /* Shared controller for the story widgets: chapters that advance on a timer
-   while the widget is on screen, with tap, swipe and keyboard control.
+   while the widget is on screen, and that the reader can drive by tapping
+   the glowing spot on the screen, the chapter list, or by swiping.
    Markup contract, all inside `root`:
-     [data-ch]            chapter items (the visible panel's)
-     [data-ch] button     jumps to that chapter and stops autoplay
+     [data-panel]         optional; the visible one holds the chapters
+     [data-ch]            chapter items; their button jumps there
      .bars span           optional story bars
-     [data-shot]          screens to show for each chapter (index)
-     [data-go="-1|1"]     previous / next taps
+     [data-shot]          anything shown only on its chapter (screens, spots, notes)
+     [data-hot]           the tap spot: moves the story on
+     [data-go="-1|1"]     previous / next
      .phone               swipe surface
-     [data-play]          play / pause toggle
+     [data-play]          play / pause
+     [data-count]         "02 / 05"
    Timers are CSS animations restarted by toggling `.tick` on root. */
 
 export interface Story {
@@ -15,9 +18,14 @@ export interface Story {
   readonly index: number;
 }
 
-export function initStory(root: HTMLElement, opts: { dur?: number; mirrored?: () => boolean } = {}): Story {
-  const dur = opts.dur ?? 5200;
-  const mirrored = opts.mirrored ?? (() => false);
+interface Options {
+  dur?: number;
+  /** Called when the story moves past its last chapter. Return true if handled. */
+  onEnd?: () => boolean;
+}
+
+export function initStory(root: HTMLElement, opts: Options = {}): Story {
+  const dur = opts.dur ?? 5600;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let idx = 0;
   let timer: number | undefined;
@@ -25,18 +33,18 @@ export function initStory(root: HTMLElement, opts: { dur?: number; mirrored?: ()
 
   root.style.setProperty("--dur", `${dur}ms`);
   const panel = () => root.querySelector<HTMLElement>("[data-panel]:not([hidden])") ?? root;
+  const total = () => panel().querySelectorAll("[data-ch]").length || 1;
 
   const schedule = () => {
     clearTimeout(timer);
-    if (root.dataset.playing === "true") timer = window.setTimeout(() => show(idx + 1), dur);
+    if (root.dataset.playing === "true") timer = window.setTimeout(next, dur);
   };
 
   function show(i: number) {
     const p = panel();
-    const items = [...p.querySelectorAll<HTMLElement>("[data-ch]")];
-    const n = items.length || 1;
+    const n = total();
     idx = (i + n) % n;
-    items.forEach((li, k) => {
+    p.querySelectorAll<HTMLElement>("[data-ch]").forEach((li, k) => {
       li.classList.toggle("on", k === idx);
       li.classList.toggle("done", k < idx);
       const b = li.querySelector("button");
@@ -50,17 +58,26 @@ export function initStory(root: HTMLElement, opts: { dur?: number; mirrored?: ()
       b.classList.toggle("done", k < idx);
     });
     p.querySelectorAll<HTMLElement>("[data-shot]").forEach((s) => s.classList.toggle("on", Number(s.dataset.shot) === idx));
+    root.querySelectorAll<HTMLElement>("[data-count]").forEach((c) => (c.textContent = `${String(idx + 1).padStart(2, "0")} / ${String(n).padStart(2, "0")}`));
     root.classList.remove("tick");
     void root.offsetWidth;
     root.classList.add("tick");
     schedule();
   }
 
+  function next() {
+    if (idx + 1 >= total() && opts.onEnd?.()) return;
+    show(idx + 1);
+  }
+
   const setPlaying = (on: boolean) => {
     root.dataset.playing = String(on);
-    root.querySelector("[data-play]")?.setAttribute("aria-label", on ? "Pause the story" : "Play the story");
+    root.querySelectorAll("[data-play]").forEach((b) => b.setAttribute("aria-label", on ? "Pause the story" : "Play the story"));
     if (on) show(idx);
-    else clearTimeout(timer);
+    else {
+      clearTimeout(timer);
+      root.classList.remove("tick");
+    }
   };
 
   root.addEventListener("click", (e) => {
@@ -73,12 +90,9 @@ export function initStory(root: HTMLElement, opts: { dur?: number; mirrored?: ()
       show([...li.parentElement!.children].indexOf(li));
       return;
     }
+    if (t.closest("[data-hot]")) return next();
     const go = t.closest<HTMLElement>("[data-go]");
-    if (go) {
-      // A mirrored stage reads right to left: its left half moves forward.
-      show(idx + Number(go.dataset.go) * (mirrored() ? -1 : 1));
-      return;
-    }
+    if (go) return Number(go.dataset.go) > 0 ? next() : show(idx - 1);
     if (t.closest("[data-play]")) {
       const on = root.dataset.playing !== "true";
       userStopped = !on;
@@ -92,8 +106,8 @@ export function initStory(root: HTMLElement, opts: { dur?: number; mirrored?: ()
     ph.addEventListener("touchend", (e) => {
       const dx = e.changedTouches[0].clientX - x0;
       if (Math.abs(dx) < 40) return;
-      const fwd = mirrored() ? dx > 0 : dx < 0;
-      show(idx + (fwd ? 1 : -1));
+      if (dx < 0) next();
+      else show(idx - 1);
     });
   });
 
