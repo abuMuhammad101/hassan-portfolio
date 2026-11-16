@@ -36,6 +36,7 @@ const num = (id: string) => String(sections.findIndex(([s]) => s === id)).padSta
 const label = (id: string) => sections.find(([s]) => s === id)![1];
 const n = data.states.length;
 const story = stories[data.widget];
+const slug = Astro.url.pathname.split("/").filter(Boolean).pop();
 ---
 
 <article class="case">
@@ -48,7 +49,7 @@ const story = stories[data.widget];
         ? <span class="badge nda"><Icon name="lock-simple" size={12} />Under NDA, re-created</span>
         : <span class="badge real"><i></i>Live product</span>}
     </nav>
-    <TwoToneHeading as="h1" size="hero" lead={data.title} rest={data.titleRest} />
+    <div class="vt-title" style={`view-transition-name: t-${slug}`}><TwoToneHeading as="h1" size="hero" lead={data.title} rest={data.titleRest} /></div>
     <p class="angle">{data.angle}</p>
     <dl class="facts">
       {data.meta.map((m: any) => (
