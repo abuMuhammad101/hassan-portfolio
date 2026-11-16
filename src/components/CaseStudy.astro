@@ -55,11 +55,9 @@ const n = data.states.length;
   <!-- The proof comes first: read it after you've tried it. -->
   <section id="proof" class="wrap-wide proof">
     <div class="proof-head">
-      <p class="hand" aria-hidden="true">
-        go on, try it
-        <svg viewBox="0 0 70 46" fill="none"><path d="M3 6c18-4 40 2 50 16 5 7 6 13 5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><path d="M50 33l8 9 7-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-      </p>
+      <p class="hand" aria-hidden="true">go on, try it</p>
       <p class="proof-intro">{data.widgetIntro}</p>
+      <svg class="arrow" viewBox="0 0 40 56" fill="none" aria-hidden="true"><path d="M14 3c-9 12-8 28 8 44" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><path d="M13 44l9 4 2-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
     </div>
     <div class="widget">
       <span class="cursor" aria-hidden="true">
@@ -76,7 +74,6 @@ const n = data.states.length;
       {data.widget === "range-audit" && <RangeAudit />}
       {data.widget === "phone-tour" && <PhoneTour />}
     </div>
-    {data.ndaRecreated && <p class="caption">Re-created for this page. It shows the pattern, with sample data.</p>}
   </section>
 
   {data.stats && (
@@ -216,7 +213,7 @@ const n = data.states.length;
 <style>
   /* Hero ----------------------------------------------------------------- */
   .hero {
-    padding-top: var(--space-4);
+    padding-top: var(--space-6);
     padding-bottom: var(--space-4);
   }
   .eyebrow {
@@ -252,8 +249,8 @@ const n = data.states.length;
   }
   .hero-row {
     display: grid;
-    gap: var(--space-3);
-    margin-top: var(--space-3);
+    gap: var(--space-4);
+    margin-top: var(--space-4);
   }
   .angle {
     margin: 0;
@@ -266,7 +263,7 @@ const n = data.states.length;
   .facts {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px 24px;
+    gap: 20px 28px;
     margin: 0;
     align-content: start;
   }
@@ -296,46 +293,43 @@ const n = data.states.length;
   }
 
   /* Proof ---------------------------------------------------------------- */
+  /* A centred invitation, then the stage, with room on every side. */
   .proof {
-    padding-top: var(--space-3);
-    padding-bottom: var(--space-6);
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
     scroll-margin-top: 90px;
   }
   .proof-head {
-    display: flex;
-    align-items: flex-end;
-    gap: var(--space-3);
-    margin-bottom: var(--space-3);
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    max-width: 560px;
+    margin: 0 auto var(--space-4);
+    text-align: center;
   }
   .proof-intro {
     margin: 0;
-    max-width: 58ch;
-    font-size: var(--text-sm);
-    line-height: 1.6;
+    font-size: var(--text-base);
+    line-height: 1.65;
     color: var(--ink-secondary);
   }
   .hand {
-    flex: none;
-    display: none;
-    position: relative;
-    margin: 0 0 6px;
+    margin: 0;
     font-family: var(--font-hand);
-    font-size: 1.6rem;
+    font-size: 1.75rem;
     font-weight: 500;
     line-height: 1;
     color: var(--accent-warm);
-    transform: rotate(-4deg);
+    transform: rotate(-3deg);
   }
-  .hand svg {
-    position: absolute;
-    left: 58%;
-    top: 92%;
-    width: 64px;
+  .arrow {
+    width: 30px;
+    height: 42px;
+    margin-top: 6px;
+    color: var(--accent-warm);
+    transform: rotate(-8deg);
   }
   @media (min-width: 760px) {
-    .hand {
-      display: block;
-    }
     .cursor {
       display: inline-flex;
     }
@@ -383,17 +377,11 @@ const n = data.states.length;
       transform: translate(-8px, 30px);
     }
   }
-  .caption {
-    margin: var(--space-2) 0 0;
-    font-size: var(--text-sm);
-    color: var(--ink-muted);
-  }
-
   /* Stats ---------------------------------------------------------------- */
   .stats {
     list-style: none;
     margin: 0;
-    padding: var(--space-4) 0;
+    padding: var(--space-6) 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     border-top: 1px solid var(--rule);
@@ -441,7 +429,7 @@ const n = data.states.length;
 
   /* Body ----------------------------------------------------------------- */
   .body {
-    padding-top: var(--space-8);
+    padding-top: var(--space-4);
     padding-bottom: var(--space-8);
   }
   .col {
@@ -456,10 +444,14 @@ const n = data.states.length;
   }
 
   /* Each section: an editorial head on the left, the content on the right. */
+  /* Sections sit on a quiet rhythm: a hairline, then generous room. */
   .split {
     display: grid;
-    gap: var(--space-2);
-    padding-bottom: var(--space-8);
+    gap: var(--space-3);
+    padding: var(--space-8) 0;
+  }
+  .split + .split {
+    border-top: 1px solid var(--rule);
   }
   @media (min-width: 820px) {
     .split {
@@ -493,9 +485,14 @@ const n = data.states.length;
 
   .letter p {
     max-width: 60ch;
+    margin-bottom: 20px;
     line-height: 1.7;
   }
+  .letter p:last-child {
+    margin-bottom: 0;
+  }
   .letter .lede {
+    margin-bottom: 24px;
     font-size: 1.2rem;
     line-height: 1.6;
     color: var(--ink);
@@ -505,8 +502,8 @@ const n = data.states.length;
   .note {
     position: relative;
     max-width: 560px;
-    margin-top: 8px;
-    padding: 26px 26px 20px;
+    margin-top: 12px;
+    padding: 34px 32px 22px;
     border-radius: 3px;
     background: color-mix(in srgb, #fff3c4 72%, var(--bg-raised));
     color: #3a3324;
@@ -537,7 +534,7 @@ const n = data.states.length;
     backdrop-filter: blur(1px);
   }
   .note-h {
-    margin: 0 0 10px;
+    margin: 0 0 16px;
     font-family: var(--font-hand);
     font-size: 1.45rem;
     font-weight: 600;
@@ -554,8 +551,8 @@ const n = data.states.length;
     counter-increment: rule;
     display: grid;
     grid-template-columns: 24px 1fr;
-    gap: 6px;
-    padding: 9px 0;
+    gap: 8px;
+    padding: 13px 0;
     border-top: 1px dashed rgb(58 51 36 / 0.22);
     font-size: 0.97rem;
     line-height: 1.5;
@@ -571,7 +568,7 @@ const n = data.states.length;
   /* Decisions. */
   .pull {
     max-width: 34ch;
-    margin: 0 0 var(--space-3);
+    margin: 0 0 var(--space-4);
     font-family: var(--font-editorial);
     font-style: italic;
     font-size: 1.55rem;
@@ -589,7 +586,7 @@ const n = data.states.length;
     grid-template-columns: 40px 1fr 20px;
     align-items: baseline;
     gap: 8px;
-    padding: 18px 0;
+    padding: 22px 0;
     cursor: pointer;
     list-style: none;
   }
@@ -638,9 +635,9 @@ const n = data.states.length;
   }
   details > p {
     max-width: 58ch;
-    margin: -4px 0 0;
-    padding: 0 0 20px 48px;
-    line-height: 1.65;
+    margin: -6px 0 0;
+    padding: 0 0 26px 48px;
+    line-height: 1.7;
   }
   summary:focus-visible {
     outline: 2px solid var(--accent-warm);
@@ -654,7 +651,7 @@ const n = data.states.length;
     max-width: 470px;
   }
   .stack-note {
-    margin: 0 0 14px;
+    margin: 0 0 20px;
   }
   .hand-sm {
     font-family: var(--font-hand);
@@ -739,8 +736,8 @@ const n = data.states.length;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-top: 14px;
-    padding: 6px 12px;
+    margin-top: 20px;
+    padding: 7px 14px;
     border: 0;
     border-radius: 999px;
     background: var(--bg-sunk);
@@ -777,7 +774,7 @@ const n = data.states.length;
     grid-template-columns: 44px 1fr;
     align-items: baseline;
     gap: 10px;
-    padding: 16px 0;
+    padding: 20px 0;
     border-bottom: 1px solid var(--rule);
   }
   .ev-n {
@@ -801,7 +798,7 @@ const n = data.states.length;
     display: grid;
     justify-items: start;
     gap: 0;
-    margin: var(--space-4) 0 0;
+    margin: var(--space-6) 0 0;
   }
   .sig {
     font-family: var(--font-hand);
@@ -822,13 +819,13 @@ const n = data.states.length;
   .measures {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 8px;
-    margin: 0 0 var(--space-3);
+    gap: 8px;
+    margin: var(--space-3) 0 var(--space-4);
     padding: 0;
     list-style: none;
   }
   .measures li {
-    padding: 4px 12px;
+    padding: 6px 14px;
     border-radius: 999px;
     background: var(--bg-raised);
     box-shadow: inset 0 0 0 1px var(--rule);
@@ -841,8 +838,9 @@ const n = data.states.length;
   }
   .next-case {
     display: grid;
-    gap: 4px;
-    padding: var(--space-4) 0;
+    gap: 8px;
+    margin-top: var(--space-4);
+    padding: var(--space-6) 0 var(--space-4);
     border-top: 1px solid var(--rule);
     color: var(--ink);
     text-decoration: none;

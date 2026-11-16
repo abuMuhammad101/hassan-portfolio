@@ -419,7 +419,7 @@ const sides: { id: string; role: string; icon: string; kicker: string; chapters:
   /* Wider: the chapters become a list beside the phone. */
   @container (min-width: 720px) {
     .roles {
-      margin: 0 0 4px;
+      margin: 0 auto 8px;
     }
     .layout {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
@@ -478,8 +478,7 @@ const sides: { id: string; role: string; icon: string; kicker: string; chapters:
       animation: fill var(--dur) linear forwards;
     }
     .controls {
-      justify-content: flex-start;
-      margin-top: 0;
+      margin-top: 8px;
     }
   }
 

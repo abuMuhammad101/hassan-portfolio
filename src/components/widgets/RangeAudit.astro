@@ -37,7 +37,6 @@ const menu = [
 ---
 
 <div class="ks" data-ks data-view="after" data-playing="false">
-  <p class="kicker">A customer 4.6 km from the nearest branch wants dinner.</p>
   <div class="bars" aria-hidden="true">{chapters.map(() => <span><i></i></span>)}</div>
   <ol class="chapters">
     {chapters.map((c, i) => (
@@ -897,7 +896,7 @@ const menu = [
     align-items: center;
     justify-content: center;
     gap: 10px 16px;
-    margin-top: 20px;
+    margin-top: 28px;
   }
   .view {
     display: inline-flex;
@@ -945,14 +944,10 @@ const menu = [
   /* Room for both: the phones side by side, each with its caption, and the
      four moments as a timeline under them. */
   @container (min-width: 640px) {
-    .kicker {
-      text-align: center;
-      margin-bottom: 18px;
-    }
     .stage {
       grid-template-columns: 1fr 1fr;
       gap: 28px;
-      padding: 32px 28px 28px;
+      padding: 40px 28px 36px;
     }
     .dev {
       grid-area: auto;
@@ -979,8 +974,10 @@ const menu = [
       order: 2;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin: 22px 0 0;
+      gap: 20px;
+      width: 100%;
+      max-width: 820px;
+      margin: 40px auto 0;
     }
     .chapters li,
     .chapters li:not(.on) {
