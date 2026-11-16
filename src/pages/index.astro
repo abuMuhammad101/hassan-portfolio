@@ -81,7 +81,7 @@ const earlier = [
       </div>
       <ol class="beliefs">
         {beliefs.map((b, i) => (
-          <li class="reveal">
+          <li class="reveal" style={`--i:${i}`} data-belief>
             <span class="b-top">
               <span class="b-num tabular-nums">{String(i + 1).padStart(2, "0")}</span>
               <span class="b-art"><Icon name={b.icon} weight="duotone" size={26} /></span>
@@ -109,7 +109,7 @@ const earlier = [
               <span class="card-num">{String(i + 1).padStart(2, "0")}</span>
               <span class="card-tags">{w.tags.join(" · ")}</span>
             </span>
-            <span class="card-name">{w.name}</span>
+            <span class="card-name" style={`view-transition-name: t-${w.page}`}>{w.name}</span>
             <span class="card-angle">{w.angle}</span>
             <span class="card-link">Read the case study <Icon name="arrow-up-right" size={15} /></span>
           </a>
@@ -411,6 +411,40 @@ const earlier = [
   }
   .proof-links a:hover {
     text-decoration-color: var(--accent-warm);
+  }
+  /* Phone: the beliefs stack like a deck. Each card sticks below the
+     header, and the next one slides up over it. */
+  @media (max-width: 700px) {
+    .beliefs {
+      display: block;
+    }
+    .beliefs li {
+      position: sticky;
+      top: calc(92px + var(--i) * 10px);
+      min-height: 280px;
+      margin-bottom: 18px;
+      box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--ink) 7%, transparent),
+        0 -10px 30px -18px rgb(0 0 0 / 0.28);
+      transform-origin: 50% 0;
+    }
+    .beliefs li:last-child {
+      margin-bottom: 0;
+    }
+    /* The card underneath fades toward the page, but stays solid, so the
+       deck never shows through itself. */
+    .beliefs li::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: var(--bg);
+      opacity: calc(var(--dim, 0) * 0.6);
+      pointer-events: none;
+    }
+    .beliefs li:hover {
+      transform: none;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .beliefs li, .beliefs li:hover { transition: none; transform: none; }

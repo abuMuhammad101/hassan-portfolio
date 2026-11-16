@@ -46,6 +46,59 @@ if (!reduced) {
     });
   });
 
+  // Section titles rise in a beat after their label.
+  document.querySelectorAll<HTMLElement>(".band-title").forEach((el) => {
+    if (el.getBoundingClientRect().top < fold) return;
+    gsap.from(el, {
+      opacity: 0,
+      y: 18,
+      duration: 0.9,
+      ease: "power3.out",
+      scrollTrigger: { trigger: el, start: "top 90%", once: true },
+    });
+  });
+
+  // Folders: the two screens slide up out of the pocket as the card arrives.
+  document.querySelectorAll<HTMLElement>(".folder").forEach((folder) => {
+    if (folder.getBoundingClientRect().top < fold) return;
+    gsap.from(folder.querySelectorAll(".sheet"), {
+      top: 84,
+      duration: 0.9,
+      ease: "power3.out",
+      stagger: 0.08,
+      delay: 0.15,
+      scrollTrigger: { trigger: folder, start: "top 88%", once: true },
+    });
+  });
+
+  // Phone: as each belief card slides over the one before, that one settles
+  // back a little, like a deck being dealt.
+  gsap.matchMedia().add("(max-width: 700px)", () => {
+    const cards = [...document.querySelectorAll<HTMLElement>("[data-belief]")];
+    cards.slice(0, -1).forEach((card, i) => {
+      gsap.to(card, {
+        scale: 0.94,
+        "--dim": 1,
+        ease: "none",
+        scrollTrigger: { trigger: cards[i + 1], start: "top bottom-=80", end: "top top+=140", scrub: true },
+      });
+    });
+  });
+
+  // Case pages: the stage settles into place as it comes into view.
+  document.querySelectorAll<HTMLElement>(".proof .widget").forEach((el) => {
+    if (el.getBoundingClientRect().top < fold) return;
+    gsap.from(el, {
+      opacity: 0,
+      y: 28,
+      scale: 0.985,
+      duration: 1,
+      ease: "power3.out",
+      clearProps: "transform",
+      scrollTrigger: { trigger: el, start: "top 92%", once: true },
+    });
+  });
+
   // Hero construction lines: draw the lines, then pop the handles.
   document.querySelectorAll<HTMLElement>("[data-construct]").forEach((box) => {
     const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
