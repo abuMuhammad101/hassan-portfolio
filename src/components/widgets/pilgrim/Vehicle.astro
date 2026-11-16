@@ -1,0 +1,111 @@
+---
+/* Side view of a fleet vehicle, drawn as an illustrated stand-in for the
+   real photography. Front faces right. */
+interface Props {
+  kind: "sedan" | "mpv" | "suv" | "van";
+  paint?: string;
+  class?: string;
+  /** Inside another SVG: place it at x, y with this width. */
+  at?: [number, number, number];
+}
+const { kind, paint, class: cls = "", at } = Astro.props;
+
+type Spec = { body: string; glass: string; pillars: number[]; wheels: [number, number]; door: number[]; lightY: number; paint: string; trim: string };
+const specs: Record<Props["kind"], Spec> = {
+  sedan: {
+    body: "M16 74 C14 64 20 58 32 57 L70 53 C84 40 98 33 116 32 L150 32 C166 33 176 41 188 51 L214 55 C224 57 228 63 228 70 L228 76 C228 79 226 80 223 80 L198 80 A17 17 0 0 0 164 80 L76 80 A17 17 0 0 0 42 80 L20 80 C17 80 16 78 16 74 Z",
+    glass: "M80 53 C92 42 103 37 117 37 L147 37 C160 38 169 44 178 52 Z",
+    pillars: [128],
+    wheels: [59, 181],
+    door: [92, 165],
+    lightY: 60,
+    paint: "#24282d",
+    trim: "#3a4047",
+  },
+  mpv: {
+    body: "M14 74 C12 62 16 56 28 54 L58 50 C70 34 82 25 102 24 L192 24 C206 25 214 32 218 44 L224 56 C228 60 230 64 230 70 L230 76 C230 79 228 80 225 80 L202 80 A17 17 0 0 0 168 80 L74 80 A17 17 0 0 0 40 80 L18 80 C15 80 14 78 14 74 Z",
+    glass: "M66 51 C76 38 86 30 104 30 L190 30 C202 30 208 36 212 48 L212 51 Z",
+    pillars: [116, 160],
+    wheels: [57, 185],
+    door: [110, 158],
+    lightY: 58,
+    paint: "#eceae4",
+    trim: "#cfcac0",
+  },
+  suv: {
+    body: "M14 72 C12 60 18 52 30 50 L62 47 C72 34 84 26 104 25 L190 25 C204 25 212 30 216 40 L222 52 C228 56 230 61 230 68 L230 76 C230 79 228 80 225 80 L204 80 A18 18 0 0 0 168 80 L76 80 A18 18 0 0 0 40 80 L18 80 C15 80 14 78 14 72 Z",
+    glass: "M70 48 C80 36 90 31 106 31 L188 31 C200 31 206 36 210 46 L210 48 Z",
+    pillars: [124, 168],
+    wheels: [58, 186],
+    door: [118, 166],
+    lightY: 55,
+    paint: "#173f2c",
+    trim: "#2b5a43",
+  },
+  van: {
+    body: "M12 76 L12 50 C12 40 16 34 24 28 L44 16 C48 14 52 13 58 13 L214 13 C224 13 228 18 228 28 L230 70 L230 77 C230 79 228 80 226 80 L206 80 A17 17 0 0 0 172 80 L72 80 A17 17 0 0 0 38 80 L16 80 C13 80 12 79 12 76 Z",
+    glass: "M24 40 L44 22 C47 20 50 19 55 19 L214 19 L214 38 L24 40 Z",
+    pillars: [60, 104, 150, 192],
+    wheels: [55, 189],
+    door: [62, 106, 150],
+    lightY: 52,
+    paint: "#f4f2ed",
+    trim: "#d6d1c6",
+  },
+};
+const s = specs[kind];
+const body = paint ?? s.paint;
+const light = body === "#24282d" || body === "#173f2c";
+const uid = `v-${kind}-${Math.random().toString(36).slice(2, 7)}`;
+---
+
+<svg class={at ? cls : `vehicle ${cls}`} viewBox="0 0 244 96" aria-hidden="true" x={at?.[0]} y={at?.[1]} width={at?.[2]} height={at ? (at[2] * 96) / 244 : undefined}>
+  <defs>
+    <linearGradient id={`${uid}-p`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color={body} stop-opacity="0.92" />
+      <stop offset="0.5" stop-color={body} />
+      <stop offset="1" stop-color={light ? "#0e1012" : s.trim} />
+    </linearGradient>
+    <linearGradient id={`${uid}-g`} x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c9d6de" />
+      <stop offset="0.55" stop-color="#7d8f9c" />
+      <stop offset="1" stop-color="#4a5864" />
+    </linearGradient>
+    <clipPath id={`${uid}-c`}><path d={s.glass} /></clipPath>
+    <radialGradient id={`${uid}-r`}>
+      <stop offset="0" stop-color="#f3f4f5" />
+      <stop offset="0.7" stop-color="#b9bec3" />
+      <stop offset="1" stop-color="#8d939a" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="122" cy="88" rx="112" ry="5" fill="#000" opacity="0.16" />
+  <path d={s.body} fill={`url(#${uid}-p)`} stroke={light ? "#0b0c0d" : "#bdb7aa"} stroke-width="0.8" />
+  <!-- shoulder highlight -->
+  <path d={`M30 ${s.lightY + 4} L222 ${s.lightY + 2}`} stroke="#fff" stroke-opacity={light ? 0.18 : 0.7} stroke-width="1.2" />
+  <path d={s.glass} fill={`url(#${uid}-g)`} />
+  {s.pillars.map((x) => <rect x={x} y="10" width="4" height="46" fill={light ? "#15181b" : "#3b4046"} clip-path={`url(#${uid}-c)`} />)}
+  {s.door.map((x) => <path d={`M${x} ${s.lightY - 4} L${x} 78`} stroke={light ? "#0c0d0f" : "#bfb9ad"} stroke-width="0.8" />)}
+  {s.door.slice(0, 2).map((x) => <rect x={x + 10} y={s.lightY + 1} width="9" height="2" rx="1" fill={light ? "#5a6168" : "#b4ada0"} />)}
+  <!-- lights -->
+  <path d={`M219 ${s.lightY} l9 1.5 l0 5 l-9 -0.5 Z`} fill="#fff6dd" stroke="#d8c48c" stroke-width="0.6" />
+  <path d={`M14 ${s.lightY + 2} l6 -0.5 l0 6 l-6 0.5 Z`} fill="#c2332b" />
+  <!-- sill -->
+  <path d="M40 79 L206 79" stroke="#000" stroke-opacity="0.25" stroke-width="2" />
+  {s.wheels.map((x) => (
+    <g>
+      <circle cx={x} cy="80" r="14" fill="#18191b" />
+      <circle cx={x} cy="80" r="8.5" fill={`url(#${uid}-r)`} />
+      {[0, 72, 144, 216, 288].map((a) => <rect x={x - 1} y="72.5" width="2" height="7" fill="#7d838a" transform={`rotate(${a} ${x} 80)`} />)}
+      <circle cx={x} cy="80" r="2.4" fill="#5b6168" />
+    </g>
+  ))}
+</svg>
+
+<style>
+  .vehicle {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+</style>

@@ -5,16 +5,20 @@
    sample content. */
 import BrowserFrame from "../BrowserFrame.astro";
 import Icon from "../Icon.astro";
+import Vehicle from "./pilgrim/Vehicle.astro";
+import Scene from "./pilgrim/Scene.astro";
+import "@fontsource/cormorant-garamond/latin-600.css";
+import "@fontsource/cormorant-garamond/latin-700.css";
 const slides = [
-  { t: "VIP Airport Transfers, Door to Door", d: "Meet-and-greet arrivals and a vehicle waiting the moment you land.", art: "s-dusk" },
-  { t: "Between the Holy Cities, in Comfort", d: "Fixed-price rides with drivers who know the way and the rhythm of the day.", art: "s-road" },
-  { t: "Ziyarat Tours at Your Pace", d: "Visit the historic sites with a driver who waits while you pray.", art: "s-palms" },
+  { t: "VIP Airport Transfers, Door to Door", d: "Meet-and-greet arrivals and a vehicle waiting the moment you land.", art: "dusk" },
+  { t: "Between the Holy Cities, in Comfort", d: "Fixed-price rides with drivers who know the way and the rhythm of the day.", art: "road" },
+  { t: "Ziyarat Tours at Your Pace", d: "Visit the historic sites with a driver who waits while you pray.", art: "palms" },
 ];
 const fleet = [
-  { n: "Sedan", k: "Sedan", p: 3, b: 2, d: "For individuals and small families." },
-  { n: "Family MPV", k: "MPV", p: 7, b: 5, d: "Spacious, registered for pilgrim travel." },
-  { n: "Full-size SUV", k: "SUV", p: 7, b: 6, d: "Premium comfort for VIP travel." },
-  { n: "Group Van", k: "Van", p: 10, b: 10, d: "High capacity, made for groups." },
+  { n: "Sedan", k: "Sedan", v: "sedan", p: 3, b: 2, d: "For individuals and small families." },
+  { n: "Family MPV", k: "MPV", v: "mpv", p: 7, b: 5, d: "Spacious, registered for pilgrim travel." },
+  { n: "Full-size SUV", k: "SUV", v: "suv", p: 7, b: 6, d: "Premium comfort for VIP travel." },
+  { n: "Group Van", k: "Van", v: "van", p: 10, b: 10, d: "High capacity, made for groups." },
 ];
 const quotes = ["Always on time and the driver knew every stop.", "Smooth ride between the cities, very professional.", "Helped with all our luggage at 3 am. Highly recommend.", "Our family of seven fit easily. Will book again."];
 const reasons = [
@@ -24,8 +28,6 @@ const reasons = [
 ];
 ---
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&display=swap" />
 
 <div class="ba" data-ba>
   <div class="switch" role="group" aria-label="Show the site before or after the redesign" data-chips>
@@ -55,8 +57,8 @@ const reasons = [
         <div class="b-fleet">
           <aside><span class="b-in"><Icon name="magnifying-glass" size={12} />Search by make, model…</span><span class="b-btn wide">Search Fleet</span><small>Vehicle make</small><span class="b-in">All Makes</span><small>Fuel type</small><span class="b-in">All Fuel Types</span><small>Daily rate</small><span class="b-in">$ Min — $ Max</span></aside>
           <div class="b-cards">
-            <div class="b-card"><span class="b-price">$75/day</span><div class="art a-car"></div><b>Sedan 2021</b><small><Icon name="gas-pump" size={11} />Gasoline · GPS included</small></div>
-            <div class="b-card"><span class="b-price">$85/day</span><div class="art a-car"></div><b>SUV 2020</b><small><Icon name="gas-pump" size={11} />Gasoline · Insurance included</small></div>
+            <div class="b-card"><span class="b-price">$75/day</span><div class="art a-car"><Vehicle kind="sedan" paint="#9aa3ad" /></div><b>Sedan 2021</b><small><Icon name="gas-pump" size={11} />Gasoline · GPS included</small></div>
+            <div class="b-card"><span class="b-price">$85/day</span><div class="art a-car"><Vehicle kind="suv" paint="#b8452f" /></div><b>SUV 2020</b><small><Icon name="gas-pump" size={11} />Gasoline · Insurance included</small></div>
           </div>
         </div>
         <p class="note"><Icon name="info" size={14} />A generic rental template: daily rates, fuel type, model year, "Drive Your Dreams". None of it helps a pilgrim choose a ride from the airport to the Haram.</p>
@@ -71,7 +73,7 @@ const reasons = [
         </nav>
 
         <section class="hero" data-hero>
-          {slides.map((s, i) => <div class={`slide art ${s.art}`} data-slide={i} aria-hidden={i !== 0 ? "true" : undefined}></div>)}
+          {slides.map((s, i) => <div class="slide" data-slide={i} aria-hidden={i !== 0 ? "true" : undefined}><Scene kind={s.art as any} /></div>)}
           <div class="wash"></div>
           <div class="panel">
             {slides.map((s, i) => (
@@ -84,13 +86,21 @@ const reasons = [
           <span class="dots">{slides.map((_, i) => <button type="button" data-dot={i} aria-label={`Slide ${i + 1}`}><i></i></button>)}</span>
         </section>
 
+        <div class="book" aria-label="Book a ride">
+          <label><small>Pick-up</small><span><Icon name="airplane-landing" size={14} />Jeddah Airport (JED)</span></label>
+          <label><small>Drop-off</small><span><Icon name="map-pin" size={14} />Hotel in Makkah</span></label>
+          <label><small>Arrival</small><span><Icon name="calendar-blank" size={14} />Fri 14 Mar · 02:40</span></label>
+          <label><small>Travellers</small><span><Icon name="users" size={14} />7 people · 6 bags</span></label>
+          <span class="a-btn go">See fixed price<Icon name="arrow-right" size={12} /></span>
+        </div>
+
         <section class="sec sand">
           <h6>Choose Your Vehicle</h6><i class="rule"></i>
           <p class="sub">Picked by how many travel and how much they carry.</p>
           <div class="cars">
             {fleet.map((f) => (
               <article class="car">
-                <div class="art a-car"><span class="kind">{f.k}</span></div>
+                <div class="art a-car"><span class="kind">{f.k}</span><Vehicle kind={f.v as any} /></div>
                 <b>{f.n}</b>
                 <p>{f.d}</p>
                 <span class="cap"><span><Icon name="users" size={13} />{f.p} passengers</span><span><Icon name="suitcase-rolling" size={13} />{f.b} bags</span></span>
@@ -113,7 +123,15 @@ const reasons = [
               ))}
             </ol>
           </div>
-          <div class="art s-road why-r"></div>
+          <div class="why-r">
+            <Scene kind="dusk" />
+            <div class="wa">
+              <p class="wa-h"><span class="wa-av"><i></i></span><span><b>Pilgrim Drivers</b><small>WhatsApp · now</small></span></p>
+              <p class="bub">Assalamu alaikum. Your driver <b>Yusuf</b> is waiting at <b>Gate 3</b> with your name on a sign.</p>
+              <p class="bub car-b"><Icon name="van" size={14} /><span><b>White Hiace</b> · plate on the confirmation</span></p>
+              <p class="bub me">JazakAllah, we're at baggage claim now</p>
+            </div>
+          </div>
         </section>
 
         <section class="sec sand quotes">
@@ -187,17 +205,8 @@ const reasons = [
 
   /* Illustrated stand-ins for photography */
   .art { position: relative; overflow: hidden; }
-  .s-dusk { background: linear-gradient(180deg, #f5cf9c 0%, #e9a774 35%, #a07a82 66%, #4f4a66 100%); }
-  .s-road { background: linear-gradient(180deg, #cfe3ee 0%, #f2e6cf 52%, #c9b48d 53%, #a8946f 100%); }
-  .s-palms { background: linear-gradient(180deg, #a9d3e9 0%, #e8efe9 58%, #d8c7a2 59%, #c2ac80 100%); }
-  .s-dusk::after, .s-road::after, .s-palms::after { content: ""; position: absolute; inset: auto 0 0; height: 52%; background: linear-gradient(#3a3649, #2b2938);
-    clip-path: polygon(0 55%, 9% 55%, 9% 35%, 11% 35%, 11% 55%, 24% 55%, 24% 44%, 36% 44%, 36% 18%, 37% 6%, 38% 18%, 38% 44%, 45% 44%, 45% 30%, 50% 22%, 55% 30%, 55% 44%, 62% 44%, 62% 18%, 63% 6%, 64% 18%, 64% 44%, 76% 44%, 76% 55%, 89% 55%, 89% 36%, 91% 36%, 91% 55%, 100% 55%, 100% 100%, 0 100%); }
-  .s-road::after { height: 34%; background: linear-gradient(#57524a, #3d3a35); clip-path: polygon(0 40%, 100% 30%, 100% 100%, 0 100%); }
-  .s-road::before { content: ""; position: absolute; left: 34%; width: 30%; bottom: 20%; height: 14%; border-radius: 40% 46% 8px 8px / 70% 70% 8px 8px; background: linear-gradient(#f4f4f2, #c9c8c3); box-shadow: 0 10px 12px -6px rgb(0 0 0 / 0.4); z-index: 1; }
-  .s-palms::after { height: 46%; background: radial-gradient(ellipse 34px 16px at 20% 18%, #3d6b46 60%, transparent 62%), radial-gradient(ellipse 34px 16px at 74% 10%, #3d6b46 60%, transparent 62%), linear-gradient(90deg, transparent 19.5%, #6d5236 19.5% 21%, transparent 21% 73.5%, #6d5236 73.5% 75%, transparent 75%) 0 30% / 100% 70% no-repeat; clip-path: none; }
-  .a-car { background: linear-gradient(180deg, #f1efe9 0%, #e5e1d7 62%, #d6d0c2 100%); }
-  .a-car::after { content: ""; position: absolute; left: 16%; right: 16%; bottom: 20%; height: 30%; border-radius: 40% 46% 10px 10px / 70% 70% 10px 10px; background: linear-gradient(180deg, #44484f, #24272c); box-shadow: 0 10px 10px -6px rgb(0 0 0 / 0.35); }
-  .a-car::before { content: ""; position: absolute; left: 31%; right: 33%; bottom: 38%; height: 14%; border-radius: 30% 30% 0 0; background: #8ea2b3; z-index: 1; }
+  .a-car { display: grid; align-items: end; padding: 14px 12px 8px; background: linear-gradient(180deg, #f4f2ec 0%, #ebe7de 70%, #ddd7ca 100%); }
+  .a-car :global(svg) { max-width: 92%; margin: 0 auto; }
 
   /* BEFORE */
   .before { --or: #f2610d; color: #1c2230; font-family: Poppins, Inter, system-ui, sans-serif; }
@@ -226,7 +235,8 @@ const reasons = [
   .b-in { display: flex; align-items: center; gap: 6px; padding: 6px 9px; border-radius: 7px; border: 1px solid #ddd; color: #777; font-size: 11.5px; }
   .b-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .b-card { position: relative; display: grid; align-content: start; gap: 4px; padding-bottom: 12px; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 1px 4px rgb(0 0 0 / 0.08); }
-  .b-card .art { height: 110px; } .b-card b, .b-card small { padding: 0 12px; } .b-card b { font-size: 15px; }
+  .b-card .art { height: 120px; padding: 16px 22px 8px; display: grid; align-items: end; }
+  .b-cards { align-items: start; } .b-card b, .b-card small { padding: 0 12px; } .b-card b { font-size: 15px; }
   .b-card small { display: flex; align-items: center; gap: 4px; color: #777; }
   .b-price { position: absolute; top: 10px; right: 10px; z-index: 2; padding: 4px 9px; border-radius: 7px; background: var(--or); color: #fff; font-weight: 700; font-size: 12px; }
 
@@ -245,10 +255,11 @@ const reasons = [
   .a-btn.sm { padding: 6px 11px; font-size: 12px; }
 
   .hero { position: relative; height: 340px; overflow: hidden; }
-  .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s ease; }
+  .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s ease, transform 6s ease; transform: scale(1.03); }
+  .slide.on { transform: none; }
   .slide.on { opacity: 1; }
-  .wash { position: absolute; inset: 0; background: rgb(0 0 0 / 0.08); }
-  .panel { position: absolute; left: 40px; top: 50%; transform: translateY(-50%); width: 300px; padding: 24px 26px; border-radius: 16px; background: rgb(255 255 255 / 0.8); backdrop-filter: blur(12px); box-shadow: 0 24px 50px -20px rgb(0 0 0 / 0.4); }
+  .wash { position: absolute; inset: 0; background: linear-gradient(90deg, rgb(0 0 0 / 0.18), transparent 55%); }
+  .panel { position: absolute; left: 40px; top: 42%; transform: translateY(-50%); width: 300px; padding: 24px 26px; border-radius: 16px; background: rgb(255 255 255 / 0.8); backdrop-filter: blur(12px); box-shadow: 0 24px 50px -20px rgb(0 0 0 / 0.4); }
   .copy[hidden] { display: none; }
   .copy { animation: fade 0.5s ease; }
   .copy h5 { margin: 0; font: 700 27px/1.1 var(--disp); color: var(--ink); }
@@ -258,14 +269,22 @@ const reasons = [
   .nav { position: absolute; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgb(255 255 255 / 0.25); background: rgb(0 0 0 / 0.5); color: #fff; cursor: pointer; }
   .prev { left: 10px; } .next { right: 10px; }
   .panel { left: 62px; }
-  .count { position: absolute; right: 18px; bottom: 16px; padding: 4px 11px; border-radius: 999px; background: rgb(0 0 0 / 0.35); color: rgb(255 255 255 / 0.6); font-size: 12px; } .count b { color: #fff; font-size: 14px; }
-  .dots { position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); display: flex; }
+  .count { position: absolute; right: 18px; bottom: 50px; padding: 4px 11px; border-radius: 999px; background: rgb(0 0 0 / 0.35); color: rgb(255 255 255 / 0.6); font-size: 12px; } .count b { color: #fff; font-size: 14px; }
+  .dots { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); display: flex; }
   .dots button { display: grid; place-items: center; height: 30px; padding: 0 4px; border: 0; background: none; cursor: pointer; }
   .dots i { width: 6px; height: 6px; border-radius: 3px; background: rgb(255 255 255 / 0.7); transition: width 0.4s; }
   .dots [aria-current] i { width: 30px; background: var(--gold); }
   :is(.nav, .dots button, .why button):focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
+  .book { position: relative; z-index: 2; display: grid; grid-template-columns: 1.3fr 1.1fr 1fr 1fr auto; align-items: center; margin: -30px 22px 0; padding: 6px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 20px 40px -22px rgb(0 50 27 / 0.45); }
+  .book label { display: grid; gap: 1px; padding: 7px 12px; min-width: 0; }
+  .book label + label { border-left: 1px solid var(--line); }
+  .book small { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink4); }
+  .book label span { display: flex; align-items: center; gap: 6px; font-weight: 550; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .book label :global(svg) { flex: none; color: var(--g6); }
+  .book .go { height: 42px; padding: 0 16px; white-space: nowrap; }
   .sec { padding: 26px 26px 28px; }
+  .book + .sec { padding-top: 30px; }
   .sand { background: var(--sand); }
   h6 { margin: 0; font: 700 28px/1.1 var(--disp); color: var(--g9); }
   .sub { margin: 0 0 16px; color: var(--ink4); font-size: 14px; }
@@ -293,7 +312,18 @@ const reasons = [
   .reasons li.open b { color: var(--g9); } .reasons li.open em { color: var(--gold); }
   .reasons p { display: none; margin: 6px 0 0; color: #3b3b3b; max-width: 380px; }
   .reasons li.open p { display: block; animation: fade 0.4s ease; }
-  .why-r { border-radius: 18px; min-height: 230px; }
+  .why-r { position: relative; overflow: hidden; border-radius: 18px; min-height: 250px; isolation: isolate; }
+  .why-r :global(.scene) { position: absolute; inset: 0; }
+  .wa { position: absolute; right: 16px; bottom: 16px; width: min(250px, 78%); display: grid; gap: 6px; padding: 12px; border-radius: 16px; background: rgb(239 234 226 / 0.94); backdrop-filter: blur(8px); box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.5); font-size: 12px; }
+  .wa p { margin: 0; }
+  .wa-h { display: flex; align-items: center; gap: 8px; padding-bottom: 6px; border-bottom: 1px solid rgb(0 0 0 / 0.06); }
+  .wa-h span:last-child { display: grid; line-height: 1.25; } .wa-h small { color: #6b6b6b; font-size: 11px; }
+  .wa-av { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--g9); box-shadow: inset 0 0 0 2px var(--gold); }
+  .wa-av i { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+  .bub { justify-self: start; max-width: 92%; padding: 7px 10px; border-radius: 4px 12px 12px 12px; background: #fff; color: #222; line-height: 1.4; box-shadow: 0 1px 1px rgb(0 0 0 / 0.06); }
+  .bub.car-b { display: flex; align-items: center; gap: 6px; color: #3b3b3b; } .car-b :global(svg) { color: var(--g6); flex: none; }
+  .bub.me { justify-self: end; border-radius: 12px 4px 12px 12px; background: #d9f6c9; }
+
 
   .quotes { padding-bottom: 0; }
   .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; height: 220px; margin-top: 8px; overflow: hidden; mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent); }
@@ -317,7 +347,13 @@ const reasons = [
     .a-nav { padding: 10px 14px; gap: 10px; } .a-menu { display: grid; } .a-pills, .a-end > span:first-child { display: none; } .a-end { margin-left: auto; }
     .a-logo { white-space: nowrap; font-size: 16px; } .a-end .a-btn { white-space: nowrap; padding: 7px 11px; } .a-end .a-btn :global(svg) { display: none; }
     .hero { height: 380px; }
-    .panel { left: 14px; right: 14px; top: auto; bottom: 40px; transform: none; width: auto; padding: 16px 18px; }
+    .book { grid-template-columns: 1fr 1fr; margin: -26px 12px 0; }
+    .book label { padding: 6px 9px; } .book label span { font-size: 12px; gap: 5px; }
+    .book label:nth-child(3) { border-left: 0; } .book label:nth-child(n + 3) { border-top: 1px solid var(--line); }
+    .book .go { grid-column: 1 / -1; justify-content: center; margin-top: 4px; }
+    .count { bottom: auto; } .dots { bottom: 30px; }
+    .wa { right: 10px; bottom: 10px; }
+    .panel { left: 14px; right: 14px; top: auto; bottom: 64px; transform: none; width: auto; padding: 16px 18px; }
     .copy h5 { font-size: 22px; } .copy i { margin: 8px 0; } .copy p { font-size: 12.5px; }
     .nav { display: none; } .count { top: 14px; bottom: auto; right: 14px; }
     .sec { padding: 22px 16px; } h6 { font-size: 24px; }
