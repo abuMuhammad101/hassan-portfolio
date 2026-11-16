@@ -9,7 +9,7 @@ meta:
   - { label: Domain, value: "US therapy, Medicare" }
 ndaRecreated: true
 widget: record-chain
-widgetIntro: "Try to start a daily note from New document. The screen stops you, says why, and shows the next step."
+widgetIntro: "Watch a clinician try to start a daily note before the plan is certified. The screen stops her, says why, and shows the fix. Then try it yourself."
 stats:
   - { value: "3", unit: structures, label: Explored for plan templates before choosing one }
   - { value: "1", unit: thread, label: Every record ties back to the one before it }

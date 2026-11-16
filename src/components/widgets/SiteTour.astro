@@ -24,7 +24,7 @@ const screens = [
           <img data-shot={s.key} hidden={i !== 0} src={s.src} alt={`HH Global, ${s.title}`} width="800" height="500" loading={i === 0 ? "eager" : "lazy"} decoding="async" />
         ))}
       </BrowserFrame>
-      {screens.map((s, i) => <p class="note" data-note={s.key} hidden={i !== 0}><b>{s.title}.</b> {s.note}</p>)}
+      {screens.map((s, i) => <p class="note sr-only" data-note={s.key} hidden={i !== 0}><b>{s.title}.</b> {s.note}</p>)}
     </div>
     <div class="phone">
       <PhoneFrame label="HH Global on a phone">
@@ -58,6 +58,8 @@ const screens = [
   [hidden] { display: none !important; }
   .phone img { display: block; width: 100%; height: auto; }
   .note { margin: 12px 0 0; color: var(--ink-secondary); font-size: var(--text-sm); }
+  /* The story player under the stage carries these captions now. */
+  .note.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .note b { color: var(--ink); font-weight: 600; }
   .live { display: inline-block; margin-top: 10px; font-size: var(--text-sm); font-weight: 500; color: var(--ink); }
   @container (max-width: 640px) {

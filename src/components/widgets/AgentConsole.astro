@@ -139,7 +139,7 @@ const queue = [
   document.querySelectorAll<HTMLElement>("[data-console]").forEach((root) => {
     const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
     const sheet = q("[data-sheet]"), scrim = q("[data-scrim]"), count = q('[data-count="loop"]');
-    const open = (v: boolean) => { sheet.hidden = !v; scrim.hidden = !v; if (v) q<HTMLButtonElement>("[data-approve]").focus(); };
+    const open = (v: boolean) => { sheet.hidden = !v; scrim.hidden = !v; if (v) q<HTMLButtonElement>("[data-approve]").focus({ preventScroll: true }); };
     const set = (s: string) => { root.dataset.state = s; count.textContent = s === "loop" ? "135" : "134"; };
     q("[data-open]").addEventListener("click", () => open(true));
     q("[data-close]").addEventListener("click", () => open(false));

@@ -1,121 +1,851 @@
 ---
-/* Clicker, the real app: screens captured from the running product with its
-   demo seed. Two journeys, light and dark. */
-import BrowserFrame from "../BrowserFrame.astro";
+/* Clicker, told as the thing it is: you write a declaration, the app draws
+   itself. Each chapter pairs a real excerpt of the product's model code
+   with the real screen it produced, captured from the running demo. The
+   numbered pins tie a line of code to the part of the screen it draws. */
 import Icon from "../Icon.astro";
-const journeys = [
+import "../../styles/story.css";
+
+type Ch = {
+  title: string;
+  note: string;
+  file: string;
+  code: string[];
+  pins: { line: number; x: number; y: number; label: string }[];
+  shot: string;
+  hot: [number, number];
+  wipe?: boolean;
+};
+
+const chapters: Ch[] = [
   {
-    id: "water",
-    name: "Water board",
-    who: "Signed in as a manager",
-    screens: [
-      { key: "w-aging", title: "Aging", note: "Bills grouped by how overdue they are, with totals per band and a summary strip in crore. One saved view, no custom screen." },
-      { key: "w-statement", title: "Customer statement", note: "The contact record becomes a statement: outstanding, oldest overdue, advance held, and every bill and payment below it." },
-      { key: "w-bill-peek", title: "Bill in a peek", note: "Click a row and the bill opens beside the list. The list stays put, the open row stays marked." },
-      { key: "w-recovery", title: "Recovery cases", note: "Who owes, how long, which notice they're on, and whose case it is. Cases without an owner are counted at the top." },
-      { key: "w-runs", title: "Billing runs", note: "Each monthly run is one record: period, bills made, total billed, and its state." },
+    title: "The schema draws the list",
+    note: "A few lines declare the Aging view: posted bills with a balance, grouped by how overdue they are. Nobody drew this screen.",
+    file: "billing/models.py",
+    code: [
+      "class Schema:",
+      "  list_display = ['number', 'customer',",
+      "    'due_date', 'amount_total', 'balance',",
+      "    'payment_status', 'state']",
+      "  views = [{",
+      "    'key': 'aging',",
+      "    'filters': ['state:in:posted',",
+      "                'balance:gte:0.01'],",
+      "    'group_by': 'days_overdue',",
+      "    'ordering': '-balance',",
+      "  }]",
     ],
+    pins: [
+      { line: 1, x: 62, y: 24.6, label: "Columns" },
+      { line: 6, x: 21, y: 12, label: "Filters" },
+      { line: 8, x: 23, y: 47.2, label: "Groups" },
+    ],
+    shot: "w-aging",
+    hot: [22.5, 51],
   },
   {
-    id: "port",
-    name: "Clearing agency",
-    who: "Signed in as the owner",
-    screens: [
-      { key: "c-stages", title: "Jobs by stage", note: "The pipeline as a grouped list: booked to closed, with what's at risk and what's ready to invoice on top." },
-      { key: "c-risk", title: "Demurrage at risk", note: "Containers costing money by the day rise to the top, with the deadline and the agent responsible." },
-      { key: "c-job", title: "A job", note: "Stage track, the next move in plain words, and the containers' free days counting down inside the record." },
-      { key: "c-disb", title: "Disbursements", note: "Money paid out on a client's behalf, waiting for approval before it can be billed back." },
+    title: "Peek, don't navigate",
+    note: "Click a row and the bill opens beside the list, which stays put. It's the same form renderer as the full page; it doesn't know it's in a drawer.",
+    file: "frontend/src/records/open.ts",
+    code: [
+      "// The one intent function. Callers",
+      "// name a surface, never a mechanism.",
+      "openRecord('billing.bill', id,",
+      "  { surface: 'peek' })",
+      "",
+      "// A new container is one registration",
+      "// and no caller changes.",
+      "registerSurface('peek', PeekDrawer)",
     ],
+    pins: [
+      { line: 2, x: 81, y: 13, label: "Peek" },
+      { line: 7, x: 22.5, y: 51, label: "List stays" },
+    ],
+    shot: "w-bill-peek",
+    hot: [98.4, 6.4],
+  },
+  {
+    title: "Workflow and money, declared",
+    note: "The recovery path and the money owed on open cases are declarations too. The state chips and the summary strip follow from them.",
+    file: "water/models.py",
+    code: [
+      "summaries = [{",
+      "    'label': 'Owed on open cases',",
+      "    'aggregate': 'sum',",
+      "    'field': 'outstanding',",
+      "}]",
+      "workflow = {",
+      "    'field': 'state',",
+      "    'path': ['open', 'notice_1',",
+      "      'notice_2', 'legal', 'instalment',",
+      "      'settled'],",
+      "}",
+    ],
+    pins: [
+      { line: 1, x: 53, y: 18, label: "Summary" },
+      { line: 7, x: 50.6, y: 28.4, label: "States" },
+    ],
+    shot: "w-recovery",
+    hot: [94.6, 2.6],
+  },
+  {
+    title: "Another business, same engine",
+    note: "A port clearing agency: jobs, containers, disbursements. A different model on the same renderers, with zero frontend changes.",
+    file: "clearance/models.py",
+    code: [
+      "views = [{",
+      "    'key': 'by_stage',",
+      "    'label': 'Jobs by stage',",
+      "    'group_by': 'state',",
+      "    # Early stages are counts and sums;",
+      "    # where money and risk are stays open.",
+      "    'collapsed': ['booked', 'documents_in',",
+      "                  'gd_filed', 'gate_out'],",
+      "}]",
+    ],
+    pins: [
+      { line: 3, x: 22.5, y: 39.6, label: "Stages" },
+      { line: 6, x: 22, y: 28.4, label: "Collapsed" },
+    ],
+    shot: "c-stages",
+    hot: [37.5, 18],
+  },
+  {
+    title: "Risk rises to the top",
+    note: "One saved view: the containers costing money by the day, ordered by the next deadline, with whose job it is.",
+    file: "clearance/models.py",
+    code: [
+      "{",
+      "    'key': 'at_risk',",
+      "    'label': 'Demurrage at risk',",
+      "    'filters': ['demurrage_status:in:",
+      "                 soon,urgent,accruing'],",
+      "    'columns': ['number', 'client',",
+      "      'state', 'demurrage_status',",
+      "      'assigned_to', 'billable_total'],",
+      "    'ordering': 'demurrage_next_deadline',",
+      "}",
+    ],
+    pins: [
+      { line: 3, x: 59.5, y: 28.4, label: "At risk" },
+      { line: 7, x: 67.5, y: 24.6, label: "Deadline" },
+    ],
+    shot: "c-risk",
+    hot: [22.5, 28.4],
+  },
+  {
+    title: "Light and dark, one set of tokens",
+    note: "Every colour lives in one tokens file, so dark mode costs nothing per screen. Drag across the job to compare.",
+    file: "tokens.css",
+    code: [
+      "/* The accent sits inside the greys and",
+      "   never competes with status colours. */",
+      ":root {",
+      "  --accent: #4a3fcf;",
+      "}",
+      ":root[data-theme='dark'] {",
+      "  --accent: #8991ff;",
+      "}",
+    ],
+    pins: [
+      { line: 3, x: 80, y: 22.8, label: "Accent" },
+      { line: 6, x: 52.5, y: 18.4, label: "Track" },
+    ],
+    shot: "c-job",
+    hot: [80, 22.8],
+    wipe: true,
   },
 ];
+
+// A tiny highlighter for the excerpts: comments, strings, keywords.
+const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const hl = (line: string) => {
+  if (!line.trim()) return "&nbsp;";
+  const m = line.match(/^(\s*)(#|\/\/|\/\*|\*)(.*)$/);
+  if (m) return `${m[1]}<span class="c">${esc(m[2] + m[3])}</span>`;
+  // One pass, so a later rule never matches inside markup an earlier one added.
+  return esc(line).replace(
+    /('[^']*')|(#[0-9a-fA-F]{6})|(--[a-z-]+)|\b(class|const|import)\b|\b(openRecord|registerSurface)\b/g,
+    (m, s, n, v, k, f) => `<span class="${s ? "s" : n ? "n" : v ? "v" : k ? "k" : "f"}">${m}</span>`,
+  );
+};
 ---
 
-<div class="tour" data-tour data-theme-mode="light">
-  <div class="bar">
-    <div class="tabs" role="tablist" aria-label="Journey">
-      {journeys.map((j, i) => (
-        <button type="button" role="tab" data-journey={j.id} aria-selected={i === 0 ? "true" : "false"}>{j.name}</button>
-      ))}
-    </div>
-    <button type="button" class="mode" data-mode aria-pressed="false"><Icon name="moon" size={14} /><span>Dark</span></button>
-  </div>
+<div class="ck" data-ck data-mode="light" data-playing="false">
+  <blockquote class="law">
+    <span class="law-k">The law</span>
+    If a change needs the renderer to know about a module, the schema is wrong.
+  </blockquote>
 
-  {journeys.map((j, ji) => (
-    <section class="journey" data-panel={j.id} hidden={ji !== 0}>
-      <div class="chips" role="group" aria-label={`${j.name} screens`}>
-        {j.screens.map((s, si) => (
-          <button type="button" data-screen={s.key} aria-pressed={si === 0 ? "true" : "false"}>{s.title}</button>
+  <div class="stage">
+    <!-- The code: what a module author writes -->
+    <div class="editor" aria-label="Model code">
+      <div class="ed-bar"><i></i><i></i><i></i>
+        {chapters.map((c, i) => <span class:list={["file", { on: i === 0 }]} data-shot={i}>{c.file}</span>)}
+      </div>
+      <div class="ed-body">
+        {chapters.map((c, i) => (
+          <pre class:list={["code", { on: i === 0 }]} data-shot={i}><code>{c.code.map((l, li) => {
+            const pin = c.pins.findIndex((p) => p.line === li);
+            return <span class:list={["ln", { pinned: pin >= 0 }]}><em>{li + 1}</em><span set:html={hl(l)} />{pin >= 0 && <b class="badge">{pin + 1}</b>}</span>;
+          })}</code></pre>
         ))}
       </div>
-      <BrowserFrame address={`clicker.app · ${j.name.toLowerCase()} demo`} label={`Clicker, ${j.name} journey`}>
-        <div class="stage">
-          {j.screens.map((s, si) => (
-            <figure class="shot" data-shot={s.key} hidden={si !== 0}>
-              <a class="zoom" href={`/media/clicker/${s.key}-light.webp`} target="_blank" rel="noopener" aria-label={`Open ${s.title} full size`}>
-              <img class="light" src={`/media/clicker/${s.key}-light.webp`} alt={`Clicker, ${s.title}, light mode`} width="1600" height="1000" loading={ji === 0 && si === 0 ? "eager" : "lazy"} decoding="async" />
-              <img class="dark" src={`/media/clicker/${s.key}-dark.webp`} alt={`Clicker, ${s.title}, dark mode`} width="1600" height="1000" loading="lazy" decoding="async" />
-              </a>
-            </figure>
-          ))}
-        </div>
-      </BrowserFrame>
-      {j.screens.map((s, si) => (
-        <p class="note" data-note={s.key} hidden={si !== 0}><b>{s.title}.</b> {s.note} <span class="who">{j.who}, demo data.</span></p>
-      ))}
-    </section>
-  ))}
+    </div>
+
+    <!-- The screen: what the platform drew from it -->
+    <div class="browser">
+      <div class="br-bar"><i></i><i></i><i></i><span class="url"><Icon name="lock-simple" size={11} /> clicker.app</span></div>
+      <div class="screen phone">
+        {chapters.map((c, i) => (
+          <figure class:list={["shot", { on: i === 0, wipe: c.wipe }]} data-shot={i} style={c.wipe ? "--cut:55%" : undefined}>
+            <img class="lt" src={`/media/clicker/${c.shot}-light.webp`} alt={`Clicker, ${c.title}, light`} width="1600" height="1000" loading={i < 2 ? "eager" : "lazy"} decoding="async" />
+            <img class="dk" src={`/media/clicker/${c.shot}-dark.webp`} alt={`Clicker, ${c.title}, dark`} width="1600" height="1000" loading="lazy" decoding="async" />
+            {c.wipe && (
+              <>
+                <span class="handle" aria-hidden="true"><i><Icon name="arrows-left-right" size={13} /></i></span>
+                <input class="wipe-in" type="range" min="0" max="100" value="55" aria-label="Compare light and dark" data-wipe />
+              </>
+            )}
+            {c.pins.map((p, pi) => (
+              <span class="pin" style={`--x:${p.x}%;--y:${p.y}%;--d:${pi * 140}ms`}><b>{pi + 1}</b><span>{p.label}</span></span>
+            ))}
+          </figure>
+        ))}
+        <button type="button" class="tap prev" data-go="-1" aria-label="Previous chapter"></button>
+        <button type="button" class="tap next" data-go="1" aria-label="Next chapter"></button>
+        {chapters.map((c, i) => (
+          <button type="button" class:list={["s-hot", { on: i === 0 }]} data-shot={i} data-hot style={`--x:${c.hot[0]}%;--y:${c.hot[1]}%`} aria-label="Click to continue the story"><b></b></button>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="caps">
+    {chapters.map((c, i) => <p class:list={["cap", { on: i === 0 }]} data-shot={i}><b>{c.title}.</b> {c.note}</p>)}
+  </div>
+
+  <div class="bars" aria-hidden="true">{chapters.map(() => <span><i></i></span>)}</div>
+  <ol class="chapters">
+    {chapters.map((c, i) => (
+      <li data-ch class:list={[{ on: i === 0 }]}>
+        <span class="timer" aria-hidden="true"><i></i></span>
+        <button type="button"><span class="num tabular-nums">{String(i + 1).padStart(2, "0")}</span><span class="title">{c.title}</span></button>
+      </li>
+    ))}
+  </ol>
+
+  <div class="controls">
+    <button type="button" class="s-play" data-play aria-label="Play the story">
+      <span class="knob">
+        <svg viewBox="0 0 42 42" aria-hidden="true"><circle class="track" cx="21" cy="21" r="19" /><circle class="prog" cx="21" cy="21" r="19" pathLength="100" /></svg>
+        <span class="icon" aria-hidden="true"><i></i><i></i></span>
+      </span>
+      <span class="count" data-count>01 / 06</span>
+    </button>
+    <button type="button" class="mode" data-mode aria-pressed="false"><Icon name="moon" size={14} /><span>Dark</span></button>
+    <p class="hint"><span class="dot" aria-hidden="true"></span>Click where you'd click next</p>
+  </div>
 </div>
 
 <script>
-  document.querySelectorAll<HTMLElement>("[data-tour]").forEach((root) => {
-    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[data-journey]")];
-    tabs.forEach((t) => t.addEventListener("click", () => {
-      tabs.forEach((x) => x.setAttribute("aria-selected", String(x === t)));
-      root.querySelectorAll<HTMLElement>("[data-panel]").forEach((p) => (p.hidden = p.dataset.panel !== t.dataset.journey));
-    }));
-    root.querySelectorAll<HTMLElement>("[data-panel]").forEach((panel) => {
-      const chips = [...panel.querySelectorAll<HTMLButtonElement>("[data-screen]")];
-      chips.forEach((c) => c.addEventListener("click", () => {
-        chips.forEach((x) => x.setAttribute("aria-pressed", String(x === c)));
-        panel.querySelectorAll<HTMLElement>("[data-shot]").forEach((s) => (s.hidden = s.dataset.shot !== c.dataset.screen));
-        panel.querySelectorAll<HTMLElement>("[data-note]").forEach((s) => (s.hidden = s.dataset.note !== c.dataset.screen));
-      }));
-    });
+  import { initStory } from "../../scripts/story";
+  document.querySelectorAll<HTMLElement>("[data-ck]").forEach((root) => {
+    initStory(root, { dur: 6400 });
     const mode = root.querySelector<HTMLButtonElement>("[data-mode]")!;
     mode.addEventListener("click", () => {
-      const dark = root.dataset.themeMode !== "dark";
-      root.dataset.themeMode = dark ? "dark" : "light";
+      const dark = root.dataset.mode !== "dark";
+      root.dataset.mode = dark ? "dark" : "light";
       mode.setAttribute("aria-pressed", String(dark));
       mode.querySelector("span")!.textContent = dark ? "Light" : "Dark";
+    });
+    // Dragging the light/dark divider stops the sweep and follows the hand.
+    root.querySelectorAll<HTMLInputElement>("[data-wipe]").forEach((r) => {
+      const fig = r.closest<HTMLElement>(".shot")!;
+      r.addEventListener("input", () => {
+        fig.classList.add("held");
+        fig.style.setProperty("--cut", `${r.value}%`);
+      });
     });
   });
 </script>
 
 <style>
-  .tour { --violet: #4a3fcf; }
-  .bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
-  .tabs { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--bg-sunk); border: 1px solid var(--rule); }
-  .tabs button, .mode { border: 0; background: none; font: inherit; font-weight: 600; font-size: var(--text-sm); padding: 6px 16px; border-radius: 999px; color: var(--ink-muted); cursor: pointer; }
-  .tabs [aria-selected="true"] { background: var(--bg-raised); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
-  .mode { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--rule); background: var(--bg-raised); color: var(--ink); }
-  .mode[aria-pressed="true"] { background: #17161d; color: #fff; border-color: #17161d; }
-  .chips { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
-  .chips::-webkit-scrollbar { display: none; }
-  .chips button { flex: none; border: 1px solid var(--rule); background: transparent; font: inherit; font-size: 13px; padding: 5px 12px; border-radius: 999px; color: var(--ink-secondary); cursor: pointer; transition: all 0.15s; }
-  .chips [aria-pressed="true"] { border-color: var(--violet); color: var(--violet); background: color-mix(in srgb, var(--violet) 8%, transparent); }
-  :is(.tabs button, .mode, .chips button):focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
-  .journey[hidden], .shot[hidden], .note[hidden] { display: none; }
-  .stage { background: #f8f8fb; }
-  .tour[data-theme-mode="dark"] .stage { background: #111015; }
-  .shot { margin: 0; animation: in 0.35s ease; }
-  .shot img { display: block; width: 100%; height: auto; }
-  .shot .dark { display: none; }
-  .tour[data-theme-mode="dark"] .shot .light { display: none; }
-  .tour[data-theme-mode="dark"] .shot .dark { display: block; }
-  @keyframes in { from { opacity: 0; } }
-  .zoom { display: block; cursor: zoom-in; }
-  .note { margin: 12px 0 0; color: var(--ink-secondary); font-size: var(--text-sm); max-width: 70ch; }
-  .note b { color: var(--ink); font-weight: 600; }
-  .who { color: var(--ink-muted); }
-  @media (prefers-reduced-motion: reduce) { .shot { animation: none; } }
+  .ck {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    --violet: #4a3fcf;
+    --story-accent: #6d5cff;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .law {
+    margin: 0 auto 28px;
+    max-width: 30ch;
+    text-align: center;
+    font-family: var(--font-editorial);
+    font-style: italic;
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
+    line-height: 1.25;
+    color: var(--ink);
+  }
+  .law-k {
+    display: block;
+    margin-bottom: 8px;
+    font-family: var(--font-mono);
+    font-style: normal;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--violet);
+  }
+
+  /* Stage: on a phone, the screen then the code; wide, the code window sits
+     over the left edge of the browser like two windows on a desk. */
+  .stage {
+    position: relative;
+    display: grid;
+    gap: 14px;
+  }
+  /* On a phone the screen leads; the code follows it. */
+  .browser {
+    order: -1;
+  }
+  .browser {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--bg-raised);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--ink) 9%, transparent),
+      0 30px 60px -36px rgb(30 20 80 / 0.45);
+  }
+  .br-bar,
+  .ed-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 12px;
+  }
+  .br-bar {
+    background: var(--bg-sunk);
+    border-bottom: 1px solid var(--rule);
+  }
+  .br-bar > i,
+  .ed-bar > i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--ink) 16%, transparent);
+  }
+  .url {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0 auto;
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: var(--bg-raised);
+    font-size: 11.5px;
+    color: var(--ink-muted);
+  }
+  .screen {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: #f8f8fb;
+    overflow: hidden;
+  }
+  .ck[data-mode="dark"] .screen {
+    background: #111015;
+  }
+  .shot {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    filter: blur(8px);
+    transform: scale(1.015);
+    transition:
+      opacity 0.5s var(--ease),
+      filter 0.5s var(--ease),
+      transform 0.7s var(--ease);
+  }
+  .shot.on {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  .shot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+  }
+  .shot .dk {
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .ck[data-mode="dark"] .shot:not(.wipe) .dk {
+    opacity: 1;
+  }
+
+  /* Light / dark compare on the last chapter. */
+  @property --cut {
+    syntax: "<percentage>";
+    inherits: true;
+    initial-value: 55%;
+  }
+  .shot.wipe .dk {
+    opacity: 1;
+    clip-path: inset(0 0 0 var(--cut));
+  }
+  .handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--cut);
+    z-index: 3;
+    width: 2px;
+    margin-left: -1px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.15);
+    pointer-events: none;
+  }
+  .handle i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    color: #222;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.25);
+  }
+  .tick[data-playing="true"] .shot.wipe.on:not(.held) {
+    animation: sweep var(--dur) var(--ease) both;
+  }
+  @keyframes sweep {
+    0% {
+      --cut: 96%;
+    }
+    45% {
+      --cut: 18%;
+    }
+    100% {
+      --cut: 55%;
+    }
+  }
+  .wipe-in {
+    position: absolute;
+    inset: 0;
+    z-index: 7;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+  }
+
+  /* Pins tie a line of code to the part of the screen it draws. */
+  .pin {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.35s,
+      transform 0.5s var(--ease);
+  }
+  .shot.on .pin {
+    opacity: 1;
+    transform: translate(-11px, -50%) scale(1);
+    transition-delay: calc(0.5s + var(--d));
+  }
+  .pin b {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--violet);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    box-shadow:
+      0 0 0 3px rgb(255 255 255 / 0.9),
+      0 4px 10px rgb(40 30 120 / 0.35);
+  }
+  .pin span {
+    padding: 3px 8px;
+    border-radius: 7px;
+    background: #141414;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .tap {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+    width: 50%;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .tap.prev {
+    left: 0;
+  }
+  .tap.next {
+    right: 0;
+  }
+  .s-hot {
+    z-index: 8;
+  }
+
+  /* The code editor. */
+  .editor {
+    position: relative;
+    z-index: 2;
+    border-radius: 14px;
+    background: #16151c;
+    color: #d9d7e6;
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.06),
+      0 30px 60px -28px rgb(20 10 60 / 0.6);
+    overflow: hidden;
+  }
+  .ed-bar {
+    position: relative;
+    border-bottom: 1px solid rgb(255 255 255 / 0.07);
+  }
+  .ed-bar > i {
+    background: rgb(255 255 255 / 0.16);
+  }
+  .file {
+    position: absolute;
+    left: 56px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #9a96b5;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .file.on {
+    opacity: 1;
+  }
+  .ed-body {
+    display: grid;
+    padding: 12px 0 14px;
+  }
+  .code {
+    grid-area: 1 / 1;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.75;
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 0.4s,
+      transform 0.5s var(--ease);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .code.on {
+    opacity: 1;
+    transform: none;
+  }
+  .code code {
+    display: grid;
+    min-width: max-content;
+  }
+  .ln {
+    position: relative;
+    display: block;
+    padding: 0 40px 0 12px;
+    white-space: pre;
+  }
+  .ln em {
+    display: inline-block;
+    width: 26px;
+    margin-right: 10px;
+    font-style: normal;
+    text-align: right;
+    color: #5a5670;
+  }
+  .ln.pinned {
+    background: rgb(109 92 255 / 0.14);
+    box-shadow: inset 2px 0 0 #8b7dff;
+  }
+  .badge {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #6d5cff;
+    color: #fff;
+    font-size: 10px;
+    transform: translateY(-50%);
+  }
+  .code :global(.c) {
+    color: #6f6b88;
+    font-style: italic;
+  }
+  .code :global(.s) {
+    color: #9fe0b5;
+  }
+  .code :global(.k) {
+    color: #c7a6ff;
+  }
+  .code :global(.n) {
+    color: #ffc387;
+  }
+  .code :global(.v) {
+    color: #8fd1ff;
+  }
+  .code :global(.f) {
+    color: #ffd27a;
+  }
+
+  /* Caption, bars, chapters, controls. */
+  .caps {
+    display: grid;
+    margin-top: 20px;
+  }
+  .cap {
+    grid-area: 1 / 1;
+    max-width: 62ch;
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--ink-secondary);
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 0.4s,
+      transform 0.5s var(--ease);
+  }
+  .cap.on {
+    opacity: 1;
+    transform: none;
+  }
+  .cap b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .bars {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 5px;
+    margin-top: 18px;
+  }
+  .bars span {
+    height: 3px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--ink) 12%, transparent);
+    overflow: hidden;
+  }
+  .bars i {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--ink);
+  }
+  .bars .done i,
+  .bars .on i {
+    width: 100%;
+  }
+  .ck.tick[data-playing="true"] .bars .on i {
+    animation: fill var(--dur) linear forwards;
+  }
+  @keyframes fill {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+  .chapters {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 16px;
+    margin-top: 26px;
+  }
+  .mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--bg-sunk);
+    box-shadow: inset 0 0 0 1px var(--rule);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .mode[aria-pressed="true"] {
+    background: #17161d;
+    color: #fff;
+    box-shadow: none;
+  }
+  .hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+  .hint .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--story-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--story-accent) 25%, transparent);
+  }
+  :is(.mode, .chapters button):focus-visible {
+    outline: 2px solid var(--story-accent);
+    outline-offset: 2px;
+  }
+
+  /* Wide: code over the browser's left edge, chapters as a timeline. */
+  @container (min-width: 820px) {
+    .stage {
+      grid-template-columns: 330px 1fr;
+      align-items: center;
+      gap: 0;
+      padding: 10px 0;
+    }
+    .editor {
+      grid-column: 1 / 2;
+      grid-row: 1;
+      margin-right: -72px;
+      transform: rotate(-1.2deg);
+    }
+    .code {
+      font-size: 11px;
+    }
+    .browser {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .caps {
+      max-width: 640px;
+      margin: 26px auto 0;
+      text-align: center;
+    }
+    .bars {
+      display: none;
+    }
+    .chapters {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px;
+      margin-top: 28px;
+    }
+    .chapters li {
+      display: grid;
+      gap: 10px;
+    }
+    .chapters button {
+      display: grid;
+      gap: 2px;
+      padding: 0;
+      border: 0;
+      background: none;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .num {
+      font-size: 11px;
+      color: var(--ink-muted);
+    }
+    .title {
+      font-size: 13px;
+      line-height: 1.35;
+      color: var(--ink-muted);
+    }
+    .chapters li.on .title {
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .chapters button:hover .title {
+      color: var(--ink);
+    }
+    .timer {
+      display: block;
+      height: 2px;
+      border-radius: 2px;
+      background: color-mix(in srgb, var(--ink) 12%, transparent);
+      overflow: hidden;
+    }
+    .timer i {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--ink);
+    }
+    .chapters li.done .timer i,
+    .chapters li.on .timer i {
+      width: 100%;
+    }
+    .chapters li.on .timer i {
+      background: var(--story-accent);
+    }
+    .ck.tick[data-playing="true"] .chapters li.on .timer i {
+      animation: fill var(--dur) linear forwards;
+    }
+  }
+  @container (min-width: 1000px) {
+    .stage {
+      grid-template-columns: 360px 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shot,
+    .code,
+    .cap,
+    .pin {
+      transition: none;
+      filter: none;
+    }
+    .tick[data-playing="true"] .shot.wipe.on {
+      animation: none;
+    }
+  }
 </style>

@@ -9,7 +9,7 @@ meta:
   - { label: Domain, value: "GCC healthcare billing" }
 ndaRecreated: true
 widget: agent-console
-widgetIntro: "A claim is stuck in a denial loop. Open it, read what the agents tried, and decide: approve the suggested fix or take it over yourself."
+widgetIntro: "Watch a claim stuck in a denial loop reach a person, who approves the fix or takes it over. Click anywhere to drive it yourself."
 stats:
   - { value: "5", unit: agents, label: "Intake, coding, eligibility, submission and denial follow-up" }
   - { value: "1", unit: screen, label: Where a person sees all of it and steps in }

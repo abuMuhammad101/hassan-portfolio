@@ -15,6 +15,8 @@ import SiteTour from "./widgets/SiteTour.astro";
 import RangeAudit from "./widgets/RangeAudit.astro";
 import PhoneTour from "./widgets/PhoneTour.astro";
 import Icon from "./Icon.astro";
+import StoryDirector from "./StoryDirector.astro";
+import { stories } from "../data/stories";
 
 interface Props {
   data: any;
@@ -33,6 +35,7 @@ const sections: [string, string][] = [
 const num = (id: string) => String(sections.findIndex(([s]) => s === id)).padStart(2, "0");
 const label = (id: string) => sections.find(([s]) => s === id)![1];
 const n = data.states.length;
+const story = stories[data.widget];
 ---
 
 <article class="case">
@@ -60,19 +63,31 @@ const n = data.states.length;
       <svg class="arrow" viewBox="0 0 40 56" fill="none" aria-hidden="true"><path d="M14 3c-9 12-8 28 8 44" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><path d="M13 44l9 4 2-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
     </div>
     <div class="widget">
-      <span class="cursor" aria-hidden="true">
-        <svg viewBox="0 0 16 18"><path d="M1 1l13 6.5-5.6 1.7L6 15z" /></svg>
-        <b>Hassan</b>
-      </span>
-      {data.widget === "before-after" && <BeforeAfter />}
-      {data.widget === "record-chain" && <RecordChain />}
-      {data.widget === "copilot" && <Copilot />}
-      {data.widget === "agent-console" && <AgentConsole />}
-      {data.widget === "density" && <DensityTable />}
-      {data.widget === "tour" && <ClickerTour />}
-      {data.widget === "site-tour" && <SiteTour />}
-      {data.widget === "range-audit" && <RangeAudit />}
-      {data.widget === "phone-tour" && <PhoneTour />}
+      {story ? (
+        <StoryDirector chapters={story.chapters} reset={story.reset} accent={story.accent}>
+          {data.widget === "before-after" && <BeforeAfter />}
+          {data.widget === "record-chain" && <RecordChain />}
+          {data.widget === "copilot" && <Copilot />}
+          {data.widget === "agent-console" && <AgentConsole />}
+          {data.widget === "density" && <DensityTable />}
+          {data.widget === "tour" && <ClickerTour />}
+          {data.widget === "site-tour" && <SiteTour />}
+          {data.widget === "range-audit" && <RangeAudit />}
+          {data.widget === "phone-tour" && <PhoneTour />}
+        </StoryDirector>
+      ) : (
+        <>
+          {data.widget === "before-after" && <BeforeAfter />}
+          {data.widget === "record-chain" && <RecordChain />}
+          {data.widget === "copilot" && <Copilot />}
+          {data.widget === "agent-console" && <AgentConsole />}
+          {data.widget === "density" && <DensityTable />}
+          {data.widget === "tour" && <ClickerTour />}
+          {data.widget === "site-tour" && <SiteTour />}
+          {data.widget === "range-audit" && <RangeAudit />}
+          {data.widget === "phone-tour" && <PhoneTour />}
+        </>
+      )}
     </div>
   </section>
 
@@ -329,53 +344,8 @@ const n = data.states.length;
     color: var(--accent-warm);
     transform: rotate(-8deg);
   }
-  @media (min-width: 760px) {
-    .cursor {
-      display: inline-flex;
-    }
-  }
   .widget {
     position: relative;
-  }
-  .cursor {
-    display: none;
-    position: absolute;
-    z-index: 20;
-    top: -12px;
-    right: 8%;
-    align-items: flex-start;
-    pointer-events: none;
-    animation: drift 7s ease-in-out infinite;
-  }
-  .cursor svg {
-    width: 16px;
-    height: 18px;
-    fill: var(--accent-site);
-    stroke: #fff;
-    stroke-width: 1.2;
-    filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.25));
-  }
-  .cursor b {
-    margin: 14px 0 0 -2px;
-    padding: 3px 8px;
-    border-radius: 6px 10px 10px 10px;
-    background: var(--accent-site);
-    color: #fff;
-    font-size: 11.5px;
-    font-weight: 600;
-    box-shadow: 0 4px 10px -4px rgb(0 0 0 / 0.35);
-  }
-  @keyframes drift {
-    0%,
-    100% {
-      transform: translate(0, 0);
-    }
-    35% {
-      transform: translate(-26px, 14px);
-    }
-    65% {
-      transform: translate(-8px, 30px);
-    }
   }
   /* Stats ---------------------------------------------------------------- */
   .stats {
@@ -869,9 +839,6 @@ const n = data.states.length;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .cursor {
-      animation: none;
-    }
     .stack,
     .stack li {
       transition: none;

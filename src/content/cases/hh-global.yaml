@@ -9,7 +9,7 @@ meta:
   - { label: Stack, value: "Next.js, Supabase, Vercel" }
 ndaRecreated: false
 widget: site-tour
-widgetIntro: These are screens from the live site. Step through them, or open the site itself.
+widgetIntro: "Screens from the live site, played as a buyer would meet them. Take over at any point, or open the site itself."
 stats:
   - { value: "5", unit: admin tabs, label: "Quotes, products, categories, media and content, run by a non-technical owner" }
   - { value: "1", unit: request, label: Several products in one quote, each with its own spec and photo }
