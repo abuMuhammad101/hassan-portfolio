@@ -347,7 +347,8 @@ import Icon from "../Icon.astro";
   .goals i { grid-column: 1 / -1; grid-row: 2; height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--gold) var(--p), #ecebe7 var(--p)); }
   .goals small { grid-row: 1; grid-column: 2; }
 
-  .toast { position: absolute; z-index: 7; left: 50%; top: 52px; transform: translateX(-50%); max-width: 520px; padding: 10px 14px; border-radius: 11px; background: var(--ink); color: #e9e9ea; box-shadow: 0 16px 36px -14px rgb(0 0 0 / 0.5); animation: rise 0.3s ease-out; }
+  .toast { position: absolute; z-index: 7; left: 50%; bottom: 18px; transform: translateX(-50%); width: max-content; max-width: min(520px, calc(100% - 28px)); padding: 10px 14px; border-radius: 11px; background: var(--ink); color: #e9e9ea; box-shadow: 0 16px 36px -14px rgb(0 0 0 / 0.5); animation: toast-in 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+  @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 8px); } }
   .toast :global(b) { color: #fff; }
   .toast.warn { border-left: 3px solid #e8a04a; }
   .toast.ok { border-left: 3px solid #5cc489; }
@@ -366,7 +367,7 @@ import Icon from "../Icon.astro";
     dl div { grid-template-columns: 120px 1fr; }
     .ask { flex-wrap: wrap; } .ask span { flex-basis: calc(100% - 30px); }
     .row { flex-wrap: wrap; row-gap: 4px; }
-    .toast { top: 52px; width: calc(100% - 28px); box-sizing: border-box; }
+    .toast { bottom: 16px; width: calc(100% - 28px); box-sizing: border-box; }
     .main { padding-bottom: 72px; }
     .menu { width: min(268px, 88cqw); }
   }

@@ -99,6 +99,30 @@ if (!reduced) {
     });
   });
 
+  // First arrival: the opening screen sets itself, line by line. Only on the
+  // first page of a visit; after that, page-to-page transitions take over.
+  let first = true;
+  try {
+    first = !sessionStorage.getItem("arrived");
+    sessionStorage.setItem("arrived", "1");
+  } catch {}
+  if (first) {
+    const order = [
+      ".hero .crumbs, .early .crumbs",
+      ".headline h1 .lead",
+      ".headline h1 .rest",
+      ".hero .vt-title, .early h1",
+      ".hero .angle, .early .angle",
+      ".hero-grid .intro",
+      ".hero-grid .ledger",
+      ".hero .facts, .early .facts",
+    ];
+    const els = order.flatMap((sel) => [...document.querySelectorAll<HTMLElement>(sel)]).filter((el) => el.getBoundingClientRect().top < window.innerHeight);
+    if (els.length) {
+      gsap.from(els, { opacity: 0, y: 16, duration: 0.8, ease: "power3.out", stagger: 0.08, delay: 0.05, clearProps: "opacity,transform" });
+    }
+  }
+
   // Hero construction lines: draw the lines, then pop the handles.
   document.querySelectorAll<HTMLElement>("[data-construct]").forEach((box) => {
     const tl = gsap.timeline({ defaults: { ease: "power2.out" } });

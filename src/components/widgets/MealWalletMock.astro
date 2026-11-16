@@ -1,0 +1,432 @@
+---
+/* Pure Prep meal wallet, re-drawn from the design: the wallet, paying at the
+   counter with a QR code, and the receipt. Sample balances and branches. */
+import Icon from "../Icon.astro";
+import MiniPhone from "./MiniPhone.astro";
+import "../../styles/story.css";
+
+// A QR-looking pattern: three finder squares and a seeded fill. Not scannable.
+const N = 25;
+let seed = 7;
+const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+const finder = (x: number, y: number) =>
+  [[0, 0], [N - 7, 0], [0, N - 7]].some(([fx, fy]) => x >= fx && x < fx + 7 && y >= fy && y < fy + 7);
+const cells: [number, number][] = [];
+for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (!finder(x, y) && rnd() > 0.52) cells.push([x, y]);
+const spark = "M0 34 L8 30 L16 32 L24 22 L32 26 L40 18 L48 21 L56 12 L64 16 L72 9 L80 13 L88 6 L96 8";
+---
+
+<div class="mw">
+  <div class="s-canvas">
+    <span class="s-h tl" aria-hidden="true"></span><span class="s-h tr" aria-hidden="true"></span>
+    <span class="s-h bl" aria-hidden="true"></span><span class="s-h br" aria-hidden="true"></span>
+    <div class="row">
+      <MiniPhone label="Wallet" bg="#fbfaf5">
+        <div class="pad">
+          <div class="top"><b class="logo">PURE PREP</b><span class="sq"><Icon name="bell-simple" size={13} weight="fill" /></span></div>
+          <div class="loc"><Icon name="map-pin" size={13} weight="fill" /><span><b>Phuket branch</b><small>1.2 km · open until 21:00</small></span><Icon name="caret-right" size={11} /></div>
+          <p class="lbl">Credits wallet</p>
+          <p class="bal"><b>2,800</b><small>credits</small></p>
+          <svg class="chart" viewBox="0 0 96 40" preserveAspectRatio="none" aria-hidden="true"><path d={spark + " L96 40 L0 40 Z"} class="area" /><path d={spark} class="ln" /><circle cx="96" cy="8" r="2.2" class="dot" /></svg>
+          <div class="per"><span>1D</span><b>1W</b><span>1M</span><span>6M</span><span>1Y</span></div>
+          <div class="tiles">
+            <span class="tile y"><Icon name="plus-circle" size={16} weight="fill" /><b>Top up</b><small>Card or PromptPay</small></span>
+            <span class="tile"><Icon name="storefront" size={16} /><b>Branches</b><small>4 near you</small></span>
+          </div>
+          <p class="lbl">Recent</p>
+          <div class="tx"><span class="ti"><Icon name="bowl-food" size={13} /></span><span><b>Phuket branch</b><small>Today, 12:40</small></span><em class="neg">−180</em></div>
+          <div class="tx"><span class="ti"><Icon name="arrow-down" size={13} /></span><span><b>Top up</b><small>Mon, 09:15</small></span><em class="pos">+1,000</em></div>
+        </div>
+        <nav class="tab" aria-hidden="true"><span class="on"><Icon name="house" size={15} weight="fill" /></span><span><Icon name="clock-counter-clockwise" size={15} /></span><span><Icon name="gear-six" size={15} /></span><span class="qr"><Icon name="qr-code" size={17} weight="bold" /></span></nav>
+      </MiniPhone>
+
+      <MiniPhone label="Pay with QR" bg="#fbfaf5">
+        <div class="pad">
+          <div class="top"><span class="back"><Icon name="caret-left" size={14} /></span><b class="ttl">Pay at the counter</b><span></span></div>
+          <div class="qrcard">
+            <p>Show this to the cashier</p>
+            <svg viewBox={`-2 -2 ${N + 4} ${N + 4}`} class="code" aria-hidden="true">
+              {[[0, 0], [N - 7, 0], [0, N - 7]].map(([x, y]) => (
+                <g><rect x={x} y={y} width="7" height="7" rx="1.4" fill="#141414" /><rect x={x + 1} y={y + 1} width="5" height="5" rx="1" fill="#f7d54a" /><rect x={x + 2} y={y + 2} width="3" height="3" rx="0.6" fill="#141414" /></g>
+              ))}
+              {cells.map(([x, y]) => <rect x={x + 0.08} y={y + 0.08} width="0.84" height="0.84" rx="0.2" fill="#141414" />)}
+            </svg>
+            <b>WALLET · 814-SSV</b>
+            <small>Refreshes in 0:42</small>
+          </div>
+          <div class="after"><span>Balance</span><b>2,800 credits</b></div>
+          <div class="hint"><Icon name="device-mobile" size={14} />Works offline at the counter</div>
+        </div>
+      </MiniPhone>
+
+      <MiniPhone label="Receipt" bg="#d9d7cf">
+        <div class="dim" aria-hidden="true"><b class="logo">PURE PREP</b></div>
+        <div class="sheet">
+          <span class="ok"><Icon name="check" size={16} weight="bold" /></span>
+          <p class="h">Thanks, enjoy your meal</p>
+          <p class="amt"><b>180</b><small>credits</small></p>
+          <dl>
+            <div><dt>Branch</dt><dd>Phuket</dd></div>
+            <div><dt>Time</dt><dd>Today, 12:40</dd></div>
+            <div><dt>Confirmation</dt><dd class="mono">KV9V62JV</dd></div>
+            <div><dt>Balance left</dt><dd>2,620 credits</dd></div>
+          </dl>
+          <span class="done">Done</span>
+        </div>
+      </MiniPhone>
+    </div>
+  </div>
+  <p class="cap">Re-drawn from the design with sample balances and branches.</p>
+</div>
+
+<style>
+  .mw {
+    container-type: inline-size;
+    --y: #f7d54a;
+    --ink: #141414;
+    --mute: #8a877c;
+    --line: #ecebe4;
+  }
+  .row {
+    display: flex;
+    justify-content: center;
+    gap: 26px;
+    padding: 34px 18px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .row::-webkit-scrollbar {
+    display: none;
+  }
+  .row > :global(*) {
+    scroll-snap-align: center;
+  }
+  .pad {
+    padding: 4px 14px 0;
+  }
+  .top {
+    display: grid;
+    grid-template-columns: 24px 1fr 24px;
+    align-items: center;
+    margin: 4px 0 10px;
+  }
+  .top .logo {
+    grid-column: 1 / 3;
+  }
+  .logo {
+    font-weight: 850;
+    font-size: 17px;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .ttl {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .sq,
+  .back {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background: var(--ink);
+    color: var(--y);
+  }
+  .back {
+    background: #fff;
+    color: var(--ink);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .loc {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .loc > span {
+    display: grid;
+    flex: 1;
+    line-height: 1.25;
+  }
+  .loc small,
+  .tile small,
+  .tx small {
+    color: var(--mute);
+    font-size: 10px;
+  }
+  .lbl {
+    margin: 12px 0 2px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--mute);
+  }
+  .bal {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    margin: 0;
+  }
+  .bal b {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .bal small {
+    color: var(--mute);
+  }
+  .chart {
+    display: block;
+    width: 100%;
+    height: 46px;
+    margin-top: 4px;
+  }
+  .area {
+    fill: color-mix(in srgb, var(--y) 45%, transparent);
+  }
+  .ln {
+    fill: none;
+    stroke: #d9ad12;
+    stroke-width: 1.4;
+    vector-effect: non-scaling-stroke;
+  }
+  .dot {
+    fill: #d9ad12;
+  }
+  .per {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0 0;
+    font-size: 10px;
+    color: var(--mute);
+  }
+  .per b {
+    padding: 0 7px;
+    border-radius: 6px;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 600;
+  }
+  .tiles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    margin-top: 12px;
+  }
+  .tile {
+    display: grid;
+    gap: 2px;
+    padding: 9px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .tile.y {
+    background: #fff8d6;
+    box-shadow: 0 0 0 1px #f3e3a0;
+  }
+  .tx {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .tx > span:nth-child(2) {
+    display: grid;
+    flex: 1;
+    line-height: 1.25;
+  }
+  .ti {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background: #f3f2ec;
+  }
+  .tx em {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 11px;
+  }
+  .neg {
+    color: #b2392c;
+  }
+  .pos {
+    color: #1f7a45;
+  }
+  .tab {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 5px 5px 14px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line), 0 10px 20px -12px rgb(0 0 0 / 0.3);
+    color: var(--mute);
+  }
+  .tab .on {
+    color: var(--ink);
+  }
+  .tab .qr {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: var(--ink);
+    color: var(--y);
+  }
+
+  .qrcard {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 14px 14px 12px;
+    border-radius: 18px;
+    background: var(--y);
+    text-align: center;
+  }
+  .qrcard p {
+    margin: 0;
+    font-weight: 600;
+  }
+  .code {
+    width: 150px;
+    height: 150px;
+    padding: 0;
+    border-radius: 12px;
+    background: #fff9dc;
+  }
+  .qrcard small {
+    color: #6f5d10;
+    font-size: 10px;
+  }
+  .after {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .after span,
+  .hint {
+    color: var(--mute);
+  }
+  .hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 10.5px;
+  }
+
+  .dim {
+    padding: 8px 14px;
+    opacity: 0.35;
+  }
+  .sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 18px 16px 16px;
+    border-radius: 22px 22px 0 0;
+    background: #fff;
+    text-align: center;
+  }
+  .ok {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--y);
+    color: var(--ink);
+  }
+  .h {
+    margin: 2px 0 0;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .amt {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin: 0;
+  }
+  .amt b {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .amt small {
+    color: var(--mute);
+  }
+  dl {
+    width: 100%;
+    margin: 6px 0 4px;
+    text-align: left;
+  }
+  dl div {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-top: 1px dashed var(--line);
+  }
+  dt {
+    color: var(--mute);
+  }
+  dd {
+    margin: 0;
+    font-weight: 550;
+  }
+  .mono {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+  }
+  .done {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 600;
+  }
+  .cap {
+    margin: 12px 0 0;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    text-align: center;
+  }
+  @container (max-width: 760px) {
+    .row {
+      justify-content: flex-start;
+      gap: 16px;
+      padding: 24px 16px;
+    }
+    .code {
+      width: 124px;
+      height: 124px;
+    }
+  }
+</style>

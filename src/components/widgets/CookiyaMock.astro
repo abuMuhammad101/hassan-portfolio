@@ -1,0 +1,505 @@
+---
+/* Cookiya, re-drawn from the running app: tonight's picks, a recipe that
+   knows what's in the pantry, and cook mode one step at a time. Dishes are
+   illustrated stand-ins for the food photography. */
+import Icon from "../Icon.astro";
+import MiniPhone from "./MiniPhone.astro";
+import "@fontsource-variable/fraunces/index.css";
+import "../../styles/story.css";
+
+// A bowl of aloo palak from above: spinach curry, potato, a swirl of cream.
+const potatoes = [
+  [40, 44, 12], [58, 36, -18], [62, 58, 30], [44, 62, -8], [52, 49, 50], [34, 54, 20],
+] as const;
+const ingredients = [
+  ["Potatoes", "3 medium, cubed", true],
+  ["Spinach", "1 large bunch", false],
+  ["Onion", "1, chopped", true],
+  ["Tomatoes", "2, chopped", true],
+  ["Ginger garlic paste", "1 tbsp", true],
+] as const;
+---
+
+<div class="ck">
+  <div class="s-canvas">
+    <span class="s-h tl" aria-hidden="true"></span><span class="s-h tr" aria-hidden="true"></span>
+    <span class="s-h bl" aria-hidden="true"></span><span class="s-h br" aria-hidden="true"></span>
+    <div class="row">
+      <MiniPhone label="Tonight's picks" bg="#f7f0e6">
+        <div class="pad">
+          <div class="hd"><div><b class="brand">Cookiya</b><small>Tuesday evening</small></div><span class="av">S</span></div>
+          <p class="sec">Tonight's picks <small>3 for you</small></p>
+          <div class="pick">
+            <span class="num">01</span>
+            <span class="tag">Ready now</span>
+            <svg class="bowl" viewBox="0 0 100 100" aria-hidden="true"><use href="#ck-bowl" /></svg>
+            <b class="dish">Aloo Palak</b>
+            <small>30 min · 5 ingredients · serves 4</small>
+            <span class="acts"><span class="ghost"><Icon name="bookmark-simple" size={12} />Save</span><span class="solid">Cook</span></span>
+          </div>
+          <div class="chips"><b>All</b><span>Ready now</span><span>Under 30 min</span></div>
+        </div>
+        <nav class="tab" aria-hidden="true"><span class="on"><Icon name="cooking-pot" size={16} weight="fill" />Tonight</span><span><Icon name="basket" size={16} />Pantry</span><span><Icon name="list-checks" size={16} />List</span><span><Icon name="bookmark-simple" size={16} />Saved</span></nav>
+      </MiniPhone>
+
+      <MiniPhone label="Recipe" bg="#f7f0e6">
+        <div class="hero"><svg class="bowl big" viewBox="0 0 100 100" aria-hidden="true"><use href="#ck-bowl" /></svg><span class="back"><Icon name="caret-left" size={13} /></span></div>
+        <div class="pad">
+          <b class="dish lg">Aloo Palak</b>
+          <dl class="meta"><div><dt>Level</dt><dd>Easy</dd></div><div><dt>Time</dt><dd>30 min</dd></div><div><dt>Serves</dt><dd>4</dd></div></dl>
+          <p class="sec sm">Ingredients <small>4 of 5 at home</small></p>
+          <span class="have" aria-hidden="true"><i></i></span>
+          <ul class="ing">
+            {ingredients.map(([n, q, have]) => (
+              <li class:list={[{ need: !have }]}><span class="box">{have && <Icon name="check" size={9} weight="bold" />}</span><span><b>{n}</b><small>{q}</small></span>{!have && <em>Add to list</em>}</li>
+            ))}
+          </ul>
+        </div>
+        <div class="bar"><span class="step"><Icon name="minus" size={11} /><b>4</b><Icon name="plus" size={11} /></span><span class="solid wide">Start cooking</span></div>
+      </MiniPhone>
+
+      <MiniPhone label="Cook mode" bg="#fbf7f1">
+        <div class="pad cook">
+          <div class="hd"><span class="back"><Icon name="x" size={12} /></span><b class="ttl">Aloo Palak</b><span class="cnt">2 / 5</span></div>
+          <span class="prog" aria-hidden="true"><i></i></span>
+          <span class="big-num">02</span>
+          <p class="stepx">Add ginger garlic paste, tomatoes and spices. Cook into a soft masala.</p>
+          <div class="chips soft"><span>Tomatoes · 2</span><span>Ginger garlic · 1 tbsp</span><span>Red chilli · ½ tsp</span></div>
+          <div class="timer"><Icon name="timer" size={15} /><span><b>6:00</b><small>until the oil separates</small></span><span class="go"><Icon name="play" size={11} weight="fill" /></span></div>
+        </div>
+        <div class="bar"><span class="ghost">Back</span><span class="solid wide">Next step</span></div>
+      </MiniPhone>
+    </div>
+  </div>
+  <p class="cap">Re-drawn from the running app. Dishes are illustrated stand-ins for food photos.</p>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <radialGradient id="ck-curry" cx="0.45" cy="0.4" r="0.6">
+        <stop offset="0" stop-color="#7c8f2e" />
+        <stop offset="0.6" stop-color="#55691f" />
+        <stop offset="1" stop-color="#3d4b16" />
+      </radialGradient>
+      <radialGradient id="ck-plate" cx="0.4" cy="0.35" r="0.7">
+        <stop offset="0" stop-color="#3a3532" />
+        <stop offset="1" stop-color="#1e1b19" />
+      </radialGradient>
+      <g id="ck-bowl">
+        <circle cx="50" cy="52" r="46" fill="#000" opacity="0.12" />
+        <circle cx="50" cy="50" r="46" fill="url(#ck-plate)" />
+        <circle cx="50" cy="50" r="38" fill="url(#ck-curry)" />
+        {potatoes.map(([x, y, r]) => <rect x={x - 5} y={y - 4.5} width="10" height="9" rx="2.6" fill="#e8c46a" stroke="#c99a38" stroke-width="0.8" transform={`rotate(${r} ${x} ${y})`} />)}
+        <path d="M36 40 C 44 34, 58 36, 60 44 C 62 52, 50 56, 46 50" fill="none" stroke="#f6efe2" stroke-width="2.4" stroke-linecap="round" opacity="0.9" />
+        <path d="M60 64 l6 -3 M64 34 l5 3" stroke="#c43a22" stroke-width="2.2" stroke-linecap="round" />
+        <circle cx="30" cy="46" r="1.3" fill="#e9e1cf" /><circle cx="68" cy="50" r="1.3" fill="#e9e1cf" /><circle cx="50" cy="70" r="1.3" fill="#e9e1cf" />
+      </g>
+    </defs>
+  </svg>
+</div>
+
+<style>
+  .ck {
+    container-type: inline-size;
+    --t: #c4612f;
+    --ink: #2a2420;
+    --mute: #8d8173;
+    --line: #eadfd0;
+    --serif: "Fraunces Variable", Georgia, serif;
+  }
+  .row {
+    display: flex;
+    justify-content: center;
+    gap: 26px;
+    padding: 34px 18px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .row::-webkit-scrollbar {
+    display: none;
+  }
+  .row > :global(*) {
+    scroll-snap-align: center;
+  }
+  .pad {
+    padding: 4px 14px 0;
+  }
+  .hd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4px 0 8px;
+  }
+  .hd > div {
+    display: grid;
+    line-height: 1.15;
+  }
+  .brand {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .hd small,
+  .sec small,
+  .pick small,
+  .ing small {
+    color: var(--mute);
+    font-size: 10px;
+    font-weight: 400;
+  }
+  .av {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ecd7c4;
+    color: #7a3d1c;
+    font-weight: 650;
+  }
+  .sec {
+    display: flex;
+    gap: 8px;
+    white-space: nowrap;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 10px 0 8px;
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .sec.sm {
+    margin-top: 12px;
+    font-size: 13px;
+  }
+  .pick {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    padding: 14px 14px 12px;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line), 0 14px 26px -18px rgb(90 50 20 / 0.35);
+    text-align: center;
+  }
+  .num {
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 300;
+    color: #e6d6c2;
+  }
+  .tag {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #e4f1e1;
+    color: #2d6a33;
+    font-size: 9.5px;
+    font-weight: 600;
+  }
+  .bowl {
+    width: 112px;
+    height: 112px;
+    margin: 10px 0 4px;
+  }
+  .dish {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .dish.lg {
+    display: block;
+    margin-top: 4px;
+    font-size: 21px;
+  }
+  .acts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .ghost,
+  .solid {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .ghost {
+    box-shadow: inset 0 0 0 1px var(--line);
+    background: #fff;
+  }
+  .solid {
+    background: var(--t);
+    color: #fff;
+  }
+  .wide {
+    flex: 1;
+  }
+  .chips {
+    display: flex;
+    gap: 5px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .chips > * {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px var(--line);
+    font-size: 10px;
+  }
+  .chips b {
+    background: var(--ink);
+    color: #fff;
+    box-shadow: none;
+  }
+  .chips.soft > * {
+    background: #f3e9dc;
+    box-shadow: none;
+  }
+  .tab {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 8px 6px 14px;
+    background: #fffaf3;
+    border-top: 1px solid var(--line);
+    color: var(--mute);
+    font-size: 9px;
+  }
+  .tab span {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+  }
+  .tab .on {
+    color: var(--t);
+    font-weight: 600;
+  }
+
+  .hero {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 150px;
+    margin-top: -32px;
+    padding-top: 32px;
+    background: radial-gradient(circle at 50% 60%, #f1dcc4, #e9cdae 70%);
+  }
+  .bowl.big {
+    width: 128px;
+    height: 128px;
+  }
+  .back {
+    position: absolute;
+    top: 38px;
+    left: 12px;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #fffaf3;
+  }
+  .hd .back {
+    position: static;
+    background: #f3e9dc;
+  }
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 10px 0 0;
+    padding: 8px 0;
+    border-block: 1px solid var(--line);
+  }
+  .meta dt {
+    font-size: 9.5px;
+    color: var(--mute);
+  }
+  .meta dd {
+    margin: 0;
+    font-weight: 600;
+  }
+  .have {
+    display: block;
+    height: 4px;
+    border-radius: 2px;
+    background: #efe3d4;
+  }
+  .have i {
+    display: block;
+    width: 80%;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--t);
+  }
+  .ing {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+  }
+  .ing li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid #f1e8dc;
+  }
+  .ing li > span:nth-child(2) {
+    display: grid;
+    flex: 1;
+    line-height: 1.2;
+  }
+  .ing b {
+    font-weight: 550;
+  }
+  .box {
+    display: grid;
+    place-items: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 4px;
+    background: var(--t);
+    color: #fff;
+  }
+  .need .box {
+    background: #fff;
+    box-shadow: inset 0 0 0 1.5px #d9c7b1;
+  }
+  .ing em {
+    font-style: normal;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--t);
+  }
+  .bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px 16px;
+    background: linear-gradient(transparent, var(--scr) 30%);
+  }
+  .step {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+
+  .cook .ttl {
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .cnt {
+    color: var(--mute);
+    font-size: 10.5px;
+  }
+  .prog {
+    display: block;
+    height: 3px;
+    margin: 4px 0 18px;
+    border-radius: 2px;
+    background: #efe3d4;
+  }
+  .prog i {
+    display: block;
+    width: 40%;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--t);
+  }
+  .big-num {
+    display: block;
+    font-family: var(--serif);
+    font-size: 54px;
+    font-weight: 300;
+    line-height: 1;
+    color: #e3cfb6;
+  }
+  .stepx {
+    margin: 8px 0 14px;
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  .timer {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 16px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px var(--line);
+    color: var(--t);
+  }
+  .timer > span:nth-child(2) {
+    display: grid;
+    flex: 1;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .timer b {
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+  }
+  .timer small {
+    color: var(--mute);
+    font-size: 10px;
+  }
+  .go {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--t);
+    color: #fff;
+  }
+  .cap {
+    margin: 12px 0 0;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    text-align: center;
+  }
+  @container (max-width: 760px) {
+    .row {
+      justify-content: flex-start;
+      gap: 16px;
+      padding: 24px 16px;
+    }
+    .stepx {
+      font-size: 16px;
+    }
+    .bowl {
+      width: 92px;
+      height: 92px;
+    }
+  }
+</style>

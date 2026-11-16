@@ -9,6 +9,8 @@ import Icon from "../../components/Icon.astro";
 import InventoryMock from "../../components/widgets/InventoryMock.astro";
 import LandlordMock from "../../components/widgets/LandlordMock.astro";
 import ExamMock from "../../components/widgets/ExamMock.astro";
+import MealWalletMock from "../../components/widgets/MealWalletMock.astro";
+import CookiyaMock from "../../components/widgets/CookiyaMock.astro";
 import "../../styles/story.css";
 
 export async function getStaticPaths() {
@@ -73,6 +75,8 @@ const siblings = entry
         {widget === "inventory" && <InventoryMock />}
         {widget === "landlord" && <LandlordMock />}
         {widget === "exam" && <ExamMock />}
+        {widget === "meal" && <MealWalletMock />}
+        {widget === "cookiya" && <CookiyaMock />}
         {!widget && image && (
           <figure class="frame">
             <span class="s-h tl" aria-hidden="true"></span><span class="s-h tr" aria-hidden="true"></span>
