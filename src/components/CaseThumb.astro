@@ -7,93 +7,40 @@ interface Props {
   kind: string;
 }
 const { kind } = Astro.props;
+// Two faces per project, captured from the prototypes and products on the
+// case-study pages, so the peek is the real thing.
+const faces: Record<string, [string, string, boolean?]> = {
+  "pilgrim-transport": ["/media/peek/pilgrim-1.webp", "/media/peek/pilgrim-2.webp"],
+  "therapy-documentation": ["/media/peek/therapy-1.webp", "/media/peek/therapy-2.webp"],
+  "clinical-copilot": ["/media/peek/copilot-1.webp", "/media/peek/copilot-2.webp"],
+  "claims-agent-console": ["/media/peek/claims-1.webp", "/media/peek/claims-2.webp"],
+  clicker: ["/media/clicker/w-aging-light.webp", "/media/clicker/c-stages-dark.webp"],
+  istyme: ["/media/istyme/en-welcome.webp", "/media/istyme/en-home.webp", true],
+  "hh-global": ["/media/hh/home.webp", "/media/hh/catalogue.webp"],
+  "quick-service-app": ["/media/peek/qs-1.webp", "/media/peek/qs-2.webp"],
+};
+const face = faces[kind];
+const marks: Record<string, string> = {
+  "pilgrim-transport": "van",
+  "therapy-documentation": "heartbeat",
+  "clinical-copilot": "microphone",
+  "claims-agent-console": "receipt",
+  clicker: "squares-four",
+  istyme: "map-pin-area",
+  "hh-global": "t-shirt",
+  "quick-service-app": "hamburger",
+};
 ---
 
 <div class={`folder ${kind}`} aria-hidden="true">
   <div class="back"><span class="tab"></span></div>
-
-  <div class="sheet s1">
-    {kind === "pilgrim-transport" && (
-      <div class="pad">
-        <span class="tag green"><Icon name="seal-check" weight="fill" size={9} /> Private drivers</span>
-        <span class="h">Your pilgrimage, driven with care.</span>
-        <span class="search"><i></i><i></i><b>Check</b></span>
-      </div>
-    )}
-    {kind === "therapy-documentation" && (
-      <div class="pad list">
-        <span class="row"><Icon name="clipboard-text" size={10} /> Evaluation <em class="ok">Signed</em></span>
-        <span class="row"><Icon name="file-text" size={10} /> Plan of care <em class="ok">Certified</em></span>
-        <span class="row dim"><Icon name="note-pencil" size={10} /> Session note <em>Ready</em></span>
-      </div>
-    )}
-    {kind === "clinical-copilot" && (
-      <div class="pad list">
-        <span class="row"><b class="av">A</b> Patient A <em class="ok">Seen</em></span>
-        <span class="row"><b class="av">B</b> Patient B <em class="wait">Waiting</em></span>
-        <span class="row"><b class="av">C</b> Patient C <em>11:15</em></span>
-      </div>
-    )}
-    {kind === "claims-agent-console" && (
-      <div class="pad list">
-        <span class="row"><Icon name="code" size={10} /> Coding <em>386</em></span>
-        <span class="row"><Icon name="shield-check" size={10} /> Eligibility <em>301</em></span>
-        <span class="row"><Icon name="arrows-counter-clockwise" size={10} /> Denials <em class="wait">Loop</em></span>
-      </div>
-    )}
-    {kind === "clicker" && <img class="real" src="/media/clicker/w-aging-light.webp" alt="" loading="lazy" />}
-    {kind === "istyme" && <img class="real phone" src="/media/istyme/en-welcome.webp" alt="" loading="lazy" />}
-    {kind === "hh-global" && <img class="real" src="/media/hh/home.webp" alt="" loading="lazy" />}
-    {kind === "quick-service-app" && (
-      <div class="pad list">
-        <span class="row"><b class="av">D</b> Delivery <em>Off</em></span>
-        <span class="row"><b class="av">P</b> Pickup <em class="ok">1.8 km</em></span>
-        <span class="row dim">Outside the delivery zone</span>
-      </div>
-    )}
-  </div>
-
-  <div class="sheet s2">
-    {kind === "pilgrim-transport" && (
-      <div class="pad">
-        <span class="art"><Icon name="mosque" weight="duotone" size={22} /></span>
-        <span class="cap">Makkah <Icon name="arrow-right" size={8} /> Madinah</span>
-      </div>
-    )}
-    {kind === "therapy-documentation" && (
-      <div class="pad">
-        <span class="alert"><Icon name="warning-circle" weight="fill" size={11} /> Plan isn't certified yet</span>
-        <span class="line"></span><span class="line short"></span>
-        <span class="s-btn">Request certification</span>
-      </div>
-    )}
-    {kind === "clinical-copilot" && (
-      <div class="pad">
-        <span class="cop"><span class="spark"><Icon name="sparkle" weight="fill" size={8} /></span> Copilot</span>
-        <span class="q">Which patient is this for?</span>
-        <span class="btns"><b>Patient B</b><i>Patient C</i></span>
-      </div>
-    )}
-    {kind === "claims-agent-console" && (
-      <div class="pad dark">
-        <span class="qlbl">Priority queue</span>
-        <span class="amt">AED 18,400</span>
-        <span class="qsub">3h left · coding mismatch</span>
-      </div>
-    )}
-    {kind === "clicker" && <img class="real" src="/media/clicker/c-stages-dark.webp" alt="" loading="lazy" />}
-    {kind === "istyme" && <img class="real phone" src="/media/istyme/en-home.webp" alt="" loading="lazy" />}
-    {kind === "hh-global" && <img class="real" src="/media/hh/catalogue.webp" alt="" loading="lazy" />}
-    {kind === "quick-service-app" && (
-      <div class="pad">
-        <span class="alert vio"><Icon name="storefront" weight="fill" size={10} /> Pick up at Gate Branch</span>
-        <span class="line"></span><span class="line short"></span>
-        <span class="s-btn vio">Recommended</span>
-      </div>
-    )}
-  </div>
-
-  <div class="front"><span class="seam"></span></div>
+  {face && (
+    <>
+      <div class="sheet s1"><img class:list={["real", { phone: face[2] }]} src={face[0]} alt="" loading="lazy" decoding="async" /></div>
+      <div class="sheet s2"><img class:list={["real", { phone: face[2] }]} src={face[1]} alt="" loading="lazy" decoding="async" /></div>
+    </>
+  )}
+  <div class="front"><span class="seam"></span>{marks[kind] && <span class="mark"><Icon name={marks[kind]} weight="duotone" size={22} /></span>}</div>
 </div>
 
 <style>
@@ -108,7 +55,7 @@ const { kind } = Astro.props;
     --ok: #1f8a4c;
     --warn: #b7791f;
     position: relative;
-    height: 196px;
+    height: 212px;
     margin: 10px 0 0;
     transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -142,12 +89,12 @@ const { kind } = Astro.props;
     position: absolute;
     top: 24px;
     left: 50%;
-    width: 56%;
-    height: 124px;
-    border-radius: 9px;
+    width: 58%;
+    height: 150px;
+    border-radius: 10px;
     background: var(--paper);
     color: var(--p-ink);
-    box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.45);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.06), 0 8px 18px -8px rgb(0 0 0 / 0.5);
     overflow: hidden;
     transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     /* Keeps the tilted edges smooth instead of stair-stepped. */
@@ -157,25 +104,25 @@ const { kind } = Astro.props;
     line-height: 1.3;
   }
   .s1 {
-    transform: translateX(-78%) rotate(-7deg);
+    transform: translateX(-80%) rotate(-6deg);
   }
   .s2 {
     transform: translateX(-24%) rotate(6deg);
   }
   :global(.card:hover) .s1,
   :global(.card:focus-visible) .s1 {
-    transform: translateX(-86%) translateY(-18px) rotate(-11deg);
+    transform: translateX(-88%) translateY(-26px) rotate(-9deg);
   }
   :global(.card:hover) .s2,
   :global(.card:focus-visible) .s2 {
-    transform: translateX(-16%) translateY(-22px) rotate(9deg);
+    transform: translateX(-14%) translateY(-30px) rotate(8deg);
   }
   .front {
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
-    height: 56%;
+    height: 40%;
     border-radius: 14px;
     background: var(--f-front);
     box-shadow:
@@ -190,6 +137,18 @@ const { kind } = Astro.props;
     right: 14px;
     top: 12px;
     border-top: 1px solid rgb(255 255 255 / 0.08);
+  }
+  /* A debossed mark: which product this folder holds, felt more than seen. */
+  .mark {
+    position: absolute;
+    right: 16px;
+    bottom: 14px;
+    color: rgb(255 255 255 / 0.22);
+    transition: color 0.45s;
+  }
+  :global(.card:hover) .mark,
+  :global(.card:focus-visible) .mark {
+    color: rgb(255 255 255 / 0.5);
   }
   @media (prefers-reduced-motion: reduce) {
     .sheet {
@@ -208,191 +167,5 @@ const { kind } = Astro.props;
   .real.phone {
     object-position: 50% 9%;
     background: #fff;
-  }
-  .sheet:has(.dark) {
-    background: #0d1424;
-    color: #fff;
-  }
-  .dark {
-    display: grid;
-    gap: 3px;
-  }
-  .qlbl {
-    font-size: 8.5px;
-    opacity: 0.6;
-  }
-  .amt {
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-top: 6px;
-  }
-  .qsub {
-    font-size: 8.5px;
-    color: #fca5a5;
-  }
-  .alert.vio { background: #eeedfb; color: #4a3fcf; }
-  .s-btn.vio { background: #4a3fcf; }
-  .pad {
-    padding: 9px;
-    display: grid;
-    gap: 5px;
-  }
-  .tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    font-weight: 600;
-  }
-  .green {
-    color: var(--brand);
-  }
-  .h {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-  .search {
-    display: flex;
-    gap: 3px;
-    padding: 3px;
-    border: 1px solid var(--p-rule);
-    border-radius: 6px;
-  }
-  .search i {
-    flex: 1;
-    height: 12px;
-    border-radius: 3px;
-    background: #f1efea;
-  }
-  .search b {
-    background: var(--brand);
-    color: #fff;
-    border-radius: 4px;
-    padding: 0 6px;
-    font-size: 8.5px;
-    line-height: 12px;
-  }
-  .art {
-    height: 62px;
-    border-radius: 6px;
-    display: grid;
-    place-items: center;
-    color: var(--brand);
-    background: linear-gradient(135deg, #f4e3bd, #d6ece6);
-  }
-  .cap {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    font-weight: 600;
-  }
-  .list {
-    gap: 0;
-    padding: 5px 9px;
-  }
-  .row {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--p-rule);
-    font-weight: 500;
-  }
-  .row:last-child {
-    border-bottom: none;
-  }
-  .row.dim {
-    color: var(--p-muted);
-  }
-  .row em {
-    margin-left: auto;
-    font-style: normal;
-    font-size: 8px;
-    padding: 1px 5px;
-    border-radius: 99px;
-    background: #f1efea;
-    color: var(--p-muted);
-  }
-  .row em.ok {
-    background: #dff1e6;
-    color: var(--ok);
-  }
-  .row em.wait {
-    background: #f6ead2;
-    color: var(--warn);
-  }
-  .av {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    font-size: 7.5px;
-    background: #e3e8fb;
-  }
-  .alert {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-weight: 600;
-    padding: 5px 6px;
-    border-radius: 5px;
-    background: #fbf1df;
-  }
-  .alert :global(svg) {
-    color: var(--warn);
-  }
-  .line {
-    height: 5px;
-    border-radius: 3px;
-    background: #ecebe6;
-  }
-  .line.short {
-    width: 60%;
-  }
-  .s-btn {
-    justify-self: start;
-    border: 1px solid var(--p-rule);
-    border-radius: 5px;
-    padding: 2px 6px;
-    font-weight: 500;
-  }
-  .cop {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-weight: 600;
-  }
-  .spark {
-    width: 13px;
-    height: 13px;
-    display: grid;
-    place-items: center;
-    border-radius: 4px;
-    background: var(--p-ink);
-    color: #fff;
-  }
-  .q {
-    font-size: 11px;
-    font-weight: 500;
-  }
-  .btns {
-    display: flex;
-    gap: 4px;
-  }
-  .btns b,
-  .btns i {
-    font-style: normal;
-    border-radius: 5px;
-    padding: 2px 6px;
-    border: 1px solid var(--p-ink);
-  }
-  .btns b {
-    background: var(--p-ink);
-    color: #fff;
-  }
-  .btns i {
-    border-color: var(--p-rule);
   }
 </style>
