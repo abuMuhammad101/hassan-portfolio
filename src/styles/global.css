@@ -263,7 +263,9 @@ html.lenis body {
 @view-transition {
   navigation: auto;
 }
-.site-header {
+/* The name sits on the pill, not the header around it: a named element
+   becomes a backdrop root, and the pill's glass blur would see nothing. */
+.site-header .pill {
   view-transition-name: site-header;
 }
 ::view-transition-old(root) {
