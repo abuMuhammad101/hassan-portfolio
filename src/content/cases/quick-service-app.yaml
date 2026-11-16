@@ -9,7 +9,7 @@ meta:
   - { label: Domain, value: "Food ordering, Gulf" }
 ndaRecreated: true
 widget: range-audit
-widgetIntro: "Move the distance slider and add the item to the cart. Before, the app refuses you at the moment you want it most. After, it tells you the truth when it opens and offers the best way to still get your food."
+widgetIntro: "The same customer, 4.6 km from the nearest branch, goes through the same four moments twice: before the audit and after it. Let it play, or pick a moment."
 stats:
   - { value: "46", unit: screens, label: "Reviewed across five flows in the customer and rider apps" }
   - { value: "45", unit: findings, label: "16 of them high severity, each tied to a behavioural principle and a fix" }

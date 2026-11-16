@@ -1,188 +1,977 @@
 ---
-/* The audit's central finding, re-created with a stand-in brand and menu:
-   decide the channel when the app opens, not when someone adds to cart. */
-import PhoneFrame from "../PhoneFrame.astro";
+/* The audit's central finding as a story, re-created with a stand-in brand
+   and menu. The same customer, 4.6 km from the nearest branch, goes through
+   four moments twice: before the audit and after it. */
 import Icon from "../Icon.astro";
+
+const chapters = [
+  {
+    title: "The app opens",
+    before: "Nothing says they're 4.6 km away, far outside the 1 km delivery zone.",
+    after: "The header tells the truth in the first second, and offers pickup right there.",
+  },
+  {
+    title: "They choose dinner",
+    before: "Appetite builds. They customise the order and the intent peaks.",
+    after: "Every item carries a pickup tag and its points, so the choice is already made.",
+  },
+  {
+    title: "They tap Add to cart",
+    before: "Only now does the range check fire: a refusal, then four equal partner links.",
+    after: "If they still want delivery: one recommended option, two alternatives, and the cart is kept.",
+  },
+  {
+    title: "What happens next",
+    before: "They leave, and the order, their data and the loyalty points go with them.",
+    after: "The order stays in the app: ready in about 15 minutes, points earned.",
+  },
+];
 ---
 
-<div class="ra" data-ra data-view="after" data-km="1.8">
-  <div class="controls">
-    <div class="switch" role="group" aria-label="Before or after the audit">
+<div class="ks" data-ks data-view="after" data-playing="false">
+  <p class="kicker">A customer 4.6 km from the nearest branch wants dinner.</p>
+  <div class="bars" aria-hidden="true">{chapters.map(() => <span><i></i></span>)}</div>
+  <ol class="chapters">
+    {chapters.map((c, i) => (
+      <li data-ch class:list={[{ on: i === 0 }]}>
+        <span class="timer" aria-hidden="true"><i></i></span>
+        <button type="button">
+          <span class="num tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+          <span class="title">{c.title}</span>
+        </button>
+      </li>
+    ))}
+  </ol>
+  <div class="stage">
+      <!-- Before ------------------------------------------------------- -->
+      <figure class="dev before" aria-label="Before the audit">
+        <figcaption><i></i>Before</figcaption>
+        <div class="phone">
+          <div class="scr" data-shot="0">
+            <div class="bar-top"><span class="addr-empty"><Icon name="map-pin" size={13} /> Deliver to <b>Set your address</b> <Icon name="caret-down" size={11} /></span></div>
+            <div class="search"><Icon name="magnifying-glass" size={13} /> Search the menu</div>
+            <p class="h">Most loved</p>
+            <div class="grid">
+              <div class="item"><span class="plate p1"><Icon name="hamburger" size={22} /></span><b>Crispy chicken</b><small>SAR 26</small></div>
+              <div class="item"><span class="plate p2"><Icon name="bowl-food" size={22} /></span><b>Rice bowl</b><small>SAR 24</small></div>
+              <div class="item"><span class="plate p3"><Icon name="coffee" size={22} /></span><b>Spiced tea</b><small>SAR 6</small></div>
+              <div class="item"><span class="plate p1"><Icon name="hamburger" size={22} /></span><b>Wrap meal</b><small>SAR 21</small></div>
+            </div>
+          </div>
+
+          <div class="scr" data-shot="1">
+            <div class="hero-plate"><span class="plate big p1"><Icon name="hamburger" size={44} /></span></div>
+            <b class="dish">Crispy chicken, 4 pcs</b>
+            <small class="sub">With fries, bun and garlic sauce</small>
+            <p class="h sm">Spice</p>
+            <div class="radio on">Classic</div>
+            <div class="radio">Spicy</div>
+            <p class="h sm">Extras</p>
+            <div class="radio check on">Extra garlic sauce <em>+2</em></div>
+            <div class="cta coral">Add to cart · SAR 28</div>
+          </div>
+
+          <div class="scr dim" data-shot="2">
+            <div class="modal">
+              <span class="ic bad"><Icon name="x-circle" size={22} /></span>
+              <b>Sorry, we don't deliver to your area</b>
+              <small>Order from us on:</small>
+              <div class="eq4"><span>Partner A</span><span>Partner B</span><span>Partner C</span><span>Partner D</span></div>
+            </div>
+          </div>
+
+          <div class="scr dim" data-shot="3">
+            <div class="lost">
+              <span class="ic"><Icon name="sign-out" size={20} /></span>
+              <b>Left for a partner app</b>
+              <ul>
+                <li><Icon name="x" size={11} /> The order</li>
+                <li><Icon name="x" size={11} /> Their details</li>
+                <li><Icon name="x" size={11} /> 260 points</li>
+              </ul>
+            </div>
+          </div>
+          <button type="button" class="tap prev" data-go="-1" aria-label="Previous chapter"></button>
+          <button type="button" class="tap next" data-go="1" aria-label="Next chapter"></button>
+        </div>
+        <div class="caps">{chapters.map((c, i) => <p class:list={["cap", { on: i === 0 }]} data-shot={i}>{c.before}</p>)}</div>
+      </figure>
+
+      <!-- After -------------------------------------------------------- -->
+      <figure class="dev after" aria-label="After the audit">
+        <figcaption><i></i>After</figcaption>
+        <div class="phone">
+          <div class="scr" data-shot="0">
+            <div class="seg"><span><Icon name="moped" size={12} /> Delivery</span><span class="on"><Icon name="storefront" size={12} /> Pickup</span></div>
+            <div class="loc"><span class="pin"><Icon name="map-pin" weight="fill" size={13} /></span><span><b>Home · Villa 4 <Icon name="caret-down" size={10} /></b><small>4.6 km from the nearest branch</small></span></div>
+            <span class="chip warn"><Icon name="warning-circle" size={11} /> Outside our delivery zone</span>
+            <div class="card-plum">
+              <b>Near the old town? Order ahead</b>
+              <small>Pick up at Gate Branch. Ready in about 15 min, and you earn points.</small>
+              <span class="cta sm">Order for pickup</span>
+            </div>
+            <p class="h">Most loved</p>
+            <div class="grid two">
+              <div class="item"><span class="plate p1"><Icon name="hamburger" size={22} /></span><b>Crispy chicken</b><small>SAR 26</small></div>
+              <div class="item"><span class="plate p2"><Icon name="bowl-food" size={22} /></span><b>Rice bowl</b><small>SAR 24</small></div>
+            </div>
+          </div>
+
+          <div class="scr" data-shot="1">
+            <span class="status"><i></i>Pickup · Gate Branch · ready in ~15 min</span>
+            <p class="h">Most loved</p>
+            <div class="grid">
+              <div class="item"><span class="plate p1"><Icon name="hamburger" size={22} /></span><b>Crispy chicken</b><small>SAR 26 <em>+26 pts</em></small><span class="tag">Pickup</span></div>
+              <div class="item"><span class="plate p2"><Icon name="bowl-food" size={22} /></span><b>Rice bowl</b><small>SAR 24 <em>+24 pts</em></small><span class="tag">Pickup</span></div>
+              <div class="item"><span class="plate p3"><Icon name="coffee" size={22} /></span><b>Spiced tea</b><small>SAR 6 <em>+6 pts</em></small><span class="tag">Pickup</span></div>
+              <div class="item"><span class="plate p1"><Icon name="hamburger" size={22} /></span><b>Wrap meal</b><small>SAR 21 <em>+21 pts</em></small><span class="tag">Pickup</span></div>
+            </div>
+          </div>
+
+          <div class="scr dim" data-shot="2">
+            <div class="sheet">
+              <span class="grab"></span>
+              <b class="st-h">We can't deliver to Villa 4 yet</b>
+              <small class="sub">Your crispy chicken is saved. How would you like it?</small>
+              <div class="opt on"><span class="oi"><Icon name="storefront" size={14} /></span><span><b>Pick up at Gate Branch</b><small><em class="best">Best value</em> Ready in ~15 min · +350 pts</small></span><i class="rd"></i></div>
+              <div class="opt"><span class="oi"><Icon name="arrow-square-out" size={14} /></span><span><b>Deliver with a partner</b><small>Their fees apply · no points</small></span><i class="rd"></i></div>
+              <div class="opt"><span class="oi"><Icon name="bell-ringing" size={14} /></span><span><b>Tell me when you deliver here</b><small>One message when it opens</small></span><i class="rd"></i></div>
+              <span class="cta">Continue with pickup</span>
+            </div>
+          </div>
+
+          <div class="scr" data-shot="3">
+            <div class="done">
+              <span class="ring"><Icon name="check-circle" weight="fill" size={34} /></span>
+              <b>Order placed</b>
+              <small>Pick it up at Gate Branch</small>
+              <div class="eta"><span><small>Ready in</small><b>~15 min</b></span><span><small>Points</small><b>+350</b></span></div>
+              <span class="cta ghost">Directions to Gate Branch</span>
+            </div>
+          </div>
+          <button type="button" class="tap prev" data-go="-1" aria-label="Previous chapter"></button>
+          <button type="button" class="tap next" data-go="1" aria-label="Next chapter"></button>
+        </div>
+        <div class="caps">{chapters.map((c, i) => <p class:list={["cap", { on: i === 0 }]} data-shot={i}>{c.after}</p>)}</div>
+      </figure>
+  </div>
+
+  <div class="dock" role="toolbar" aria-label="Story controls">
+    <div class="seg-d" role="group" aria-label="Before or after the audit">
       <button type="button" data-view-btn="before" aria-pressed="false">Before</button>
       <button type="button" data-view-btn="after" aria-pressed="true">After</button>
     </div>
-    <label class="dist">
-      <span>Distance from the nearest branch <b data-km-out>1.8 km</b></span>
-      <input type="range" min="0.4" max="6" step="0.2" value="1.8" data-km-in aria-label="Distance from the nearest branch in kilometres" />
-      <span class="marks" aria-hidden="true"><i style="--at:10.7%">1 km</i><i style="--at:46.4%">3 km</i></span>
-    </label>
-    <p class="explain" data-explain></p>
-  </div>
-
-  <div class="phone-wrap">
-    <PhoneFrame label="Re-created ordering app">
-      <div class="app">
-        <!-- after: channel decided on open -->
-        <div class="top only-after">
-          <div class="seg" role="group" aria-label="Order type">
-            <button type="button" data-mode="delivery">Delivery</button>
-            <button type="button" data-mode="pickup">Pickup</button>
-          </div>
-          <p class="status" data-status></p>
-        </div>
-        <!-- before: an address and nothing else -->
-        <div class="top only-before">
-          <p class="addr"><small>Deliver to</small><b>Home · Villa 4</b></p>
-        </div>
-
-        <div class="hero">
-          <span class="tag">Most loved</span>
-          <div class="plate" aria-hidden="true"><i></i></div>
-          <b>Crispy chicken, 4 pcs</b>
-          <small>With fries, bun and garlic sauce</small>
-          <div class="row"><span class="price">SAR 26</span><button type="button" class="add" data-add>Add to cart</button></div>
-        </div>
-        <div class="mini" aria-hidden="true"><span>Spiced tea</span><span>Wraps</span><span>Deals</span></div>
-
-        <div class="toast" data-toast hidden></div>
-
-        <div class="sheet" data-sheet hidden>
-          <div class="before-sheet only-before">
-            <span class="sad"><Icon name="x-circle" size={22} /></span>
-            <b>Sorry, we don't deliver to your area</b>
-            <small>Order from us on:</small>
-            <span class="eq">Partner app A</span><span class="eq">Partner app B</span><span class="eq">Partner app C</span><span class="eq">Partner app D</span>
-            <em>No ranking, no reason to pick one, no way back.</em>
-          </div>
-          <div class="after-sheet only-after">
-            <b>We can't deliver this far yet</b>
-            <small>Your cart is saved.</small>
-            <button type="button" class="opt rec" data-pick-pickup><Icon name="storefront" size={16} /><span><b>Pick up at Gate Branch</b><small>Ready in about 15 min · points earned</small></span><em>Recommended</em></button>
-            <span class="opt"><Icon name="arrow-square-out" size={16} /><span><b>Order on a partner app</b><small>Prices may differ · no points there</small></span></span>
-            <span class="opt"><Icon name="bell-ringing" size={16} /><span><b>Tell me when you deliver here</b><small>We'll remember this address</small></span></span>
-          </div>
-          <button type="button" class="close" data-close>Close</button>
-        </div>
-      </div>
-    </PhoneFrame>
+    <span class="div" aria-hidden="true"></span>
+    <button type="button" class="play" data-play aria-label="Play the story">
+      <span class="i-play"><Icon name="play" weight="fill" size={14} /></span>
+      <span class="i-pause"><Icon name="pause" weight="fill" size={14} /></span>
+    </button>
   </div>
 </div>
 
 <script>
-  document.querySelectorAll<HTMLElement>("[data-ra]").forEach((root) => {
-    const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
-    const sheet = q("[data-sheet]"), toast = q("[data-toast]");
-    let mode = "pickup", t: number | undefined;
-    const km = () => parseFloat(root.dataset.km!);
-    const say = (msg: string) => { toast.textContent = msg; toast.hidden = false; clearTimeout(t); t = window.setTimeout(() => (toast.hidden = true), 2600); };
-    const render = () => {
-      const d = km(), view = root.dataset.view;
-      q("[data-km-out]").textContent = `${d.toFixed(1)} km`;
-      const band = d <= 1 ? "in" : d <= 3 ? "near" : "far";
-      root.dataset.band = band;
-      if (view === "after") {
-        const canDeliver = band === "in";
-        root.querySelector<HTMLButtonElement>('[data-mode="delivery"]')!.disabled = !canDeliver;
-        if (!canDeliver && mode === "delivery") mode = "pickup";
-        root.querySelectorAll<HTMLElement>("[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
-        q("[data-status]").innerHTML =
-          band === "in" ? (mode === "delivery" ? '<i class="ok"></i>Delivers here · 25–35 min' : '<i class="ok"></i>Pickup at Gate Branch · ready in 15 min')
-          : band === "near" ? `<i class="warn"></i>Outside the delivery zone · Pickup at Gate Branch, ${d.toFixed(1)} km`
-          : `<i class="bad"></i>${d.toFixed(1)} km from the nearest branch · see your options`;
-        q("[data-explain]").textContent =
-          band === "in" ? "Within 1 km the app defaults to its own delivery, with pickup one tap away."
-          : band === "near" ? "Between 1 and 3 km the app says so on open and defaults to pickup, so nothing is refused later."
-          : "Beyond 3 km the customer sees the honest options up front, and adding to cart opens a guided choice that keeps the cart.";
-      } else {
-        q("[data-explain]").textContent = d <= 1
-          ? "Inside 1 km, the original app works well."
-          : "Outside 1 km, the original app lets you browse and choose, then refuses at Add to cart, at peak intent.";
-      }
-    };
-    root.querySelectorAll<HTMLButtonElement>("[data-view-btn]").forEach((b) => b.addEventListener("click", () => {
-      root.dataset.view = b.dataset.viewBtn!;
-      root.querySelectorAll("[data-view-btn]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-      sheet.hidden = true; toast.hidden = true; render();
-    }));
-    q<HTMLInputElement>("[data-km-in]").addEventListener("input", (e) => { root.dataset.km = (e.target as HTMLInputElement).value; sheet.hidden = true; render(); });
-    root.querySelectorAll<HTMLButtonElement>("[data-mode]").forEach((b) => b.addEventListener("click", () => { mode = b.dataset.mode!; render(); }));
-    q("[data-add]").addEventListener("click", () => {
-      const d = km(), view = root.dataset.view;
-      if (d <= 1) return say(view === "after" && mode === "pickup" ? "Added · pickup in about 15 min" : "Added · delivers in 25–35 min");
-      if (view === "after" && d <= 3) return say("Added for pickup at Gate Branch");
-      sheet.hidden = false;
-    });
-    q("[data-close]").addEventListener("click", () => (sheet.hidden = true));
-    q("[data-pick-pickup]").addEventListener("click", () => { sheet.hidden = true; mode = "pickup"; render(); say("Switched to pickup · cart kept"); });
-    render();
+  import { initStory } from "../../scripts/story";
+  document.querySelectorAll<HTMLElement>("[data-ks]").forEach((root) => {
+    initStory(root);
+    root.querySelectorAll<HTMLButtonElement>("[data-view-btn]").forEach((b) =>
+      b.addEventListener("click", () => {
+        root.dataset.view = b.dataset.viewBtn;
+        root.querySelectorAll("[data-view-btn]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      }),
+    );
   });
 </script>
 
 <style>
-  .ra {
-    container-type: inline-size;
+  .ks {
     --plum: #4b2a5e;
     --coral: #ff6b4a;
     --cream: #fbf6ef;
+    --ok: #1f8a4c;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* Stage: one phone on a narrow screen (switched in the dock), two beside each other when there is room. */
+  .stage {
+    position: relative;
     display: grid;
-    grid-template-columns: 1fr 270px;
-    gap: 28px;
+    justify-items: center;
+    padding: 26px 0 6px;
+    border-radius: 28px;
+    background:
+      radial-gradient(60% 55% at 50% 45%, color-mix(in srgb, var(--coral) 9%, transparent), transparent 70%),
+      repeating-radial-gradient(circle at 50% 46%, transparent 0 69px, color-mix(in srgb, var(--ink) 7%, transparent) 69px 70px);
+    overflow: hidden;
+  }
+  .dev {
+    margin: 0;
+    grid-area: 1 / 1;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    transition:
+      opacity 0.5s var(--ease),
+      transform 0.6s var(--ease),
+      filter 0.5s var(--ease);
+  }
+  .ks[data-view="after"] .before,
+  .ks[data-view="before"] .after {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+    pointer-events: none;
+    visibility: hidden;
+  }
+  figcaption {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  figcaption i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #b9b3ab;
+  }
+  .after figcaption i {
+    background: var(--ok);
+  }
+
+  .phone {
+    position: relative;
+    width: min(272px, 72vw);
+    aspect-ratio: 9 / 19;
+    border-radius: 40px;
+    padding: 9px;
+    background: #fff;
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent),
+      0 30px 60px -30px rgb(40 20 50 / 0.45);
+  }
+  .phone::before {
+    content: "";
+    position: absolute;
+    top: 17px;
+    left: 50%;
+    z-index: 4;
+    width: 62px;
+    height: 17px;
+    border-radius: 10px;
+    background: #111;
+    transform: translateX(-50%);
+  }
+  .scr {
+    position: absolute;
+    inset: 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: 40px 12px 12px;
+    border-radius: 31px;
+    background: var(--cream);
+    color: #2a1d33;
+    font: 11px/1.35 Inter, var(--font-sans);
+    overflow: hidden;
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(12px) scale(0.98);
+    transition:
+      opacity 0.5s var(--ease),
+      filter 0.5s var(--ease),
+      transform 0.65s var(--ease);
+  }
+  .scr.on {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  .scr b {
+    font-weight: 600;
+  }
+  .scr small {
+    color: #85758d;
+  }
+  .h {
+    margin: 4px 0 0;
+    font-weight: 700;
+    font-size: 12.5px;
+  }
+  .h.sm {
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  /* Shared app parts */
+  .search,
+  .bar-top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .search {
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: #fff;
+    color: #9a8ca1;
+  }
+  .addr-empty {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #85758d;
+  }
+  .addr-empty b {
+    color: #2a1d33;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .item {
+    position: relative;
+    display: grid;
+    gap: 2px;
+    padding: 7px;
+    border-radius: 14px;
+    background: #fff;
+  }
+  .item em {
+    font-style: normal;
+    color: var(--plum);
+    font-weight: 600;
+  }
+  .plate {
+    display: grid;
+    place-items: center;
+    height: 58px;
+    margin-bottom: 4px;
+    border-radius: 10px;
+    color: rgb(42 29 51 / 0.55);
+  }
+  .p1 {
+    background: #fde3d6;
+  }
+  .p2 {
+    background: #f3e7c9;
+  }
+  .p3 {
+    background: #e8ddf0;
+  }
+  .plate.big {
+    height: 130px;
+    border-radius: 18px;
+  }
+  .tag {
+    position: absolute;
+    top: 11px;
+    left: 11px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--plum);
+    font-size: 9px;
+    font-weight: 700;
+  }
+  .cta {
+    display: block;
+    margin-top: auto;
+    padding: 10px;
+    border-radius: 14px;
+    background: var(--plum);
+    color: #fff;
+    text-align: center;
+    font-weight: 600;
+  }
+  .cta.coral {
+    background: var(--coral);
+  }
+  .cta.sm {
+    display: inline-block;
+    margin: 6px 0 0;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: var(--coral);
+  }
+  .cta.ghost {
+    background: none;
+    color: var(--plum);
+    box-shadow: inset 0 0 0 1px rgb(75 42 94 / 0.25);
+  }
+
+  /* Before screens */
+  .dish {
+    font-size: 13px;
+  }
+  .sub {
+    margin-top: -6px;
+  }
+  .radio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 9px;
+    border-radius: 10px;
+    background: #fff;
+  }
+  .radio::before {
+    content: "";
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px #c9bccf;
+  }
+  .radio.check::before {
+    border-radius: 3px;
+  }
+  .radio.on::before {
+    box-shadow: inset 0 0 0 3.5px var(--coral);
+  }
+  .radio em {
+    margin-left: auto;
+    font-style: normal;
+    color: #85758d;
+  }
+  .dim::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgb(42 29 51 / 0.45);
+    z-index: 0;
+  }
+  .modal,
+  .lost {
+    position: relative;
+    z-index: 1;
+    margin: auto 0;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 18px 14px;
+    border-radius: 20px;
+    background: #fff;
+    text-align: center;
+  }
+  .modal b,
+  .lost b {
+    font-size: 13px;
+  }
+  .ic {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f2ebf4;
+    color: var(--plum);
+  }
+  .ic.bad {
+    background: #fde6e1;
+    color: #d64545;
+  }
+  .eq4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .eq4 span {
+    padding: 8px 0;
+    border-radius: 10px;
+    background: #f4efe9;
+    font-weight: 600;
+  }
+  .lost ul {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 5px;
+  }
+  .lost li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #85758d;
+    text-decoration: line-through;
+  }
+  .lost li :global(svg) {
+    color: #d64545;
+  }
+
+  /* After screens */
+  .seg {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 3px;
+    border-radius: 12px;
+    background: #efe6dc;
+  }
+  .seg span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px;
+    border-radius: 9px;
+    font-weight: 600;
+    color: #85758d;
+  }
+  .seg .on {
+    background: var(--plum);
+    color: #fff;
+  }
+  .loc {
+    display: flex;
+    gap: 8px;
     align-items: center;
   }
-  @media (max-width: 760px) {
-    .ra { grid-template-columns: 1fr; }
-    .phone-wrap { width: min(280px, 80%); margin: 0 auto; }
+  .loc > span:last-child {
+    display: grid;
   }
-  .switch { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--bg-sunk); border: 1px solid var(--rule); }
-  .switch button { border: 0; background: none; font: inherit; font-weight: 600; font-size: var(--text-sm); padding: 6px 16px; border-radius: 999px; color: var(--ink-muted); cursor: pointer; }
-  .switch [aria-pressed="true"] { background: var(--bg-raised); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
-  .dist { display: grid; gap: 8px; margin-top: 20px; font-size: var(--text-sm); color: var(--ink-secondary); }
-  .dist b { color: var(--ink); font-variant-numeric: tabular-nums; margin-left: 6px; }
-  .dist input { width: 100%; accent-color: var(--plum); }
-  .marks { position: relative; height: 14px; }
-  .marks i { position: absolute; left: var(--at); transform: translateX(-50%); font-style: normal; font-size: 11px; color: var(--ink-muted); }
-  .explain { margin: 16px 0 0; padding: 14px 16px; border-radius: 14px; background: var(--bg-sunk); color: var(--ink); font-size: var(--text-sm); line-height: 1.5; min-height: 4.5em; }
-  :is(.switch button, .seg button, .add, .opt, .close, input):focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+  .pin {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    background: #fde3d6;
+    color: var(--coral);
+  }
+  .chip {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .chip.warn {
+    background: #fbefd2;
+    color: #8a5a00;
+  }
+  .card-plum {
+    display: grid;
+    gap: 3px;
+    padding: 12px;
+    border-radius: 16px;
+    background: var(--plum);
+    color: #fff;
+  }
+  .card-plum small {
+    color: rgb(255 255 255 / 0.75);
+  }
+  .grid.two .plate {
+    height: 48px;
+  }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 10px;
+    border-radius: 12px;
+    background: #fff;
+    font-weight: 600;
+  }
+  .status i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ok);
+  }
+  .sheet {
+    position: relative;
+    z-index: 1;
+    margin: auto -12px -12px;
+    display: grid;
+    gap: 7px;
+    padding: 10px 12px 14px;
+    border-radius: 22px 22px 31px 31px;
+    background: #fff;
+  }
+  .grab {
+    justify-self: center;
+    width: 34px;
+    height: 4px;
+    border-radius: 4px;
+    background: #e3dbe6;
+  }
+  .st-h {
+    font-size: 13px;
+  }
+  .opt {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 12px;
+    box-shadow: inset 0 0 0 1px #ece4ee;
+  }
+  .opt > span:nth-child(2) {
+    display: grid;
+  }
+  .opt.on {
+    background: #f6f0f8;
+    box-shadow: inset 0 0 0 1.5px var(--plum);
+  }
+  .oi {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: #f2ebf4;
+    color: var(--plum);
+  }
+  .best {
+    margin-right: 3px;
+    padding: 1px 5px;
+    border-radius: 999px;
+    background: var(--ok);
+    color: #fff;
+    font-style: normal;
+    font-size: 8.5px;
+  }
+  .rd {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px #c9bccf;
+  }
+  .opt.on .rd {
+    box-shadow: inset 0 0 0 3.5px var(--plum);
+  }
+  .sheet .cta {
+    margin-top: 2px;
+  }
+  .done {
+    margin: auto 0;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    text-align: center;
+  }
+  .done > b {
+    font-size: 15px;
+  }
+  .ring {
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    margin-bottom: 6px;
+    border-radius: 50%;
+    color: var(--ok);
+    background: #fff;
+    box-shadow:
+      0 0 0 10px rgb(31 138 76 / 0.08),
+      0 0 0 22px rgb(31 138 76 / 0.04);
+  }
+  .eta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    margin: 10px 0 14px;
+  }
+  .eta span {
+    display: grid;
+    padding: 10px;
+    border-radius: 14px;
+    background: #fff;
+  }
+  .eta b {
+    font-size: 15px;
+  }
+  .done .cta {
+    width: 100%;
+    margin-top: 0;
+  }
 
-  .app { position: relative; height: 520px; overflow: hidden; background: var(--cream); color: #2a1d33; font: 12.5px/1.4 Inter, var(--font-body, system-ui), sans-serif; padding: 14px 12px; display: flex; flex-direction: column; gap: 10px; }
-  .only-before, .only-after { display: none; }
-  .ra[data-view="before"] .only-before, .ra[data-view="after"] .only-after { display: revert; }
-  .ra[data-view="before"] .top.only-before, .ra[data-view="after"] .top.only-after { display: grid; }
-  .top { gap: 8px; }
-  .seg { display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 12px; background: #efe6dc; }
-  .seg button { border: 0; background: none; font: inherit; font-weight: 600; padding: 7px; border-radius: 9px; color: #6e5d77; cursor: pointer; }
-  .seg [aria-pressed="true"] { background: #fff; color: var(--plum); box-shadow: 0 1px 3px rgb(0 0 0 / 0.1); }
-  .seg button:disabled { opacity: 0.4; cursor: not-allowed; }
-  .status { margin: 0; display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 500; }
-  .status :global(i) { width: 7px; height: 7px; border-radius: 50%; flex: none; }
-  .status :global(.ok) { background: #1f9254; } .status :global(.warn) { background: #e3a008; } .status :global(.bad) { background: #d64545; }
-  .addr { margin: 0; display: grid; } .addr small { color: #8a7a92; } .addr b { font-size: 13px; }
+  .tap {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+    width: 50%;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tap.prev {
+    left: 0;
+    cursor: w-resize;
+  }
+  .tap.next {
+    right: 0;
+    cursor: e-resize;
+  }
+  .tap:focus-visible {
+    outline: 2px solid var(--coral);
+    outline-offset: -6px;
+    border-radius: 36px;
+  }
 
-  .hero { display: grid; gap: 3px; padding: 10px; border-radius: 18px; background: #fff; box-shadow: 0 10px 24px -16px rgb(75 42 94 / 0.45); position: relative; }
-  .tag { position: absolute; top: 14px; left: 14px; z-index: 1; padding: 2px 8px; border-radius: 999px; background: #fff; font-size: 10px; font-weight: 600; color: var(--plum); }
-  .plate { height: 150px; border-radius: 14px; background: radial-gradient(circle at 50% 60%, #fff 0 34%, #f2ebe2 35% 100%); display: grid; place-items: center; margin-bottom: 6px; }
-  .plate i { width: 92px; height: 60px; border-radius: 46% 54% 50% 50%; background: radial-gradient(circle at 35% 35%, #f2b45a, #c46a1c); box-shadow: 30px 6px 0 -8px #e7a04a, -26px 10px 0 -12px #d98a33, 0 14px 14px -8px rgb(0 0 0 / 0.25); }
-  .hero b { font-size: 14px; } .hero small { color: #8a7a92; }
-  .row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
-  .price { font-weight: 700; font-variant-numeric: tabular-nums; }
-  .add { border: 0; border-radius: 999px; padding: 8px 14px; background: var(--coral); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
-  .mini { display: flex; gap: 6px; } .mini span { flex: 1; padding: 10px 6px; border-radius: 12px; background: #fff; text-align: center; font-weight: 600; color: #6e5d77; }
+  /* Story text. Mobile order: kicker, bars, moment, phone, caption, dock. */
+  .ks {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+  }
+  .kicker {
+    margin: 0 0 14px;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 3.6vw, 1.6rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .bars {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+  .bars span {
+    height: 3px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--ink) 12%, transparent);
+    overflow: hidden;
+  }
+  .bars i {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--ink);
+  }
+  .bars .done i,
+  .bars .on i {
+    width: 100%;
+  }
+  .ks.tick[data-playing="true"] .bars .on i {
+    animation: fill var(--dur) linear forwards;
+  }
+  @keyframes fill {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+  .chapters {
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+  }
+  .chapters li:not(.on) {
+    display: none;
+  }
+  .chapters button {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .num {
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .title {
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+  }
+  .timer {
+    display: none;
+  }
+  .caps {
+    display: grid;
+    width: min(300px, 100%);
+    text-align: center;
+  }
+  .cap {
+    grid-area: 1 / 1;
+    margin: 4px 0 0;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--ink-secondary);
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 0.4s var(--ease),
+      transform 0.5s var(--ease);
+  }
+  .cap.on {
+    opacity: 1;
+    transform: none;
+  }
 
-  .toast { position: absolute; z-index: 4; left: 12px; right: 12px; bottom: 14px; padding: 10px 12px; border-radius: 12px; background: var(--plum); color: #fff; font-weight: 600; animation: up 0.25s ease-out; }
-  .toast[hidden], .sheet[hidden] { display: none; }
-  .sheet { position: absolute; z-index: 3; inset: auto 0 0 0; display: grid; gap: 8px; padding: 16px 14px 14px; border-radius: 22px 22px 0 0; background: #fff; box-shadow: 0 -20px 40px -20px rgb(0 0 0 / 0.35); animation: up 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
-  .ra[data-view="before"] .sheet { inset: 0; border-radius: 0; align-content: center; }
-  @keyframes up { from { transform: translateY(16px); opacity: 0; } }
-  .before-sheet, .after-sheet { gap: 7px; }
-  .ra[data-view="before"] .before-sheet, .ra[data-view="after"] .after-sheet { display: grid; }
-  .sheet b { font-size: 14px; } .sheet small { color: #8a7a92; }
-  .sad { color: #d64545; }
-  .eq { padding: 10px; border-radius: 10px; border: 1px solid #e6dce6; text-align: center; font-weight: 600; color: #6e5d77; }
-  .before-sheet em { font-style: normal; font-size: 11px; color: #d64545; }
-  .opt { display: grid; grid-template-columns: 18px 1fr auto; gap: 10px; align-items: center; text-align: left; padding: 10px; border: 1px solid #ece4ec; border-radius: 12px; background: #fff; font: inherit; color: inherit; }
-  .opt span { display: grid; } .opt b { font-size: 12.5px; }
-  .opt em { font-style: normal; font-size: 10px; font-weight: 700; color: var(--coral); }
-  .rec { border-color: var(--plum); background: #f7f1fa; cursor: pointer; }
-  .close { justify-self: center; border: 0; background: none; font: inherit; color: #8a7a92; cursor: pointer; padding: 4px 10px; }
-  @media (prefers-reduced-motion: reduce) { .toast, .sheet { animation: none; } }
+  .dock {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: max-content;
+    margin: 22px auto 0;
+    padding: 5px;
+    border-radius: 999px;
+    background: #141414;
+    box-shadow:
+      0 12px 30px -12px rgb(0 0 0 / 0.45),
+      inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  }
+  .seg-d {
+    display: inline-flex;
+  }
+  .seg-d button,
+  .play {
+    border: 0;
+    background: none;
+    color: rgb(255 255 255 / 0.62);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .seg-d [aria-pressed="true"] {
+    background: rgb(255 255 255 / 0.14);
+    color: #fff;
+  }
+  .div {
+    width: 1px;
+    height: 18px;
+    background: rgb(255 255 255 / 0.14);
+  }
+  .play {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 32px;
+    padding: 0;
+    color: var(--coral);
+  }
+  .ks[data-playing="true"] .i-play,
+  .ks[data-playing="false"] .i-pause {
+    display: none;
+  }
+  :is(.seg-d button, .play, .chapters button):focus-visible {
+    outline: 2px solid var(--coral);
+    outline-offset: 2px;
+  }
+
+  /* Room for both: the phones side by side, each with its caption, and the
+     four moments as a timeline under them. */
+  @container (min-width: 640px) {
+    .kicker {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .stage {
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      padding: 32px 28px 28px;
+    }
+    .dev {
+      grid-area: auto;
+    }
+    .ks[data-view] .before,
+    .ks[data-view] .after {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: none;
+    }
+    .ks .before .phone {
+      filter: saturate(0.35);
+      opacity: 0.85;
+    }
+    .phone {
+      width: min(250px, 100%);
+    }
+    .seg-d,
+    .seg-d + .div,
+    .bars {
+      display: none;
+    }
+    .chapters {
+      order: 2;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 22px 0 0;
+    }
+    .chapters li,
+    .chapters li:not(.on) {
+      display: grid;
+      gap: 10px;
+    }
+    .chapters li:not(.on) .title {
+      color: var(--ink-muted);
+      font-weight: 500;
+    }
+    .chapters li:not(.on) button:hover .title {
+      color: var(--ink);
+    }
+    .chapters button {
+      flex-direction: column;
+      gap: 2px;
+    }
+    .title {
+      font-size: var(--text-sm);
+    }
+    .timer {
+      display: block;
+      height: 2px;
+      border-radius: 2px;
+      background: color-mix(in srgb, var(--ink) 12%, transparent);
+      overflow: hidden;
+    }
+    .timer i {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--ink);
+    }
+    .done .timer i {
+      width: 100%;
+    }
+    .on .timer i {
+      width: 100%;
+      background: var(--coral);
+    }
+    .ks.tick[data-playing="true"] .on .timer i {
+      animation: fill var(--dur) linear forwards;
+    }
+    .dock {
+      order: 3;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scr,
+    .dev,
+    .cap {
+      transition: none;
+      filter: none;
+    }
+    .ks .bars i,
+    .ks .timer i {
+      animation: none !important;
+    }
+  }
 </style>

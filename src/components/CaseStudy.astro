@@ -113,7 +113,7 @@ const rail = [
           {data.widget === "range-audit" && <RangeAudit />}
           {data.widget === "phone-tour" && <PhoneTour />}
         </div>
-        <p class="caption">Re-created for this page. It shows the pattern, with sample data.</p>
+        {data.ndaRecreated && <p class="caption">Re-created for this page. It shows the pattern, with sample data.</p>}
       </section>
 
       <section id="states" class="reveal">

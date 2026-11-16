@@ -9,7 +9,7 @@ meta:
   - { label: Market, value: "Karachi first, built to travel to the GCC" }
 ndaRecreated: false
 widget: phone-tour
-widgetIntro: "These are the real screens from the design file. Pick a side of the marketplace and swipe through. Then switch to Urdu: every screen mirrors and the flow runs right to left."
+widgetIntro: "The real screens from the design file, told as two short stories. Let it play or tap the phone to move on. Switch to Urdu and the stage mirrors: the story runs right to left, as the app does."
 stats:
   - { value: "47", unit: screens, label: "Eight flows, from first open to a finished job, in each language" }
   - { value: "2", unit: languages, label: "English, and Karachi Urdu mirrored right to left" }
