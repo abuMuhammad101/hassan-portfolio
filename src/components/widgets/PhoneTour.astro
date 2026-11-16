@@ -1,295 +1,275 @@
 ---
-/* isTyme, the real screens exported from the design file. Two sides of the
-   marketplace, each in English and in Urdu. In Urdu the strip runs right to
-   left, the way the app does. */
+/* isTyme on a quiet canvas: the real screens exported from the design file,
+   in a window whose tabs are the chapters. Two connected stories: Ayesha
+   hires a plumber, then Imran, the plumber, gets verified and finds work.
+   A named cursor taps what the person would tap next; the brand's
+   proximity rings sit quietly behind the phone. */
 import Icon from "../Icon.astro";
-const journeys = [
+import "../../styles/story.css";
+
+type Ch = { key: string; tab: string; icon: string; title: string; note: string; hot: [number, number] };
+const sides: { id: string; role: string; icon: string; chapters: Ch[] }[] = [
   {
     id: "hire",
-    name: "Hiring",
-    screens: [
-      { key: "welcome", title: "Welcome", note: "The right person for the job, close by. The rings are the app's one motif: people near you." },
-      { key: "home", title: "Home", note: "Hire and Work are one switch apart. Four plain categories, and waiting offers rise to the top." },
-      { key: "price", title: "Set a price", note: "Set a price or ask for offers. The local range sits under the number, so a fair price is easy to find." },
-      { key: "offers", title: "Offers", note: "Best match first, with rating, jobs done and distance. One clear way to hire." },
-      { key: "rate", title: "Release payment", note: "The money waits until the job is done. Confirming releases it and asks for a quick rating." },
+    role: "Customer",
+    icon: "house",
+    chapters: [
+      { key: "welcome", tab: "Welcome", icon: "hand-waving", title: "A promise in one line", note: "The right person for the job, close by. The rings mean people near you.", hot: [70, 81.1] },
+      { key: "home", tab: "Home", icon: "house", title: "She asks in her own words", note: "Four plain categories, and the offers already waiting for her rise to the top.", hot: [69.3, 46.4] },
+      { key: "price", tab: "Price", icon: "coins", title: "She knows what's fair", note: "Plumbers nearby charge Rs 900 to 1,400, so Rs 1,100 is in range.", hot: [72, 87.3] },
+      { key: "offers", tab: "Offers", icon: "users-three", title: "She picks with confidence", note: "Best match first, with rating, jobs done and distance. One clear way to hire.", hot: [80, 37.3] },
+      { key: "rate", tab: "Pay", icon: "wallet", title: "She pays when it's done", note: "isTyme held the money. Confirming releases it to Imran and asks for a rating.", hot: [78, 80.3] },
     ],
   },
   {
     id: "work",
-    name: "Working",
-    screens: [
-      { key: "cnic", title: "Card scan", note: "No skipping verification. The card goes in the frame, encrypted and never shown to customers." },
-      { key: "glare", title: "Photo not clear", note: "The frame turns red and the fix is named in both languages, not a generic error." },
-      { key: "thumb", title: "Thumb check", note: "A thumbprint through a NADRA partner links the card to the profile." },
-      { key: "verified", title: "Verified", note: "Mubarak ho. The badge lands on the profile and matching jobs are waiting." },
-      { key: "match", title: "Picked for you", note: "Jobs that fit the worker's skills, each tagged with why: close by, good pay, quick job." },
+    role: "Worker",
+    icon: "briefcase",
+    chapters: [
+      { key: "cnic", tab: "Card", icon: "identification-card", title: "He shows who he is", note: "Verification can't be skipped. The card is encrypted and never shown to customers.", hot: [50, 79.7] },
+      { key: "glare", tab: "Retake", icon: "sun", title: "He's told how to fix it", note: "Not a generic error: the frame turns red and names the problem, too much light.", hot: [50, 79.7] },
+      { key: "thumb", tab: "Thumb", icon: "fingerprint", title: "He confirms with his thumb", note: "A thumbprint check through a NADRA partner links the card to his profile.", hot: [50, 47.7] },
+      { key: "verified", tab: "Verified", icon: "seal-check", title: "Mubarak ho, Imran", note: "The badge lands on his profile, and matching jobs are waiting.", hot: [68, 88] },
+      { key: "match", tab: "Jobs", icon: "briefcase", title: "Work that fits him", note: "Three jobs picked for his skills, each tagged with why it fits.", hot: [50, 30.9] },
     ],
   },
 ];
 ---
 
-<div class="pt" data-pt data-lang="en">
-  <div class="bar">
-    <div class="tabs" role="tablist" aria-label="Side of the marketplace">
-      {journeys.map((j, i) => (
-        <button type="button" role="tab" data-journey={j.id} aria-selected={i === 0 ? "true" : "false"}>{j.name}</button>
-      ))}
-    </div>
-    <div class="lang" role="group" aria-label="Language">
-      <button type="button" data-lang-btn="en" aria-pressed="true">English</button>
-      <button type="button" data-lang-btn="ur" aria-pressed="false" lang="ur">اردو</button>
-    </div>
-  </div>
+<div class="st" data-st data-side="hire" data-playing="false">
+  {sides.map((s, si) => (
+    <div class="side" data-panel data-side-panel={s.id} hidden={si !== 0}>
+      <div class="s-canvas">
+        <span class="s-h tl" aria-hidden="true"></span><span class="s-h tr" aria-hidden="true"></span>
+        <span class="s-h bl" aria-hidden="true"></span><span class="s-h br" aria-hidden="true"></span>
+        <div class="s-win">
+          <div class="s-bar">
+            <span class="s-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+            <ol class="s-tabs" aria-label={`${s.role} chapters`}>
+              {s.chapters.map((c, ci) => (
+                <li data-ch class:list={[{ on: ci === 0 }]}>
+                  <button type="button" title={c.title}><Icon name={c.icon} weight="duotone" size={16} /><span class="lbl">{c.tab}</span><span class="fill"></span></button>
+                </li>
+              ))}
+            </ol>
+            <div class="roles s-tool" role="group" aria-label="Whose story">
+              {sides.map((r) => (
+                <button type="button" data-side-btn={r.id} aria-pressed={r.id === s.id ? "true" : "false"} title={r.role}>
+                  <Icon name={r.icon} weight={r.id === s.id ? "fill" : "regular"} size={14} /><span>{r.role}</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
-  {journeys.map((j, ji) => (
-    <div class="panel" data-panel={j.id} hidden={ji !== 0}>
-      <ol class="strip" dir="ltr" aria-label={`${j.name}, ${j.screens.length} screens`}>
-        {j.screens.map((s, si) => (
-          <li class="item">
-            <figure>
-              <a class="shot" href={`/media/istyme/en-${s.key}.webp`} data-zoom={s.key} target="_blank" rel="noopener" aria-label={`Open ${s.title} full size`}>
-                <img class="en" src={`/media/istyme/en-${s.key}.webp`} alt={`isTyme, ${s.title}, English`} width="482" height="954" loading={ji === 0 && si < 2 ? "eager" : "lazy"} decoding="async" />
-                <img class="ur" src={`/media/istyme/ur-${s.key}.webp`} alt={`isTyme, ${s.title}, Urdu`} width="482" height="954" loading="lazy" decoding="async" />
-              </a>
-              <figcaption dir="ltr">
-                <span class="n tabular-nums">{String(si + 1).padStart(2, "0")}</span>
-                <b>{s.title}</b>
-                <span class="note">{s.note}</span>
-              </figcaption>
-            </figure>
-          </li>
-        ))}
-      </ol>
+          <div class="stage">
+            <svg class="rings" viewBox="-300 -300 600 600" aria-hidden="true">
+              <circle r="150" class="hair" />
+              <circle r="215" class="hair" />
+              <circle r="280" class="dots" />
+            </svg>
+            <div class="phone">
+              {s.chapters.map((c, ci) => (
+                <img class:list={["shot", { on: ci === 0 }]} data-shot={ci} src={`/media/istyme/en-${c.key}.webp`} alt={`isTyme, ${c.title}`} width="482" height="954" loading={si === 0 && ci < 2 ? "eager" : "lazy"} decoding="async" />
+              ))}
+              <button type="button" class="tap prev" data-go="-1" aria-label="Previous chapter"></button>
+              <button type="button" class="tap next" data-go="1" aria-label="Next chapter"></button>
+              {s.chapters.map((c, ci) => (
+                <button type="button" class:list={["s-hot", { on: ci === 0 }]} data-shot={ci} data-hot style={`--x:${c.hot[0]}%;--y:${c.hot[1]}%`} aria-label="Tap to continue the story"><b></b></button>
+              ))}
+            </div>
+            <span class="s-ghost" data-ghost aria-hidden="true">
+              <svg viewBox="0 0 18 20"><path d="M2 1.6 15.4 8.5 9.6 10.2 6.9 16.2Z" /></svg>
+              <b><i>H</i>Hassan</b>
+              <span class="s-burst"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="s-foot">
+        <button type="button" class="s-play" data-play aria-label="Play the story">
+          <span class="knob">
+            <svg viewBox="0 0 42 42" aria-hidden="true"><circle class="track" cx="21" cy="21" r="19" /><circle class="prog" cx="21" cy="21" r="19" pathLength="100" /></svg>
+            <span class="icon" aria-hidden="true"><i></i><i></i></span>
+          </span>
+        </button>
+        <div class="s-caps" aria-live="polite">
+          {s.chapters.map((c, ci) => <p class:list={["s-cap", { on: ci === 0 }]} data-shot={ci}><b>{c.title}.</b> {c.note}</p>)}
+        </div>
+      </div>
     </div>
   ))}
-
-  <div class="nav">
-    <p class="hint"><Icon name="hand-swipe-left" size={15} /><span data-hint>Swipe to follow the flow</span></p>
-    <div class="arrows">
-      <button type="button" data-step="-1" aria-label="Previous screen"><Icon name="arrow-left" size={16} /></button>
-      <button type="button" data-step="1" aria-label="Next screen"><Icon name="arrow-right" size={16} /></button>
-    </div>
-  </div>
 </div>
 
 <script>
-  document.querySelectorAll<HTMLElement>("[data-pt]").forEach((root) => {
-    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[data-journey]")];
-    const panels = [...root.querySelectorAll<HTMLElement>("[data-panel]")];
-    const langs = [...root.querySelectorAll<HTMLButtonElement>("[data-lang-btn]")];
-    const hint = root.querySelector<HTMLElement>("[data-hint]")!;
-    const strip = () => root.querySelector<HTMLElement>(".panel:not([hidden]) .strip")!;
-
-    const reset = () => {
-      const s = strip();
-      s.scrollTo({ left: 0, behavior: "instant" as ScrollBehavior });
+  import { initStory } from "../../scripts/story";
+  document.querySelectorAll<HTMLElement>("[data-st]").forEach((root) => {
+    const setSide = (id: string) => {
+      root.dataset.side = id;
+      root.querySelectorAll<HTMLElement>("[data-side-panel]").forEach((p) => (p.hidden = p.dataset.sidePanel !== id));
     };
-
-    tabs.forEach((t) =>
-      t.addEventListener("click", () => {
-        tabs.forEach((x) => x.setAttribute("aria-selected", String(x === t)));
-        panels.forEach((p) => (p.hidden = p.dataset.panel !== t.dataset.journey));
-        reset();
-      }),
-    );
-
-    langs.forEach((b) =>
+    // The two stories are one: when Ayesha's ends, Imran's begins, and back.
+    const story = initStory(root, {
+      onEnd: () => {
+        setSide(root.dataset.side === "hire" ? "work" : "hire");
+        story.show(0);
+        return true;
+      },
+    });
+    root.querySelectorAll<HTMLButtonElement>("[data-side-btn]").forEach((b) =>
       b.addEventListener("click", () => {
-        const ur = b.dataset.langBtn === "ur";
-        root.dataset.lang = ur ? "ur" : "en";
-        langs.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-        root.querySelectorAll<HTMLElement>(".strip").forEach((s) => (s.dir = ur ? "rtl" : "ltr"));
-        root.querySelectorAll<HTMLAnchorElement>("[data-zoom]").forEach((a) => (a.href = `/media/istyme/${ur ? "ur" : "en"}-${a.dataset.zoom}.webp`));
-        hint.textContent = ur ? "In Urdu the flow runs right to left" : "Swipe to follow the flow";
-        reset();
-      }),
-    );
-
-    root.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((b) =>
-      b.addEventListener("click", () => {
-        const s = strip();
-        const item = s.querySelector<HTMLElement>(".item")!;
-        const gap = parseFloat(getComputedStyle(s).columnGap) || 0;
-        // In RTL the flow moves left; the arrows follow the reading direction.
-        const dir = s.dir === "rtl" ? -1 : 1;
-        s.scrollBy({ left: Number(b.dataset.step) * dir * (item.offsetWidth + gap), behavior: "smooth" });
+        if (b.dataset.sideBtn === root.dataset.side) return;
+        setSide(b.dataset.sideBtn!);
+        story.show(0);
       }),
     );
   });
 </script>
 
 <style>
-  .pt {
-    --green: #1a5c3a;
+  .st {
+    container-type: inline-size;
+    --story-accent: #e08a00;
     --saffron: #ff9f1c;
+    --green: #1a5c3a;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 14px;
+  .side[hidden] {
+    display: none;
   }
-  .tabs,
-  .lang {
+
+  /* Role switch, at the right of the window bar. */
+  .roles {
     display: inline-flex;
-    padding: 4px;
-    border-radius: 999px;
-    background: var(--bg-sunk);
-    border: 1px solid var(--rule);
+    padding: 3px;
+    border-radius: 9px;
+    background: #e6e4de;
   }
-  .tabs button,
-  .lang button {
+  .roles button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 26px;
+    padding: 0 10px;
     border: 0;
+    border-radius: 7px;
     background: none;
     font: inherit;
-    font-weight: 600;
-    font-size: var(--text-sm);
-    padding: 6px 16px;
-    border-radius: 999px;
-    color: var(--ink-muted);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #77746c;
     cursor: pointer;
   }
-  .lang [lang="ur"] {
-    font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", serif;
-    font-weight: 500;
-    line-height: 1.2;
+  .roles [aria-pressed="true"] {
+    background: #fff;
+    color: #1d1c19;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.1);
   }
-  .tabs [aria-selected="true"],
-  .lang [aria-pressed="true"] {
-    background: var(--bg-raised);
-    color: var(--ink);
-    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+  .roles [aria-pressed="true"] :global(svg) {
+    color: var(--green);
   }
-  .lang [aria-pressed="true"] {
-    background: var(--green);
-    color: #fff;
+  .roles button:focus-visible {
+    outline: 2px solid var(--story-accent);
+    outline-offset: 1px;
   }
-  :is(.tabs, .lang) button:focus-visible,
-  .arrows button:focus-visible,
-  .shot:focus-visible {
-    outline: 2px solid var(--saffron);
-    outline-offset: 2px;
-  }
-
-  .panel[hidden] {
-    display: none;
-  }
-  .strip {
-    list-style: none;
-    margin: 0;
-    padding: 6px 2px 4px;
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: clamp(200px, 64vw, 236px);
-    column-gap: 18px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    overscroll-behavior-x: contain;
-  }
-  .strip::-webkit-scrollbar {
-    display: none;
-  }
-  .item {
-    scroll-snap-align: start;
-  }
-  figure {
-    margin: 0;
-  }
-  .shot {
-    display: block;
-    border-radius: 34px;
-    cursor: zoom-in;
-    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .shot:hover {
-    transform: translateY(-3px);
-  }
-  .shot img {
-    display: block;
-    width: 100%;
-    height: auto;
-    animation: in 0.35s ease;
-  }
-  .pt .ur,
-  .pt[data-lang="ur"] .en {
-    display: none;
-  }
-  .pt[data-lang="ur"] .ur {
-    display: block;
-  }
-  @keyframes in {
-    from {
-      opacity: 0;
+  @container (max-width: 640px) {
+    .roles span {
+      display: none;
+    }
+    .roles button {
+      padding: 0 8px;
     }
   }
-  figcaption {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 2px 8px;
-    margin-top: 12px;
-    padding: 0 4px;
-    font-size: var(--text-sm);
-  }
-  .n {
-    color: var(--ink-muted);
-    font-size: 12px;
-    line-height: 1.6;
-  }
-  figcaption b {
-    font-weight: 600;
-    color: var(--ink);
-  }
-  .note {
-    grid-column: 2;
-    color: var(--ink-secondary);
-    line-height: 1.5;
-  }
 
-  .nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 14px;
-  }
-  .hint {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-    color: var(--ink-muted);
-    font-size: var(--text-sm);
-  }
-  .arrows {
-    display: inline-flex;
-    gap: 6px;
-  }
-  .arrows button {
+  .stage {
+    position: relative;
     display: grid;
     place-items: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 999px;
-    border: 1px solid var(--rule);
-    background: var(--bg-raised);
-    color: var(--ink);
+    padding: 30px 0 34px;
+    background: #faf9f6;
+    overflow: hidden;
+  }
+  .rings {
+    position: absolute;
+    width: 600px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .hair {
+    fill: none;
+    stroke: rgb(0 0 0 / 0.06);
+  }
+  .dots {
+    fill: none;
+    stroke: rgb(0 0 0 / 0.14);
+    stroke-width: 1.4;
+    stroke-dasharray: 1 7;
+    stroke-linecap: round;
+  }
+
+  .phone {
+    position: relative;
+    width: min(250px, 66vw);
+    aspect-ratio: 482 / 954;
+  }
+  .shot {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+    transition:
+      opacity 0.5s var(--ease),
+      transform 0.7s var(--ease);
+  }
+  .shot.on {
+    opacity: 1;
+    transform: none;
+  }
+  .tap {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    width: 50%;
+    border: 0;
+    background: none;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
-  .pt[data-lang="ur"] .arrows {
-    flex-direction: row-reverse;
+  .tap.prev {
+    left: 0;
   }
-  .pt[data-lang="ur"] .arrows :global(svg) {
-    transform: scaleX(-1);
+  .tap.next {
+    right: 0;
   }
+  .tap:focus-visible {
+    outline: 2px solid var(--story-accent);
+    outline-offset: -6px;
+    border-radius: 36px;
+  }
+  /* While the cursor shows the way, the tap spot stays quiet. */
+  .st[data-playing="true"] .s-hot b,
+  .st[data-playing="true"] .s-hot::before {
+    opacity: 0;
+  }
+
+  @container (min-width: 720px) {
+    .stage {
+      padding: 44px 0 48px;
+    }
+    .phone {
+      width: 270px;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .shot,
-    .shot img {
+    .shot {
       transition: none;
-      animation: none;
+      transform: none;
     }
   }
 </style>

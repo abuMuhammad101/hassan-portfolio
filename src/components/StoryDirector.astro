@@ -1,0 +1,336 @@
+---
+/* Plays an interactive prototype as a story. A named cursor moves through
+   the real widget and clicks what a person would click, chapter by chapter,
+   with a caption and a timeline under it. Touch the prototype and the cursor
+   steps aside: it's your turn. Press play and it picks up where you are.
+
+   Each chapter lists steps run against the widget in the slot:
+     { click: selector }  the cursor moves there and clicks it
+     { point: selector }  the cursor moves there and rests
+     { run: selector }    clicked silently, without the cursor
+     { tab: true }        the cursor clicks this chapter's own tab
+     settle               ms to wait after a step when replaying silently
+   `reset` is a selector clicked silently before chapter one.
+   The prototype sits in a window on a quiet canvas; the window's tabs are
+   the chapters. */
+import Icon from "./Icon.astro";
+import "../styles/story.css";
+
+export interface Step {
+  tab?: boolean;
+  click?: string;
+  point?: string;
+  run?: string;
+  settle?: number;
+}
+export interface Chapter {
+  tab: string;
+  icon: string;
+  title: string;
+  note: string;
+  steps: Step[];
+}
+interface Props {
+  chapters: Chapter[];
+  reset?: string;
+  accent?: string;
+  who?: string;
+  address?: string;
+  pad?: boolean;
+}
+const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan", address = "", pad = false } = Astro.props;
+---
+
+<div class="sd" data-sd data-playing="false" data-reset={reset} data-chapters={JSON.stringify(chapters)} style={`--story-accent:${accent}`}>
+  <div class="s-canvas">
+    <span class="s-h tl" aria-hidden="true"></span><span class="s-h tr" aria-hidden="true"></span>
+    <span class="s-h bl" aria-hidden="true"></span><span class="s-h br" aria-hidden="true"></span>
+    <div class="s-win">
+      <div class="s-bar">
+        <span class="s-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+        <ol class="s-tabs" aria-label="Chapters">
+          {chapters.map((c, i) => (
+            <li class:list={[{ on: i === 0 }]} data-chi={i}>
+              <button type="button" title={c.title}><Icon name={c.icon} weight="duotone" size={16} /><span class="lbl">{c.tab}</span><span class="fill"></span></button>
+            </li>
+          ))}
+        </ol>
+        {address && <span class="s-addr">{address}</span>}
+      </div>
+      <div class:list={["sd-stage", { pad }]} data-stage>
+        <slot />
+      </div>
+      <span class="s-ghost" data-ghost aria-hidden="true">
+        <svg viewBox="0 0 18 20"><path d="M2 1.6 15.4 8.5 9.6 10.2 6.9 16.2Z" /></svg>
+        <b><i>{who.slice(0, 1)}</i>{who}</b>
+        <span class="s-burst"></span>
+      </span>
+      <p class="yours" data-yours hidden><span></span>Your turn. Press play to watch again.</p>
+    </div>
+  </div>
+
+  <div class="s-foot">
+    <button type="button" class="s-play" data-sd-play aria-label="Play the story">
+      <span class="knob">
+        <svg viewBox="0 0 42 42" aria-hidden="true"><circle class="track" cx="21" cy="21" r="19" /><circle class="prog" cx="21" cy="21" r="19" pathLength="100" /></svg>
+        <span class="icon" aria-hidden="true"><i></i><i></i></span>
+      </span>
+    </button>
+    <div class="s-caps" aria-live="polite">
+      {chapters.map((c, i) => <p class:list={["s-cap", { on: i === 0 }]} data-cap={i}><b>{c.title}.</b> {c.note}</p>)}
+    </div>
+  </div>
+</div>
+
+<script>
+  type Step = { click?: string; point?: string; run?: string; tab?: boolean; settle?: number };
+  type Chapter = { title: string; steps: Step[] };
+  const MOVE = 850;
+  const HOLD = 2600;
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  document.querySelectorAll<HTMLElement>("[data-sd]").forEach((root) => {
+    const chapters: Chapter[] = JSON.parse(root.dataset.chapters!);
+    const stage = root.querySelector<HTMLElement>("[data-stage]")!;
+    const win = root.querySelector<HTMLElement>(".s-win")!;
+    const ghost = root.querySelector<HTMLElement>("[data-ghost]")!;
+    const yours = root.querySelector<HTMLElement>("[data-yours]")!;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let idx = 0;
+    let run = 0; // bumps on every interruption, so stale loops stop
+    let userStopped = false;
+    let driving = false; // clicks the director makes itself
+
+    const find = (sel: string) =>
+      [...stage.querySelectorAll<HTMLElement>(sel)].find((el) => el.getClientRects().length && getComputedStyle(el).visibility !== "hidden") ??
+      stage.querySelector<HTMLElement>(sel);
+
+    const press = (el: HTMLElement | null) => {
+      if (!el) return;
+      driving = true;
+      el.click();
+      driving = false;
+    };
+
+    // Bring a target into view inside its own scroll box, never the page.
+    const reveal = (el: HTMLElement) => {
+      let p = el.parentElement;
+      while (p && p !== stage) {
+        const cs = getComputedStyle(p);
+        if (/(auto|scroll)/.test(cs.overflowY) && p.scrollHeight > p.clientHeight) {
+          const r = el.getBoundingClientRect();
+          const pr = p.getBoundingClientRect();
+          if (r.top < pr.top || r.bottom > pr.bottom) p.scrollTop += r.top - pr.top - pr.height / 3;
+          break;
+        }
+        p = p.parentElement;
+      }
+    };
+
+    // The cursor glides to a target, and the target answers with a soft ring.
+    let lit: HTMLElement | null = null;
+    const light = (el: HTMLElement | null) => {
+      lit?.removeAttribute("data-ghost-on");
+      lit = el;
+      el?.setAttribute("data-ghost-on", "");
+    };
+    const moveTo = (el: HTMLElement) => {
+      reveal(el);
+      const r = el.getBoundingClientRect();
+      const w = win.getBoundingClientRect();
+      const x = r.left - w.left + Math.min(r.width * 0.5, 56);
+      const y = r.top - w.top + Math.min(r.height * 0.6, 22);
+      ghost.style.transform = `translate(${x}px, ${y}px)`;
+      ghost.classList.add("on");
+      window.setTimeout(() => light(el), MOVE - 260);
+    };
+    const tap = async (el: HTMLElement) => {
+      ghost.classList.remove("click");
+      void ghost.offsetWidth;
+      ghost.classList.add("click");
+      el.setAttribute("data-ghost-press", "");
+      await wait(170);
+      press(el);
+      window.setTimeout(() => el.removeAttribute("data-ghost-press"), 180);
+    };
+
+    const markTabs = (i: number) =>
+      root.querySelectorAll<HTMLElement>("[data-chi]").forEach((c) => {
+        const k = Number(c.dataset.chi);
+        c.classList.toggle("on", k === i);
+        c.classList.toggle("done", k < i);
+      });
+    const mark = (i: number, tabs = true) => {
+      idx = i;
+      root.querySelectorAll<HTMLElement>("[data-cap]").forEach((c) => c.classList.toggle("on", Number(c.dataset.cap) === i));
+      if (tabs) markTabs(i);
+      // Keep the open tab in view when the strip scrolls (narrow screens).
+      const tab = root.querySelector<HTMLElement>(`[data-chi="${i}"]`);
+      const strip = tab?.parentElement;
+      if (tab && strip) strip.scrollTo({ left: tab.offsetLeft - strip.clientWidth / 2 + tab.clientWidth / 2, behavior: "smooth" });
+    };
+
+    const chapterTime = (c: Chapter) => c.steps.length * (MOVE + 350) + HOLD;
+
+    // Put the widget in the state chapter i starts from, without the cursor.
+    const replayTo = async (i: number, my: number) => {
+      if (root.dataset.reset) press(find(root.dataset.reset));
+      await wait(80);
+      for (let k = 0; k < i; k++) {
+        for (const st of chapters[k].steps) {
+          if (my !== run) return false;
+          const sel = st.click ?? st.run;
+          if (sel) press(find(sel));
+          await wait(st.settle ?? 90);
+        }
+      }
+      return my === run;
+    };
+
+    const play = async (from: number, fresh: boolean) => {
+      const my = ++run;
+      root.dataset.playing = "true";
+      root.querySelector("[data-sd-play]")!.setAttribute("aria-label", "Pause the story");
+      yours.hidden = true;
+      if (fresh && !(await replayTo(from, my))) return;
+      for (let i = from; ; i = (i + 1) % chapters.length) {
+        if (my !== run) return;
+        if (i === 0 && root.dataset.reset) {
+          press(find(root.dataset.reset));
+          await wait(250);
+        }
+        const c = chapters[i];
+        mark(i, !c.steps[0]?.tab);
+        root.style.setProperty("--dur", `${chapterTime(c)}ms`);
+        root.classList.remove("tick");
+        void root.offsetWidth;
+        root.classList.add("tick");
+        for (const st of c.steps) {
+          if (my !== run) return;
+          if (st.run) {
+            press(find(st.run));
+            await wait(st.settle ?? 60);
+            continue;
+          }
+          // `tab` sends the cursor to this chapter's own tab in the window.
+          const el = st.tab ? root.querySelector<HTMLElement>(`[data-chi="${i}"] button`) : find((st.click ?? st.point)!);
+          if (!el) continue;
+          moveTo(el);
+          await wait(MOVE);
+          if (my !== run) return;
+          if (st.click || st.tab) await tap(el);
+          if (st.tab) markTabs(i);
+          await wait(350);
+        }
+        await wait(HOLD);
+        light(null);
+      }
+    };
+
+    const stop = (byHand: boolean) => {
+      run++;
+      root.dataset.playing = "false";
+      root.classList.remove("tick");
+      root.querySelector("[data-sd-play]")!.setAttribute("aria-label", "Play the story");
+      ghost.classList.remove("on");
+      light(null);
+      if (byHand) yours.hidden = false;
+    };
+
+    // Any real touch inside the prototype hands it to the person.
+    stage.addEventListener(
+      "pointerdown",
+      (e) => {
+        if (!e.isTrusted || driving) return;
+        userStopped = true;
+        if (root.dataset.playing === "true") stop(true);
+      },
+      true,
+    );
+
+    root.querySelector("[data-sd-play]")!.addEventListener("click", () => {
+      if (root.dataset.playing === "true") {
+        userStopped = true;
+        stop(false);
+      } else {
+        userStopped = false;
+        play(idx, true);
+      }
+    });
+    root.querySelectorAll<HTMLElement>("[data-chi] button").forEach((b) =>
+      b.addEventListener("click", () => {
+        if (driving) return;
+        const i = Number(b.closest<HTMLElement>("[data-chi]")!.dataset.chi);
+        userStopped = false;
+        play(i, true);
+      }),
+    );
+
+    if (!reduce) {
+      // "In view" means half the stage, or half the screen when the stage
+      // is taller than the screen (a long page on a phone).
+      new IntersectionObserver(
+        ([e]) => {
+          const seen = e.intersectionRect.height >= Math.min(e.boundingClientRect.height, innerHeight) * 0.5;
+          if (seen && !userStopped && root.dataset.playing !== "true") play(idx, true);
+          else if (!seen && root.dataset.playing === "true") stop(false);
+        },
+        { threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1] },
+      ).observe(stage);
+    }
+  });
+</script>
+
+<style>
+  .sd {
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .sd {
+    container-type: inline-size;
+  }
+  .sd-stage {
+    position: relative;
+  }
+  .sd-stage.pad {
+    padding: 28px 22px;
+    background: #f3f2ee;
+  }
+
+  .yours {
+    position: absolute;
+    left: 50%;
+    bottom: 14px;
+    z-index: 41;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: #141414;
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    transform: translateX(-50%);
+    box-shadow: 0 10px 24px -10px rgb(0 0 0 / 0.5);
+    animation: rise 0.4s var(--ease);
+  }
+  .yours[hidden] {
+    display: none;
+  }
+  .yours span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--story-accent);
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translate(-50%, 8px);
+    }
+  }
+
+
+</style>

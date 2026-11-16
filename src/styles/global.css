@@ -26,6 +26,8 @@
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Consolas, monospace;
   --font-serif-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-editorial: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
   --font-serif-body: "Lora", Georgia, "Times New Roman", serif;
   --resume-accent: #7c3aed;
 

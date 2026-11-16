@@ -34,7 +34,7 @@ const cases = defineCollection({
     constraints: z.array(z.string()),
     decisionsIntro: z.string().optional(),
     decisions: z.array(z.object({ title: z.string(), body: z.string() })),
-    states: z.array(z.object({ name: z.string(), note: z.string() })),
+    states: z.array(z.object({ name: z.string(), note: z.string(), icon: z.string().optional() })),
     evidence: z.array(z.string()),
     measures: z.array(z.string()).optional(),
     next: z.string().optional(),

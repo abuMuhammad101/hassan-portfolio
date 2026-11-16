@@ -1,0 +1,630 @@
+/* Shared pieces of the story widgets (see src/scripts/story.ts).
+   Each widget sets --story-accent; --dur comes from the script. */
+
+/* Play / pause: the icon morphs between two bars and a triangle, and a ring
+   around it fills as the chapter plays. */
+.s-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+.s-play .knob {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--bg-raised);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent),
+    0 8px 18px -10px rgb(0 0 0 / 0.35);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.s-play:hover .knob {
+  transform: scale(1.06);
+}
+.s-play:active .knob {
+  transform: scale(0.94);
+}
+.s-play svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+.s-play circle {
+  fill: none;
+  stroke-width: 2;
+}
+.s-play .track {
+  stroke: color-mix(in srgb, var(--ink) 9%, transparent);
+}
+.s-play .prog {
+  stroke: var(--story-accent);
+  stroke-linecap: round;
+  stroke-dasharray: 0 100;
+}
+.tick[data-playing="true"] .s-play .prog {
+  animation: s-ring var(--dur) linear forwards;
+}
+@keyframes s-ring {
+  to {
+    stroke-dasharray: 100 100;
+  }
+}
+.s-play .icon {
+  position: relative;
+  width: 11px;
+  height: 13px;
+  margin-left: 1px;
+}
+.s-play .icon i {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  transition: clip-path 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Paused: show the play triangle. */
+.s-play .icon i:first-child {
+  clip-path: polygon(0 0, 50% 25%, 50% 75%, 0 100%);
+}
+.s-play .icon i:last-child {
+  clip-path: polygon(50% 25%, 100% 50%, 100% 50%, 50% 75%);
+}
+/* Playing: two bars. */
+[data-playing="true"] .s-play .icon {
+  margin-left: 0;
+}
+[data-playing="true"] .s-play .icon i:first-child {
+  clip-path: polygon(0 0, 34% 0, 34% 100%, 0 100%);
+}
+[data-playing="true"] .s-play .icon i:last-child {
+  clip-path: polygon(66% 0, 100% 0, 100% 100%, 66% 100%);
+}
+.s-play .count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
+}
+.s-play:focus-visible {
+  outline: none;
+}
+.s-play:focus-visible .knob {
+  outline: 2px solid var(--story-accent);
+  outline-offset: 3px;
+}
+
+/* The tap spot: where the person would tap next. It breathes to invite a
+   tap, and taps itself just before an autoplaying chapter moves on. */
+.s-hot {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 6;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s 0.35s;
+  -webkit-tap-highlight-color: transparent;
+}
+.s-hot.on {
+  opacity: 1;
+  pointer-events: auto;
+}
+.s-hot::before,
+.s-hot::after,
+.s-hot b {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border-radius: 50%;
+}
+.s-hot b {
+  width: 14px;
+  height: 14px;
+  background: var(--story-accent);
+  box-shadow:
+    0 0 0 4px rgb(255 255 255 / 0.9),
+    0 4px 12px rgb(0 0 0 / 0.25);
+  transition: transform 0.2s;
+}
+.s-hot:hover b {
+  transform: scale(1.2);
+}
+.s-hot::before {
+  width: 14px;
+  height: 14px;
+  background: color-mix(in srgb, var(--story-accent) 45%, transparent);
+  animation: s-breathe 1.8s ease-out infinite;
+}
+.s-hot::after {
+  width: 46px;
+  height: 46px;
+  background: rgb(0 0 0 / 0.16);
+  opacity: 0;
+  transform: scale(0.3);
+}
+.tick[data-playing="true"] .s-hot.on::after {
+  animation: s-tap 0.55s ease-out both;
+  animation-delay: calc(var(--dur) - 650ms);
+}
+@keyframes s-breathe {
+  from {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+@keyframes s-tap {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+}
+.s-hot:focus-visible {
+  outline: 2px solid var(--story-accent);
+  outline-offset: 2px;
+}
+
+/* An element inside a coded screen that is itself the tap target. */
+.s-target {
+  cursor: pointer;
+  animation: s-glow 1.8s ease-out infinite;
+}
+@keyframes s-glow {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--story-accent) 55%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 12px color-mix(in srgb, var(--story-accent) 0%, transparent);
+  }
+}
+.tick[data-playing="true"] .on .s-target {
+  animation:
+    s-glow 1.8s ease-out infinite,
+    s-press 0.45s ease-out both calc(var(--dur) - 600ms);
+}
+@keyframes s-press {
+  50% {
+    transform: scale(0.95);
+    filter: brightness(0.92);
+  }
+}
+
+/* A note pinned to a point on the screen. */
+.s-call {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(4px, -50%);
+  transition:
+    opacity 0.4s,
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.s-call.left {
+  flex-direction: row-reverse;
+  transform: translate(calc(-100% - 4px), -50%);
+}
+.s-call.on {
+  opacity: 1;
+  transform: translate(-5px, -50%);
+  transition-delay: 0.6s;
+}
+.s-call.left.on {
+  transform: translate(calc(-100% + 5px), -50%);
+}
+.s-call i {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 0 2px var(--ink),
+    0 2px 6px rgb(0 0 0 / 0.25);
+}
+.s-call span {
+  max-width: 168px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #141414;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  box-shadow: 0 10px 24px -10px rgb(0 0 0 / 0.5);
+}
+
+@media (max-width: 520px) {
+  .s-call span {
+    max-width: 120px;
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-hot::before,
+  .s-target {
+    animation: none !important;
+  }
+  .s-play .prog {
+    animation: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   The quiet canvas: a frame on a design board, a window on it, and the
+   window's tabs as the chapters. Shared by every story.
+   --------------------------------------------------------------------- */
+.s-canvas {
+  --paper: #f6f5f0;
+  --paper-line: #e6e4dc;
+  position: relative;
+  padding: 22px 12px 18px;
+  border: 1px solid var(--paper-line);
+  background: var(--paper);
+}
+@container (min-width: 720px) {
+  .s-canvas {
+    padding: 40px 36px 44px;
+  }
+}
+.s-h {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border: 1px solid #c9c6bb;
+  background: #fff;
+}
+.s-h.tl { top: -4px; left: -4px; }
+.s-h.tr { top: -4px; right: -4px; }
+.s-h.bl { bottom: -4px; left: -4px; }
+.s-h.br { bottom: -4px; right: -4px; }
+
+.s-win {
+  position: relative;
+  border-radius: 12px;
+  background: #fff;
+  color: #1d1c19;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.08),
+    0 18px 40px -24px rgb(0 0 0 / 0.28);
+  overflow: hidden;
+}
+.s-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 42px;
+  padding: 0 10px 0 16px;
+  background: #f1f0ec;
+  border-bottom: 1px solid #e4e2dc;
+}
+.s-lights {
+  display: inline-flex;
+  align-self: center;
+  gap: 8px;
+  flex: none;
+  margin-right: 6px;
+}
+.s-lights i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #d9d6d0;
+  box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.08);
+}
+
+/* Tabs, browser style: the open tab joins the page below it. */
+.s-tabs {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 0 10px;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.s-tabs::-webkit-scrollbar { display: none; }
+.s-tabs li {
+  position: relative;
+  flex: none;
+}
+/* A hairline between two closed tabs. */
+.s-tabs li + li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 1px;
+  height: 14px;
+  background: #d8d5ce;
+}
+.s-tabs li.on::before,
+.s-tabs li.on + li::before { opacity: 0; }
+.s-tabs button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  margin-bottom: -1px;
+  padding: 0 16px 1px 13px;
+  border: 0;
+  border-radius: 10px 10px 0 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: #7d7a72;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+.s-tabs button svg {
+  flex: none;
+  color: #9c988f;
+  transition: color 0.2s;
+}
+.s-tabs li:not(.on) button:hover {
+  color: #2f2e2a;
+  background: rgb(0 0 0 / 0.035);
+}
+.s-tabs li.on button {
+  background: #fff;
+  color: #1d1c19;
+}
+.s-tabs li.on button svg {
+  color: var(--story-accent);
+}
+/* The curved feet that join the open tab to the page, like a browser. */
+.s-tabs li.on button::before,
+.s-tabs li.on button::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+}
+.s-tabs li.on button::before {
+  left: -10px;
+  background: radial-gradient(circle at 0 0, transparent 9.5px, #fff 10px);
+}
+.s-tabs li.on button::after {
+  right: -10px;
+  background: radial-gradient(circle at 100% 0, transparent 9.5px, #fff 10px);
+}
+.s-tabs button:focus-visible {
+  outline: 2px solid var(--story-accent);
+  outline-offset: -3px;
+}
+/* The open tab's underline fills while its chapter plays. */
+.s-tabs .fill {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 4px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--story-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  pointer-events: none;
+}
+.tick[data-playing="true"] .s-tabs li.on .fill {
+  opacity: 0.5;
+  animation: s-grow var(--dur) linear forwards;
+}
+@keyframes s-grow {
+  to { transform: scaleX(1); }
+}
+.s-addr {
+  align-self: center;
+  flex: none;
+  max-width: 30%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+  color: #9c988f;
+}
+.s-tool {
+  align-self: center;
+  flex: none;
+}
+@container (max-width: 640px) {
+  .s-addr { display: none; }
+  .s-tabs .lbl { display: none; }
+  .s-tabs li.on .lbl { display: inline; }
+  .s-tabs button { padding: 0 12px 1px; }
+  .s-lights { margin-right: 0; }
+  .s-lights i { width: 10px; height: 10px; }
+}
+
+/* Under the canvas: one control and one line. */
+.s-foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 600px;
+  margin: 22px auto 0;
+}
+.s-caps {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.s-caps .s-cap {
+  grid-area: 1 / 1;
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--ink-secondary);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.s-caps .s-cap.on {
+  opacity: 1;
+  transition: opacity 0.4s 0.15s;
+}
+.s-caps .s-cap b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* A product frame inside a story window loses its own chrome. */
+.s-win [data-browser] {
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.s-win [data-browser-bar],
+.s-win [data-reset],
+.s-win [data-chips] {
+  display: none !important;
+}
+
+/* The cursor that walks the story: it glides with a human ease, rests on
+   a target (which answers with a soft ring), and presses it. */
+.s-ghost {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  display: inline-flex;
+  align-items: flex-start;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    transform 0.85s cubic-bezier(0.6, 0.02, 0.2, 1),
+    opacity 0.3s;
+}
+.s-ghost.on {
+  opacity: 1;
+}
+.s-ghost svg {
+  width: 18px;
+  height: 20px;
+  margin: -2px 0 0 -2px;
+  fill: #141414;
+  stroke: #fff;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 3px 5px rgb(0 0 0 / 0.28));
+  transform-origin: 3px 2px;
+  transition: transform 0.15s;
+}
+.s-ghost b {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 17px 0 0 -4px;
+  padding: 3px 9px 3px 3px;
+  border-radius: 999px;
+  background: #141414;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.08),
+    0 8px 18px -8px rgb(0 0 0 / 0.5);
+}
+.s-ghost b i {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--story-accent);
+  color: #fff;
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 700;
+}
+.s-burst {
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--story-accent) 22%, transparent);
+  opacity: 0;
+}
+.s-ghost.click .s-burst {
+  animation: burst 0.55s ease-out;
+}
+.s-ghost.click svg {
+  animation: press 0.32s ease-out;
+}
+@keyframes burst {
+  from {
+    opacity: 1;
+    transform: scale(0.25);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+@keyframes press {
+  45% {
+    transform: scale(0.8) translate(1px, 1px);
+  }
+}
+/* The target the cursor rests on, and the moment it's pressed. */
+[data-ghost-on] {
+  outline: 2px solid color-mix(in srgb, var(--story-accent) 55%, transparent) !important;
+  outline-offset: 3px;
+  transition:
+    outline-offset 0.25s,
+    transform 0.15s;
+}
+[data-ghost-press] {
+  transform: scale(0.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  .s-ghost {
+    transition: none;
+  }
+}

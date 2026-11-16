@@ -9,7 +9,7 @@ meta:
   - { label: Market, value: "Karachi first, built to travel to the GCC" }
 ndaRecreated: false
 widget: phone-tour
-widgetIntro: "These are the real screens from the design file. Pick a side of the marketplace and swipe through. Then switch to Urdu: every screen mirrors and the flow runs right to left."
+widgetIntro: "The real screens from the design file, told as two connected stories: Ayesha hires a plumber, then Imran, the plumber, gets verified and finds work. Let it play, or tap the glowing spot where they would tap."
 stats:
   - { value: "47", unit: screens, label: "Eight flows, from first open to a finished job, in each language" }
   - { value: "2", unit: languages, label: "English, and Karachi Urdu mirrored right to left" }
@@ -27,7 +27,7 @@ decisions:
   - title: One job per screen, one accent
     body: "A white canvas, ink for text and primary buttons, isTyme green for money and success, and saffron as the single vibrant accent. Saffron fills and decorates; when it has to be read, a darker saffron keeps it at AA."
   - title: Write Urdu the way Karachi speaks
-    body: "Not textbook Urdu: the English words people actually say, in Urdu script, like پیمنٹ for payment and کنفرم for confirm. The English line comes first with Urdu under every heading and key button, and money always gets reassurance: پیسے محفوظ ہیں، ٹینشن نہ لیں."
+    body: "Not textbook Urdu: the English words people actually say, written in Urdu script, like payment and confirm. The English line comes first with Urdu under every heading and key button, and anything about money comes with a reassurance that it's safe."
   - title: Mirror it, don't just translate it
     body: "In Urdu the layout, arrows, progress bars, tab bar and chat bubbles flip. Prices, phone numbers, the keypad, the wordmark and the card frame don't. Nastaliq is set about 15% smaller with taller lines, so it fits the same components."
   - title: Show what a fair price is
@@ -37,12 +37,12 @@ decisions:
   - title: One motif, used sparingly
     body: "Proximity rings, for people near you: hairline circles, a dotted outer ring and a single saffron arc. Only on welcome, location, success and empty moments, and never behind text."
 states:
-  - { name: Wrong code, note: "Says how many tries are left, with a new code one tap away" }
-  - { name: Photo not clear, note: Names the fix in both languages }
-  - { name: No internet, note: Shows saved information and a retry }
-  - { name: No offers yet, note: "Says how many have seen it, then suggests a better price or a photo" }
-  - { name: Payment didn't go through, note: "Confirms no money left the wallet, offers another wallet" }
-  - { name: Job already taken, note: "Nothing counts against the worker, with similar jobs to look at" }
+  - { icon: password, name: Wrong code, note: "Says how many tries are left, with a new code one tap away" }
+  - { icon: camera-slash, name: Photo not clear, note: Names the fix in both languages }
+  - { icon: wifi-slash, name: No internet, note: Shows saved information and a retry }
+  - { icon: hourglass-medium, name: No offers yet, note: "Says how many have seen it, then suggests a better price or a photo" }
+  - { icon: credit-card, name: Payment didn't go through, note: "Confirms no money left the wallet, offers another wallet" }
+  - { icon: prohibit, name: Job already taken, note: "Nothing counts against the worker, with similar jobs to look at" }
 evidence:
   - "The full app in Figma: eight flows and 47 screens, each in English and in Urdu."
   - "A style and copy sheet: colour roles, the one decorative motif, and a glossary of formal Urdu next to the words Karachi actually uses."

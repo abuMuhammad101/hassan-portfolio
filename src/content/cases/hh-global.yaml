@@ -9,7 +9,7 @@ meta:
   - { label: Stack, value: "Next.js, Supabase, Vercel" }
 ndaRecreated: false
 widget: site-tour
-widgetIntro: These are screens from the live site. Step through them, or open the site itself.
+widgetIntro: "Screens from the live site, played as a buyer would meet them. Take over at any point, or open the site itself."
 stats:
   - { value: "5", unit: admin tabs, label: "Quotes, products, categories, media and content, run by a non-technical owner" }
   - { value: "1", unit: request, label: Several products in one quote, each with its own spec and photo }
@@ -31,10 +31,10 @@ decisions:
   - title: Never go dark
     body: "If the database is unreachable, the storefront reads from a static copy of the catalogue, so buyers still see everything."
 states:
-  - { name: Database down, note: Catalogue served from a static copy }
-  - { name: Failed save, note: "Every admin form now says so, instead of 'Saved'" }
-  - { name: Missing photo input, note: Found in review and fixed before launch }
-  - { name: Several products, note: One quote holds them all }
+  - { icon: database, name: Database down, note: Catalogue served from a static copy }
+  - { icon: floppy-disk, name: Failed save, note: "Every admin form now says so, instead of 'Saved'" }
+  - { icon: image-broken, name: Missing photo input, note: Found in review and fixed before launch }
+  - { icon: stack, name: Several products, note: One quote holds them all }
 evidence:
   - Live in production at hhglobalcompany.com.
   - A quote form that looked finished did nothing on upload; the file input was missing. Found, fixed, then the same class of bug fixed across every admin form at once.

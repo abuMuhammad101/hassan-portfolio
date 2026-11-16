@@ -8,8 +8,8 @@ interface Props {
 const { address = "", label = "Browser window" } = Astro.props;
 ---
 
-<figure class="browser" role="group" aria-label={label}>
-  <div class="bar">
+<figure class="browser" role="group" aria-label={label} data-browser>
+  <div class="bar" data-browser-bar>
     <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
     {address && <span class="address"><Icon name="lock-simple" size={12} /> {address}</span>}
     <span class="spacer" aria-hidden="true"></span>

@@ -13,6 +13,7 @@ const patients = [
 ---
 
 <div class="cp" data-copilot data-step="idle">
+  <button type="button" hidden data-reset-cp aria-hidden="true" tabindex="-1"></button>
   <div class="tablet" role="group" aria-label="Re-created tablet app with a voice copilot">
     <div class="screen">
       <div class="app" aria-hidden="true">
@@ -159,6 +160,8 @@ const patients = [
     });
     root.querySelector("[data-exit-yes]")!.addEventListener("click", () => { exit.hidden = true; go("idle"); });
     root.querySelector("[data-exit-no]")!.addEventListener("click", () => (exit.hidden = true));
+    // Used by the story player to start over from any step.
+    root.querySelector("[data-reset-cp]")!.addEventListener("click", () => { exit.hidden = true; go("idle"); });
     void order;
   });
 </script>

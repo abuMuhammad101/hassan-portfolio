@@ -1,188 +1,902 @@
 ---
-/* The audit's central finding, re-created with a stand-in brand and menu:
-   decide the channel when the app opens, not when someone adds to cart. */
-import PhoneFrame from "../PhoneFrame.astro";
+/* The audit's central finding as a story, re-created with a stand-in brand
+   and menu. The same customer, 4.6 km from the nearest branch, goes through
+   four moments twice: before the audit and after it. Both apps share one
+   visual language, so the only thing that differs is the decision. */
 import Icon from "../Icon.astro";
+import "../../styles/story.css";
+
+const chapters = [
+  {
+    tab: "Opens",
+    icon: "device-mobile",
+    title: "The app opens",
+    before: "Nothing says they're 4.6 km away, far outside the 1 km delivery zone.",
+    after: "The truth in the first second: pickup is chosen for them, ready in about 15 minutes.",
+  },
+  {
+    tab: "Dinner",
+    icon: "bowl-food",
+    title: "They choose dinner",
+    before: "Appetite builds. They customise the order and the intent peaks.",
+    after: "The item already says where and when they'll get it, and the points they'll earn.",
+  },
+  {
+    tab: "Add to cart",
+    icon: "shopping-cart-simple",
+    title: "They tap Add to cart",
+    before: "Only now does the range check fire: a refusal, then four equal partner links.",
+    after: "Still want delivery? One recommended option, two alternatives, and the cart is kept.",
+  },
+  {
+    tab: "Next",
+    icon: "flag-checkered",
+    title: "What happens next",
+    before: "They leave, and the order, their data and the loyalty points go with them.",
+    after: "The order stays in the app: ready in about 15 minutes, with points earned.",
+  },
+];
+const menu = [
+  { name: "Crispy chicken", price: 26, icon: "hamburger", tone: "p1" },
+  { name: "Rice bowl", price: 24, icon: "bowl-food", tone: "p2" },
+  { name: "Spiced tea", price: 6, icon: "coffee", tone: "p3" },
+  { name: "Cookie box", price: 12, icon: "cookie", tone: "p4" },
+];
 ---
 
-<div class="ra" data-ra data-view="after" data-km="1.8">
-  <div class="controls">
-    <div class="switch" role="group" aria-label="Before or after the audit">
-      <button type="button" data-view-btn="before" aria-pressed="false">Before</button>
-      <button type="button" data-view-btn="after" aria-pressed="true">After</button>
-    </div>
-    <label class="dist">
-      <span>Distance from the nearest branch <b data-km-out>1.8 km</b></span>
-      <input type="range" min="0.4" max="6" step="0.2" value="1.8" data-km-in aria-label="Distance from the nearest branch in kilometres" />
-      <span class="marks" aria-hidden="true"><i style="--at:10.7%">1 km</i><i style="--at:46.4%">3 km</i></span>
-    </label>
-    <p class="explain" data-explain></p>
-  </div>
-
-  <div class="phone-wrap">
-    <PhoneFrame label="Re-created ordering app">
-      <div class="app">
-        <!-- after: channel decided on open -->
-        <div class="top only-after">
-          <div class="seg" role="group" aria-label="Order type">
-            <button type="button" data-mode="delivery">Delivery</button>
-            <button type="button" data-mode="pickup">Pickup</button>
-          </div>
-          <p class="status" data-status></p>
-        </div>
-        <!-- before: an address and nothing else -->
-        <div class="top only-before">
-          <p class="addr"><small>Deliver to</small><b>Home · Villa 4</b></p>
-        </div>
-
-        <div class="hero">
-          <span class="tag">Most loved</span>
-          <div class="plate" aria-hidden="true"><i></i></div>
-          <b>Crispy chicken, 4 pcs</b>
-          <small>With fries, bun and garlic sauce</small>
-          <div class="row"><span class="price">SAR 26</span><button type="button" class="add" data-add>Add to cart</button></div>
-        </div>
-        <div class="mini" aria-hidden="true"><span>Spiced tea</span><span>Wraps</span><span>Deals</span></div>
-
-        <div class="toast" data-toast hidden></div>
-
-        <div class="sheet" data-sheet hidden>
-          <div class="before-sheet only-before">
-            <span class="sad"><Icon name="x-circle" size={22} /></span>
-            <b>Sorry, we don't deliver to your area</b>
-            <small>Order from us on:</small>
-            <span class="eq">Partner app A</span><span class="eq">Partner app B</span><span class="eq">Partner app C</span><span class="eq">Partner app D</span>
-            <em>No ranking, no reason to pick one, no way back.</em>
-          </div>
-          <div class="after-sheet only-after">
-            <b>We can't deliver this far yet</b>
-            <small>Your cart is saved.</small>
-            <button type="button" class="opt rec" data-pick-pickup><Icon name="storefront" size={16} /><span><b>Pick up at Gate Branch</b><small>Ready in about 15 min · points earned</small></span><em>Recommended</em></button>
-            <span class="opt"><Icon name="arrow-square-out" size={16} /><span><b>Order on a partner app</b><small>Prices may differ · no points there</small></span></span>
-            <span class="opt"><Icon name="bell-ringing" size={16} /><span><b>Tell me when you deliver here</b><small>We'll remember this address</small></span></span>
-          </div>
-          <button type="button" class="close" data-close>Close</button>
+<div class="ks" data-ks data-view="after" data-playing="false">
+  <div class="s-canvas">
+    <span class="s-h tl" aria-hidden="true"></span><span class="s-h tr" aria-hidden="true"></span>
+    <span class="s-h bl" aria-hidden="true"></span><span class="s-h br" aria-hidden="true"></span>
+    <div class="s-win">
+      <div class="s-bar">
+        <span class="s-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+        <ol class="s-tabs" aria-label="Moments">
+          {chapters.map((c, i) => (
+            <li data-ch class:list={[{ on: i === 0 }]}>
+              <button type="button" title={c.title}><Icon name={c.icon} weight="duotone" size={16} /><span class="lbl">{c.tab}</span><span class="fill"></span></button>
+            </li>
+          ))}
+        </ol>
+        <div class="view s-tool" role="group" aria-label="Before or after the audit">
+          <button type="button" data-view-btn="before" aria-pressed="false">Before</button>
+          <button type="button" data-view-btn="after" aria-pressed="true">After</button>
         </div>
       </div>
-    </PhoneFrame>
+
+  <div class="stage">
+    {(["before", "after"] as const).map((v) => (
+      <figure class:list={["dev", v]} aria-label={v === "before" ? "Before the audit" : "After the audit"}>
+        <figcaption><i></i>{v === "before" ? "Before" : "After"}</figcaption>
+        <div class="phone">
+          <div class="sb" aria-hidden="true"><b>9:41</b><span><Icon name="cell-signal-full" weight="fill" size={11} /><Icon name="wifi-high" weight="fill" size={11} /><Icon name="battery-full" weight="fill" size={13} /></span></div>
+
+          <!-- 1. Home -->
+          <div class="scr" data-shot="0">
+            <p class="hello">Good evening</p>
+            {v === "before" ? (
+              <p class="addr"><Icon name="map-pin" weight="duotone" size={14} /><span><small>Deliver to</small><b>Set your address <Icon name="caret-down" size={10} /></b></span></p>
+            ) : (
+              <>
+                <div class="seg"><span><Icon name="moped" size={12} /> Delivery</span><span class="on"><Icon name="storefront" size={12} /> Pickup</span></div>
+                <p class="addr"><Icon name="map-pin" weight="duotone" size={14} /><span><small>Home · Villa 4 · 4.6 km away</small><b>Pick up at Gate Branch <Icon name="caret-down" size={10} /></b></span></p>
+                <p class="status"><i></i>Ready in ~15 min<em>Outside delivery zone</em></p>
+              </>
+            )}
+            <div class="search"><Icon name="magnifying-glass" size={13} /> Search the menu</div>
+            <p class="h">Most loved</p>
+            <div class="grid">
+              {menu.map((m, k) => (
+                <div class:list={["item", { "s-target": k === 0 }]} data-hot={k === 0 ? "" : undefined}>
+                  <span class:list={["plate", m.tone]}><Icon name={m.icon} weight="duotone" size={26} /></span>
+                  <b>{m.name}</b>
+                  <small>SAR {m.price}{v === "after" && <em> · +{m.price} pts</em>}</small>
+                  {v === "after" && <span class="tag">Pickup</span>}
+                </div>
+              ))}
+            </div>
+            <nav class="tabs" aria-hidden="true"><span class="on"><Icon name="house" weight="fill" size={15} />Home</span><span><Icon name="receipt" size={15} />Orders</span><span><Icon name="gift" size={15} />Rewards</span><span><Icon name="user" size={15} />Account</span></nav>
+          </div>
+
+          <!-- 2. Item -->
+          <div class="scr" data-shot="1">
+            <span class="plate big p1"><Icon name="hamburger" weight="duotone" size={56} /></span>
+            <div class="row"><b class="dish">Crispy chicken, 4 pcs</b><b class="pr">SAR 26</b></div>
+            <small class="sub">With fries, bun and garlic sauce</small>
+            {v === "after" && <p class="status sm"><i></i>Pickup at Gate Branch · ~15 min<em>+28 pts</em></p>}
+            <p class="h sm">Spice</p>
+            <div class="radios"><span class="radio on">Classic</span><span class="radio">Spicy</span></div>
+            <p class="h sm">Extras</p>
+            <div class="radio check on">Extra garlic sauce <em>+2</em></div>
+            <div class="radio check">Cheese slice <em>+3</em></div>
+            <span class="cta s-target" data-hot>{v === "before" ? "Add to cart · SAR 28" : "Add for pickup · SAR 28"}</span>
+          </div>
+
+          <!-- 3. Add to cart -->
+          {v === "before" ? (
+            <div class="scr dim" data-shot="2">
+              <div class="modal">
+                <span class="ic bad"><Icon name="x-circle" size={22} /></span>
+                <b>Sorry, we don't deliver to your area</b>
+                <small>Order from us on:</small>
+                <div class="eq4"><span class="s-target" data-hot>Partner A</span><span>Partner B</span><span>Partner C</span><span>Partner D</span></div>
+              </div>
+            </div>
+          ) : (
+            <div class="scr dim" data-shot="2">
+              <div class="sheet">
+                <span class="grab"></span>
+                <b class="st-h">We can't deliver to Villa 4 yet</b>
+                <small class="sub">Your crispy chicken is saved. How would you like it?</small>
+                <div class="opt on"><span class="oi"><Icon name="storefront" weight="duotone" size={15} /></span><span><b>Pick up at Gate Branch</b><small><em class="best">Best value</em> ~15 min · +350 pts</small></span><i class="rd"></i></div>
+                <div class="opt"><span class="oi"><Icon name="moped" weight="duotone" size={15} /></span><span><b>Deliver with a partner</b><small>Their fees apply · no points</small></span><i class="rd"></i></div>
+                <div class="opt"><span class="oi"><Icon name="bell-simple" weight="duotone" size={15} /></span><span><b>Tell me when you deliver here</b><small>One message when it opens</small></span><i class="rd"></i></div>
+                <span class="cta s-target" data-hot>Continue with pickup</span>
+              </div>
+            </div>
+          )}
+
+          <!-- 4. What happens next -->
+          {v === "before" ? (
+            <div class="scr" data-shot="3">
+              <div class="gone">
+                <span class="ic"><Icon name="sign-out" size={20} /></span>
+                <b>They left for a partner app</b>
+                <small>And took with them:</small>
+                <ul>
+                  <li><Icon name="receipt" weight="duotone" size={14} /><span>The order</span><s>SAR 28</s></li>
+                  <li><Icon name="user" weight="duotone" size={14} /><span>Their details</span><s>Lost</s></li>
+                  <li><Icon name="gift" weight="duotone" size={14} /><span>Loyalty points</span><s>+260</s></li>
+                </ul>
+              </div>
+            </div>
+          ) : (
+            <div class="scr" data-shot="3">
+              <div class="placed">
+                <span class="ring"><Icon name="check-circle" weight="fill" size={34} /></span>
+                <b>Order placed</b>
+                <small>Pick it up at Gate Branch</small>
+                <div class="eta"><span><small>Ready in</small><b>~15 min</b></span><span><small>Points</small><b>+350</b></span></div>
+                <div class="steps"><i class="on"></i><i></i><i></i></div>
+                <span class="cta s-target" data-hot>Track my order</span>
+              </div>
+            </div>
+          )}
+
+          <button type="button" class="tap prev" data-go="-1" aria-label="Previous chapter"></button>
+          <button type="button" class="tap next" data-go="1" aria-label="Next chapter"></button>
+        </div>
+        <div class="caps">{chapters.map((c, i) => <p class:list={["cap", { on: i === 0 }]} data-shot={i}>{v === "before" ? c.before : c.after}</p>)}</div>
+      </figure>
+    ))}
+  </div>
+
+      <span class="s-ghost" data-ghost aria-hidden="true">
+        <svg viewBox="0 0 18 20"><path d="M2 1.6 15.4 8.5 9.6 10.2 6.9 16.2Z" /></svg>
+        <b><i>H</i>Hassan</b>
+        <span class="s-burst"></span>
+      </span>
+    </div>
+  </div>
+
+  <div class="s-foot">
+    <button type="button" class="s-play" data-play aria-label="Play the story">
+      <span class="knob">
+        <svg viewBox="0 0 42 42" aria-hidden="true"><circle class="track" cx="21" cy="21" r="19" /><circle class="prog" cx="21" cy="21" r="19" pathLength="100" /></svg>
+        <span class="icon" aria-hidden="true"><i></i><i></i></span>
+      </span>
+    </button>
+    <div class="s-caps" aria-live="polite">
+      {chapters.map((c, i) => <p class:list={["s-cap", { on: i === 0 }]} data-shot={i}><b>{c.title}.</b> The same customer, 4.6 km from the nearest branch, before and after the audit.</p>)}
+    </div>
   </div>
 </div>
 
 <script>
-  document.querySelectorAll<HTMLElement>("[data-ra]").forEach((root) => {
-    const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
-    const sheet = q("[data-sheet]"), toast = q("[data-toast]");
-    let mode = "pickup", t: number | undefined;
-    const km = () => parseFloat(root.dataset.km!);
-    const say = (msg: string) => { toast.textContent = msg; toast.hidden = false; clearTimeout(t); t = window.setTimeout(() => (toast.hidden = true), 2600); };
-    const render = () => {
-      const d = km(), view = root.dataset.view;
-      q("[data-km-out]").textContent = `${d.toFixed(1)} km`;
-      const band = d <= 1 ? "in" : d <= 3 ? "near" : "far";
-      root.dataset.band = band;
-      if (view === "after") {
-        const canDeliver = band === "in";
-        root.querySelector<HTMLButtonElement>('[data-mode="delivery"]')!.disabled = !canDeliver;
-        if (!canDeliver && mode === "delivery") mode = "pickup";
-        root.querySelectorAll<HTMLElement>("[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
-        q("[data-status]").innerHTML =
-          band === "in" ? (mode === "delivery" ? '<i class="ok"></i>Delivers here · 25–35 min' : '<i class="ok"></i>Pickup at Gate Branch · ready in 15 min')
-          : band === "near" ? `<i class="warn"></i>Outside the delivery zone · Pickup at Gate Branch, ${d.toFixed(1)} km`
-          : `<i class="bad"></i>${d.toFixed(1)} km from the nearest branch · see your options`;
-        q("[data-explain]").textContent =
-          band === "in" ? "Within 1 km the app defaults to its own delivery, with pickup one tap away."
-          : band === "near" ? "Between 1 and 3 km the app says so on open and defaults to pickup, so nothing is refused later."
-          : "Beyond 3 km the customer sees the honest options up front, and adding to cart opens a guided choice that keeps the cart.";
-      } else {
-        q("[data-explain]").textContent = d <= 1
-          ? "Inside 1 km, the original app works well."
-          : "Outside 1 km, the original app lets you browse and choose, then refuses at Add to cart, at peak intent.";
-      }
-    };
-    root.querySelectorAll<HTMLButtonElement>("[data-view-btn]").forEach((b) => b.addEventListener("click", () => {
-      root.dataset.view = b.dataset.viewBtn!;
-      root.querySelectorAll("[data-view-btn]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-      sheet.hidden = true; toast.hidden = true; render();
-    }));
-    q<HTMLInputElement>("[data-km-in]").addEventListener("input", (e) => { root.dataset.km = (e.target as HTMLInputElement).value; sheet.hidden = true; render(); });
-    root.querySelectorAll<HTMLButtonElement>("[data-mode]").forEach((b) => b.addEventListener("click", () => { mode = b.dataset.mode!; render(); }));
-    q("[data-add]").addEventListener("click", () => {
-      const d = km(), view = root.dataset.view;
-      if (d <= 1) return say(view === "after" && mode === "pickup" ? "Added · pickup in about 15 min" : "Added · delivers in 25–35 min");
-      if (view === "after" && d <= 3) return say("Added for pickup at Gate Branch");
-      sheet.hidden = false;
-    });
-    q("[data-close]").addEventListener("click", () => (sheet.hidden = true));
-    q("[data-pick-pickup]").addEventListener("click", () => { sheet.hidden = true; mode = "pickup"; render(); say("Switched to pickup · cart kept"); });
-    render();
+  import { initStory } from "../../scripts/story";
+  document.querySelectorAll<HTMLElement>("[data-ks]").forEach((root) => {
+    initStory(root);
+    root.querySelectorAll<HTMLButtonElement>("[data-view-btn]").forEach((b) =>
+      b.addEventListener("click", () => {
+        root.dataset.view = b.dataset.viewBtn;
+        root.querySelectorAll("[data-view-btn]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      }),
+    );
   });
 </script>
 
 <style>
-  .ra {
+  .ks {
     container-type: inline-size;
+    --story-accent: #ff6b4a;
     --plum: #4b2a5e;
     --coral: #ff6b4a;
     --cream: #fbf6ef;
+    --ok: #1f8a4c;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Stage: one phone on a narrow screen, both side by side when there's room. */
+  .stage {
+    position: relative;
     display: grid;
-    grid-template-columns: 1fr 270px;
-    gap: 28px;
+    justify-items: center;
+    padding: 26px 0 22px;
+    background: #faf9f6;
+    overflow: hidden;
+  }
+  .dev {
+    margin: 0;
+    grid-area: 1 / 1;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    transition:
+      opacity 0.5s var(--ease),
+      transform 0.6s var(--ease);
+  }
+  .ks[data-view="after"] .before,
+  .ks[data-view="before"] .after {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+    pointer-events: none;
+    visibility: hidden;
+  }
+  figcaption {
+    display: inline-flex;
     align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #8a877f;
   }
-  @media (max-width: 760px) {
-    .ra { grid-template-columns: 1fr; }
-    .phone-wrap { width: min(280px, 80%); margin: 0 auto; }
+  figcaption i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #b9b3ab;
   }
-  .switch { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--bg-sunk); border: 1px solid var(--rule); }
-  .switch button { border: 0; background: none; font: inherit; font-weight: 600; font-size: var(--text-sm); padding: 6px 16px; border-radius: 999px; color: var(--ink-muted); cursor: pointer; }
-  .switch [aria-pressed="true"] { background: var(--bg-raised); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
-  .dist { display: grid; gap: 8px; margin-top: 20px; font-size: var(--text-sm); color: var(--ink-secondary); }
-  .dist b { color: var(--ink); font-variant-numeric: tabular-nums; margin-left: 6px; }
-  .dist input { width: 100%; accent-color: var(--plum); }
-  .marks { position: relative; height: 14px; }
-  .marks i { position: absolute; left: var(--at); transform: translateX(-50%); font-style: normal; font-size: 11px; color: var(--ink-muted); }
-  .explain { margin: 16px 0 0; padding: 14px 16px; border-radius: 14px; background: var(--bg-sunk); color: var(--ink); font-size: var(--text-sm); line-height: 1.5; min-height: 4.5em; }
-  :is(.switch button, .seg button, .add, .opt, .close, input):focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+  .after figcaption i {
+    background: var(--ok);
+  }
 
-  .app { position: relative; height: 520px; overflow: hidden; background: var(--cream); color: #2a1d33; font: 12.5px/1.4 Inter, var(--font-body, system-ui), sans-serif; padding: 14px 12px; display: flex; flex-direction: column; gap: 10px; }
-  .only-before, .only-after { display: none; }
-  .ra[data-view="before"] .only-before, .ra[data-view="after"] .only-after { display: revert; }
-  .ra[data-view="before"] .top.only-before, .ra[data-view="after"] .top.only-after { display: grid; }
-  .top { gap: 8px; }
-  .seg { display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 12px; background: #efe6dc; }
-  .seg button { border: 0; background: none; font: inherit; font-weight: 600; padding: 7px; border-radius: 9px; color: #6e5d77; cursor: pointer; }
-  .seg [aria-pressed="true"] { background: #fff; color: var(--plum); box-shadow: 0 1px 3px rgb(0 0 0 / 0.1); }
-  .seg button:disabled { opacity: 0.4; cursor: not-allowed; }
-  .status { margin: 0; display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 500; }
-  .status :global(i) { width: 7px; height: 7px; border-radius: 50%; flex: none; }
-  .status :global(.ok) { background: #1f9254; } .status :global(.warn) { background: #e3a008; } .status :global(.bad) { background: #d64545; }
-  .addr { margin: 0; display: grid; } .addr small { color: #8a7a92; } .addr b { font-size: 13px; }
+  .phone {
+    position: relative;
+    width: min(272px, 72vw);
+    aspect-ratio: 9 / 19;
+    border-radius: 42px;
+    padding: 9px;
+    background: #fff;
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent),
+      0 30px 60px -30px rgb(40 20 50 / 0.45);
+  }
+  .phone::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    z-index: 4;
+    width: 66px;
+    height: 18px;
+    border-radius: 10px;
+    background: #111;
+    transform: translateX(-50%);
+  }
+  .sb {
+    position: absolute;
+    top: 19px;
+    left: 30px;
+    right: 26px;
+    z-index: 4;
+    display: flex;
+    justify-content: space-between;
+    color: #2a1d33;
+    font: 600 11px/1 Inter, var(--font-sans);
+  }
+  .sb span {
+    display: inline-flex;
+    gap: 3px;
+  }
+  .scr {
+    position: absolute;
+    inset: 9px;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: 40px 13px 12px;
+    border-radius: 33px;
+    background: var(--cream);
+    color: #2a1d33;
+    font: 11px/1.35 Inter, var(--font-sans);
+    overflow: hidden;
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(12px) scale(0.98);
+    pointer-events: none;
+    transition:
+      opacity 0.5s var(--ease),
+      filter 0.5s var(--ease),
+      transform 0.65s var(--ease);
+  }
+  .scr.on {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  /* Screens sit above the half-taps; only their tap targets catch clicks. */
+  .scr.on .s-target {
+    pointer-events: auto;
+  }
+  .scr b {
+    font-weight: 600;
+  }
+  .scr small {
+    color: #85758d;
+  }
+  .scr em {
+    font-style: normal;
+  }
+  .hello {
+    margin: 2px 0 -4px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .h {
+    margin: 2px 0 0;
+    font-weight: 700;
+    font-size: 12.5px;
+  }
+  .h.sm {
+    font-size: 11px;
+    margin: 0;
+  }
 
-  .hero { display: grid; gap: 3px; padding: 10px; border-radius: 18px; background: #fff; box-shadow: 0 10px 24px -16px rgb(75 42 94 / 0.45); position: relative; }
-  .tag { position: absolute; top: 14px; left: 14px; z-index: 1; padding: 2px 8px; border-radius: 999px; background: #fff; font-size: 10px; font-weight: 600; color: var(--plum); }
-  .plate { height: 150px; border-radius: 14px; background: radial-gradient(circle at 50% 60%, #fff 0 34%, #f2ebe2 35% 100%); display: grid; place-items: center; margin-bottom: 6px; }
-  .plate i { width: 92px; height: 60px; border-radius: 46% 54% 50% 50%; background: radial-gradient(circle at 35% 35%, #f2b45a, #c46a1c); box-shadow: 30px 6px 0 -8px #e7a04a, -26px 10px 0 -12px #d98a33, 0 14px 14px -8px rgb(0 0 0 / 0.25); }
-  .hero b { font-size: 14px; } .hero small { color: #8a7a92; }
-  .row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
-  .price { font-weight: 700; font-variant-numeric: tabular-nums; }
-  .add { border: 0; border-radius: 999px; padding: 8px 14px; background: var(--coral); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
-  .mini { display: flex; gap: 6px; } .mini span { flex: 1; padding: 10px 6px; border-radius: 12px; background: #fff; text-align: center; font-weight: 600; color: #6e5d77; }
+  /* Home */
+  .addr {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+  .addr > :global(svg) {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    padding: 6px;
+    border-radius: 9px;
+    background: #fde3d6;
+    color: var(--coral);
+  }
+  .addr span {
+    display: grid;
+  }
+  .addr b {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+  }
+  .seg {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 3px;
+    border-radius: 12px;
+    background: #efe6dc;
+  }
+  .seg span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px;
+    border-radius: 9px;
+    font-weight: 600;
+    color: #85758d;
+  }
+  .seg .on {
+    background: #fff;
+    color: var(--plum);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+  }
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: #fff;
+    font-weight: 600;
+  }
+  .status i {
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ok);
+    box-shadow: 0 0 0 3px rgb(31 138 76 / 0.15);
+  }
+  .status em {
+    margin-left: auto;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: #8a5a00;
+  }
+  .status.sm {
+    padding: 7px 9px;
+    font-size: 10.5px;
+  }
+  .status.sm em {
+    color: var(--plum);
+  }
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: #fff;
+    color: #9a8ca1;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .item {
+    position: relative;
+    display: grid;
+    gap: 1px;
+    padding: 6px 6px 8px;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 6px 14px -12px rgb(75 42 94 / 0.5);
+  }
+  .item em {
+    color: var(--plum);
+    font-weight: 600;
+  }
+  .plate {
+    display: grid;
+    place-items: center;
+    height: 58px;
+    margin-bottom: 5px;
+    border-radius: 11px;
+  }
+  .p1 {
+    background: #fde3d6;
+    color: #e2582f;
+  }
+  .p2 {
+    background: #f6ead0;
+    color: #b7791f;
+  }
+  .p3 {
+    background: #ece2f3;
+    color: var(--plum);
+  }
+  .p4 {
+    background: #f1e6dc;
+    color: #8b5a3c;
+  }
+  .plate.big {
+    height: 140px;
+    border-radius: 20px;
+    flex: none;
+  }
+  .tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--plum);
+    font-size: 9px;
+    font-weight: 700;
+  }
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: auto -13px -12px;
+    padding: 8px 6px 14px;
+    background: #fff;
+    border-top: 1px solid #f0e8e0;
+  }
+  .tabs span {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    font-size: 9px;
+    color: #a597ab;
+  }
+  .tabs .on {
+    color: var(--coral);
+    font-weight: 600;
+  }
 
-  .toast { position: absolute; z-index: 4; left: 12px; right: 12px; bottom: 14px; padding: 10px 12px; border-radius: 12px; background: var(--plum); color: #fff; font-weight: 600; animation: up 0.25s ease-out; }
-  .toast[hidden], .sheet[hidden] { display: none; }
-  .sheet { position: absolute; z-index: 3; inset: auto 0 0 0; display: grid; gap: 8px; padding: 16px 14px 14px; border-radius: 22px 22px 0 0; background: #fff; box-shadow: 0 -20px 40px -20px rgb(0 0 0 / 0.35); animation: up 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
-  .ra[data-view="before"] .sheet { inset: 0; border-radius: 0; align-content: center; }
-  @keyframes up { from { transform: translateY(16px); opacity: 0; } }
-  .before-sheet, .after-sheet { gap: 7px; }
-  .ra[data-view="before"] .before-sheet, .ra[data-view="after"] .after-sheet { display: grid; }
-  .sheet b { font-size: 14px; } .sheet small { color: #8a7a92; }
-  .sad { color: #d64545; }
-  .eq { padding: 10px; border-radius: 10px; border: 1px solid #e6dce6; text-align: center; font-weight: 600; color: #6e5d77; }
-  .before-sheet em { font-style: normal; font-size: 11px; color: #d64545; }
-  .opt { display: grid; grid-template-columns: 18px 1fr auto; gap: 10px; align-items: center; text-align: left; padding: 10px; border: 1px solid #ece4ec; border-radius: 12px; background: #fff; font: inherit; color: inherit; }
-  .opt span { display: grid; } .opt b { font-size: 12.5px; }
-  .opt em { font-style: normal; font-size: 10px; font-weight: 700; color: var(--coral); }
-  .rec { border-color: var(--plum); background: #f7f1fa; cursor: pointer; }
-  .close { justify-self: center; border: 0; background: none; font: inherit; color: #8a7a92; cursor: pointer; padding: 4px 10px; }
-  @media (prefers-reduced-motion: reduce) { .toast, .sheet { animation: none; } }
+  /* Item */
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .dish {
+    font-size: 13.5px;
+  }
+  .pr {
+    color: var(--plum);
+  }
+  .sub {
+    margin-top: -6px;
+  }
+  .radios {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .radio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 9px;
+    border-radius: 11px;
+    background: #fff;
+  }
+  .radio::before {
+    content: "";
+    flex: none;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px #c9bccf;
+  }
+  .radio.check::before {
+    border-radius: 3px;
+  }
+  .radio.on::before {
+    box-shadow: inset 0 0 0 3.5px var(--coral);
+  }
+  .radio em {
+    margin-left: auto;
+    color: #85758d;
+  }
+  .cta {
+    display: block;
+    margin-top: auto;
+    padding: 11px;
+    border-radius: 15px;
+    background: var(--coral);
+    color: #fff;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  /* Overlays */
+  .dim::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgb(42 29 51 / 0.42);
+  }
+  .modal,
+  .gone,
+  .sheet {
+    position: relative;
+    z-index: 1;
+  }
+  .modal,
+  .gone {
+    margin: auto 0;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 18px 14px;
+    border-radius: 22px;
+    background: #fff;
+    text-align: center;
+  }
+  .modal b,
+  .gone > b {
+    font-size: 13px;
+  }
+  .ic {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #f2ebf4;
+    color: var(--plum);
+  }
+  .ic.bad {
+    background: #fde6e1;
+    color: #d64545;
+  }
+  .eq4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .eq4 span {
+    padding: 9px 0;
+    border-radius: 11px;
+    background: #f4efe9;
+    font-weight: 600;
+  }
+  .gone {
+    background: none;
+    padding: 0 6px;
+  }
+  .gone ul {
+    list-style: none;
+    width: 100%;
+    margin: 8px 0 0;
+    padding: 4px 10px;
+    border-radius: 16px;
+    background: #fff;
+  }
+  .gone li {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    text-align: left;
+    color: #85758d;
+  }
+  .gone li + li {
+    border-top: 1px solid #f2ebe4;
+  }
+  .gone li :global(svg) {
+    color: #c9bccf;
+  }
+  .gone s {
+    color: #d64545;
+    font-weight: 600;
+  }
+
+  .sheet {
+    margin: auto -13px -12px;
+    display: grid;
+    gap: 7px;
+    padding: 10px 13px 16px;
+    border-radius: 24px 24px 33px 33px;
+    background: #fff;
+  }
+  .grab {
+    justify-self: center;
+    width: 34px;
+    height: 4px;
+    border-radius: 4px;
+    background: #e3dbe6;
+  }
+  .st-h {
+    font-size: 13px;
+  }
+  .opt {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 13px;
+    box-shadow: inset 0 0 0 1px #ece4ee;
+  }
+  .opt > span:nth-child(2) {
+    display: grid;
+  }
+  .opt.on {
+    background: #fff6f3;
+    box-shadow: inset 0 0 0 1.5px var(--coral);
+  }
+  .oi {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    background: #fde3d6;
+    color: var(--coral);
+  }
+  .best {
+    margin-right: 3px;
+    padding: 1px 5px;
+    border-radius: 999px;
+    background: var(--ok);
+    color: #fff;
+    font-size: 8.5px;
+    font-weight: 600;
+  }
+  .rd {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px #c9bccf;
+  }
+  .opt.on .rd {
+    box-shadow: inset 0 0 0 3.5px var(--coral);
+  }
+
+  .placed {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+  }
+  .placed > b {
+    font-size: 15px;
+  }
+  .ring {
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    margin-bottom: 6px;
+    border-radius: 50%;
+    color: var(--ok);
+    background: #fff;
+    box-shadow:
+      0 0 0 10px rgb(31 138 76 / 0.08),
+      0 0 0 22px rgb(31 138 76 / 0.04);
+  }
+  .eta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    margin: 10px 0 4px;
+  }
+  .eta span {
+    display: grid;
+    padding: 10px;
+    border-radius: 14px;
+    background: #fff;
+  }
+  .eta b {
+    font-size: 15px;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .steps i {
+    height: 4px;
+    border-radius: 4px;
+    background: #ece2f3;
+  }
+  .steps .on {
+    background: var(--ok);
+  }
+  .placed .cta {
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .tap {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 0;
+    width: 50%;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tap.prev {
+    left: 0;
+  }
+  .tap.next {
+    right: 0;
+  }
+  .phone:has(.tap:focus-visible) {
+    outline: 2px solid var(--coral);
+    outline-offset: 4px;
+  }
+
+  /* Per-phone captions. */
+  .caps {
+    display: grid;
+    width: min(290px, 100%);
+    text-align: center;
+  }
+  .cap {
+    grid-area: 1 / 1;
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #5f5c55;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .cap.on {
+    opacity: 1;
+    transition: opacity 0.4s 0.15s;
+  }
+
+  /* Before / After, at the right of the window bar (narrow screens only). */
+  .view {
+    display: inline-flex;
+    padding: 3px;
+    border-radius: 9px;
+    background: #e6e4de;
+  }
+  .view button {
+    height: 26px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 7px;
+    background: none;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #77746c;
+    cursor: pointer;
+  }
+  .view [aria-pressed="true"] {
+    background: #fff;
+    color: #1d1c19;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.1);
+  }
+  .view button:focus-visible {
+    outline: 2px solid var(--coral);
+    outline-offset: 1px;
+  }
+  /* While the cursor shows the way, the targets don't glow. */
+  .ks[data-playing="true"] :global(.s-target) {
+    animation: none !important;
+  }
+
+  /* Room for both: the phones side by side, each with its caption. */
+  @container (min-width: 640px) {
+    .stage {
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      padding: 40px 28px 36px;
+    }
+    .dev {
+      grid-area: auto;
+    }
+    .ks[data-view] .before,
+    .ks[data-view] .after {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: none;
+    }
+    .ks .before .phone {
+      filter: saturate(0.4);
+      opacity: 0.88;
+    }
+    .phone {
+      width: min(256px, 100%);
+    }
+    .view {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scr,
+    .dev,
+    .cap {
+      transition: none;
+      filter: none;
+    }
+  }
 </style>
