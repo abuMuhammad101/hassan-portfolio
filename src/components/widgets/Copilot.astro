@@ -1,110 +1,164 @@
 ---
-/* Voice-first copilot over a tablet app, re-created with stand-in brand,
-   names and data. Monochrome overlay; it asks only for what's missing,
-   and the clinician confirms every step. */
+/* Voice-first copilot over the Strand tablet app, re-created with stand-in
+   brand, names and data. The app stays sharp and keeps working underneath;
+   the copilot is a monochrome card and a voice bar at the bottom. It asks
+   only for what's missing, the clinician confirms every step, and the
+   result lands in the chart behind it. */
 import Icon from "../Icon.astro";
+
 const patients = [
-  ["AB", "Arthur Bell", "PT · Plan of care certified", "Active"],
-  ["RL", "Rosa Lind", "OT · Evaluation due", "Pending"],
-  ["OH", "Omar Haddad", "RT · 4 of 12 visits", "Active"],
-  ["MK", "Mei Kato", "PT · Discharge planned", "Discharge"],
-  ["JS", "Jonah Sterne", "ST · Re-evaluation", "Active"],
+  { i: "AB", n: "Arthur Bell", d: "PT · Room 214", s: "Visit 9:00", tone: "a" },
+  { i: "RL", n: "Rosa Lind", d: "OT · Room 118", s: "Eval due", tone: "b" },
+  { i: "OH", n: "Omar Haddad", d: "RT · Room 302", s: "4 of 12", tone: "c" },
+  { i: "MK", n: "Mei Kato", d: "PT · Room 207", s: "Discharge", tone: "d" },
+  { i: "JS", n: "Jonah Sterne", d: "ST · Room 121", s: "Re-eval", tone: "a" },
 ];
+const today = [
+  ["9:00", "Arthur Bell", "PT session · 45 min", "now"],
+  ["10:30", "Rosa Lind", "OT evaluation", ""],
+  ["11:45", "Omar Haddad", "Breathing exercises", ""],
+  ["14:00", "Mei Kato", "Discharge planning", ""],
+];
+const bars = Array.from({ length: 14 }, (_, i) => 0.25 + Math.abs(Math.sin(i * 1.7)) * 0.75);
 ---
 
 <div class="cp" data-copilot data-step="idle">
   <button type="button" hidden data-reset-cp aria-hidden="true" tabindex="-1"></button>
   <div class="tablet" role="group" aria-label="Re-created tablet app with a voice copilot">
     <div class="screen">
+      <div class="status" aria-hidden="true"><b>9:41</b><span>Tue 4 Mar</span><span class="sys"><Icon name="wifi-high" size={13} weight="bold" /><i class="batt"></i></span></div>
+
+      <!-- The app underneath. It stays sharp and reacts to what the copilot does. -->
       <div class="app" aria-hidden="true">
-        <header class="bar">
-          <Icon name="list" size={18} />
-          <span class="brand"><i class="mark"></i>Strand</span>
-          <span class="end"><Icon name="magnifying-glass" size={17} /><span class="av sm warm">KR</span></span>
-        </header>
-        <div class="dash">
-          <div class="dh"><h4>Today</h4><span class="add"><Icon name="plus" size={13} weight="bold" />Add patient</span></div>
-          <p class="lbl">Recently viewed</p>
-          <div class="recent">{patients.map(([i, n]) => <span><b class="av">{i}</b>{n.split(" ")[0]}</span>)}</div>
-          <p class="lbl">My patients · 5</p>
-          <ul class="list">
-            {patients.map(([i, n, d, s]) => (
-              <li><b class="av">{i}</b><span><strong>{n}</strong><small>{d}</small></span><em class={s.toLowerCase()}>{s}</em><Icon name="caret-right" size={13} /></li>
+        <aside class="side">
+          <div class="side-h">
+            <span class="brand"><i class="mark"></i>Strand</span>
+            <span class="av xs warm">KR</span>
+          </div>
+          <h4>Patients</h4>
+          <div class="search"><Icon name="magnifying-glass" size={14} /><span>Search patients</span></div>
+          <div class="seg"><span class="on">My list</span><span>Unit</span><span>All</span></div>
+          <ul class="plist">
+            {patients.map((p, k) => (
+              <li class:list={[{ arthur: k === 0 }]}>
+                <b class:list={["av", p.tone]}>{p.i}</b>
+                <span><strong>{p.n}</strong><small>{p.d}</small></span>
+                <em>{p.s}</em>
+              </li>
             ))}
           </ul>
-        </div>
+        </aside>
+
+        <main class="main">
+          <!-- Today: what the clinician sees before asking for anything. -->
+          <section class="pane today">
+            <div class="ph">
+              <div><p class="kick">Tuesday 4 March</p><h3>Today</h3></div>
+              <span class="btn"><Icon name="plus" size={13} weight="bold" />Add visit</span>
+            </div>
+            <div class="sum">
+              <div><b>6</b><small>visits</small></div>
+              <div><b>2</b><small>notes to sign</small></div>
+              <div><b>1</b><small>plan to certify</small></div>
+            </div>
+            <p class="lbl">Schedule</p>
+            <ol class="sched">
+              {today.map(([t, n, w, now]) => (
+                <li class:list={[{ now: now }]}><time>{t}</time><span><strong>{n}</strong><small>{w}</small></span>{now && <em>In progress</em>}</li>
+              ))}
+            </ol>
+          </section>
+
+          <!-- Arthur's chart: opens once the copilot confirms him. -->
+          <section class="pane chart">
+            <div class="ph">
+              <div class="who"><b class="av lg a">AB</b><div><h3>Arthur Bell <span class="chip ok">Plan certified</span></h3><p class="sub">78 · Male · Room 214 · Medicare A</p></div></div>
+            </div>
+            <div class="tabs"><span>Overview</span><span>Sessions</span><span class="on">Tests</span><span>Goals</span></div>
+            <p class="lbl">Breathing tests</p>
+            <ul class="tests">
+              <li class="new"><span class="ti"><Icon name="wind" size={15} /></span><span><strong>Spirometry</strong><small>Today, 9:12 · 3 tries · Spirometer SN-4471</small></span><b>1.92 L</b><em>New</em></li>
+              <li><span class="ti"><Icon name="wind" size={15} /></span><span><strong>Spirometry</strong><small>25 Feb · 3 tries</small></span><b>1.84 L</b></li>
+              <li><span class="ti"><Icon name="wind" size={15} /></span><span><strong>Spirometry</strong><small>18 Feb · 2 tries</small></span><b>1.79 L</b></li>
+            </ul>
+            <p class="foot-note">FEV1, best of three. Sample data.</p>
+          </section>
+        </main>
       </div>
 
-      <div class="veil" aria-hidden="true"></div>
+      <!-- The copilot: one card above one voice bar. Monochrome, on purpose. -->
+      <div class="co" aria-live="polite">
+        <div class="card">
+          <ol class="steps" aria-hidden="true">
+            <li data-d="patient">Patient</li><li data-d="device">Device</li><li data-d="details">Details</li><li data-d="ready">Start</li>
+          </ol>
 
-      <div class="layer" aria-live="polite">
-        <p class="said"><span class="q">“</span><span data-said></span><span class="q">”</span></p>
-        <ol class="dots" aria-hidden="true"><li data-d="patient"></li><li data-d="device"></li><li data-d="details"></li><li data-d="ready"></li></ol>
-
-        <!-- idle -->
-        <div class="hint st-idle">
-          <span class="spark"><Icon name="sparkle" size={14} weight="fill" /></span>
-          Tap the mic and try <b>“Start a breathing test for Arthur.”</b>
-        </div>
-
-        <!-- listening -->
-        <div class="orb st-listen"><span></span><span></span><span></span><i><Icon name="waveform" size={26} /></i></div>
-
-        <!-- patient -->
-        <div class="stage st-patient">
-          <p class="ask">Is this the right patient?</p>
-          <div class="tile wide"><b class="av lg">AB</b><span><strong>Arthur Bell</strong><small>78 · Room 214 · RT case will be created</small></span></div>
-          <div class="acts"><button type="button" class="ghost" data-go="listen">Someone else</button><button type="button" class="solid" data-go="device">Yes, that's him</button></div>
-        </div>
-
-        <!-- device -->
-        <div class="stage st-device">
-          <div class="rings"><span></span><span></span><span></span><i><Icon name="device-mobile" size={24} /></i></div>
-          <p class="ask"><span class="searching">Looking for the spirometer…</span><span class="found"><Icon name="bluetooth" size={14} /> Spirometer SN-4471 connected</span></p>
-          <div class="acts found"><button type="button" class="solid" data-go="details">Continue</button></div>
-        </div>
-
-        <!-- details -->
-        <div class="stage st-details st-edit">
-          <p class="ask"><span class="h-empty">Predicted values need these. One is missing.</span><span class="h-set">All set. Pulled from Arthur's record.</span></p>
-          <div class="tiles">
-            <div class="tile"><strong>Male</strong><small>Sex</small></div>
-            <div class="tile"><strong>12/04/1948</strong><small>Date of birth</small></div>
-            <div class="tile"><strong>74 kg</strong><small>Weight</small></div>
-            <button type="button" class="tile need" data-go="edit"><strong class="h-empty">Add</strong><strong class="h-set">5 ft 6 in</strong><small>Height</small><Icon name="pencil-simple" size={13} /></button>
-            <div class="tile"><strong>From record</strong><small>Ethnicity</small></div>
+          <!-- patient -->
+          <div class="stage st-patient">
+            <p class="ask">Is this the right patient?</p>
+            <div class="row"><b class="av md a">AB</b><span><strong>Arthur Bell</strong><small>78 · Room 214 · a breathing test will be added to his chart</small></span></div>
+            <div class="acts"><button type="button" class="ghost" data-go="listen">Someone else</button><button type="button" class="solid" data-go="device">Yes, that's him</button></div>
           </div>
-          <div class="capsule" role="group" aria-label="Height">
-            <span class="num"><b>5</b><small>ft</small></span><span class="num"><b>6</b><small>in</small></span><span class="cm">168 cm</span>
-            <button type="button" class="ok" data-go="details-set" aria-label="Confirm height"><Icon name="check" size={16} weight="bold" /></button>
+
+          <!-- device -->
+          <div class="stage st-device">
+            <p class="ask"><span class="searching">Looking for the spirometer nearby…</span><span class="found">Spirometer found</span></p>
+            <div class="row dev">
+              <span class="radar"><i></i><i></i><Icon name="bluetooth" size={16} /></span>
+              <span><strong>Spirometer SN-4471</strong><small class="searching">Hold it close to the tablet</small><small class="found">Connected · battery 82%</small></span>
+              <span class="tick found"><Icon name="check" size={13} weight="bold" /></span>
+            </div>
+            <div class="acts found"><button type="button" class="solid" data-go="details">Continue</button></div>
           </div>
-          <div class="acts h-set"><button type="button" class="solid" data-go="ready">Looks right</button></div>
+
+          <!-- details -->
+          <div class="stage st-details">
+            <p class="ask"><span class="h-empty">Predicted values need his height. The rest is from his chart.</span><span class="h-set">All set, pulled from Arthur's chart.</span></p>
+            <dl class="fields">
+              <div><dt>Sex</dt><dd>Male</dd></div>
+              <div><dt>Born</dt><dd>12 Apr 1948</dd></div>
+              <div><dt>Weight</dt><dd>74 kg</dd></div>
+              <button type="button" class="need" data-go="edit"><dt>Height</dt><dd><span class="h-empty">Missing</span><span class="h-set">5 ft 6 in</span></dd><Icon name="pencil-simple" size={12} /></button>
+            </dl>
+            <div class="capsule" role="group" aria-label="Height">
+              <span class="num"><b>5</b><small>ft</small></span><span class="num"><b>6</b><small>in</small></span><span class="cm">168 cm</span>
+              <button type="button" class="ok" data-go="details-set" aria-label="Confirm height"><Icon name="check" size={14} weight="bold" /></button>
+            </div>
+            <div class="acts h-set"><button type="button" class="solid" data-go="ready">Looks right</button></div>
+          </div>
+
+          <!-- ready -->
+          <div class="stage st-ready">
+            <p class="ask">Ready when Arthur is.</p>
+            <div class="row"><span class="ti big"><Icon name="wind" size={18} /></span><span><strong>Breathe in fully, then blow hard and fast</strong><small>Until the device beeps · 3 tries, the best one counts</small></span></div>
+            <div class="acts"><button type="button" class="solid" data-go="done"><Icon name="play" size={12} weight="fill" />Start test</button></div>
+          </div>
+
+          <!-- done -->
+          <div class="stage st-done">
+            <div class="row"><span class="ok-dot"><Icon name="check" size={14} weight="bold" /></span><span><strong>Saved to Arthur's chart</strong><small>FEV1 1.92 L · FVC 2.61 L · up from 1.84 L</small></span><button type="button" class="undo" data-go="details-set"><Icon name="arrow-u-up-left" size={12} />Undo</button></div>
+          </div>
+
+          <!-- exit -->
+          <div class="exit" data-exit hidden role="dialog" aria-label="Exit the guide?">
+            <strong>Stop this test?</strong>
+            <p>It isn't finished, so nothing will be saved.</p>
+            <div class="acts"><button type="button" class="ghost" data-exit-yes>Stop</button><button type="button" class="solid" data-exit-no>Keep going</button></div>
+          </div>
         </div>
 
-        <!-- ready -->
-        <div class="stage st-ready">
-          <p class="ask">Ready when Arthur is.</p>
-          <div class="tile wide instr"><Icon name="wind" size={22} /><span><strong>Breathe in fully, then blow hard and fast</strong><small>Keep going until the device beeps · 3 tries, best one counts</small></span></div>
-          <div class="acts"><button type="button" class="solid" data-go="done"><Icon name="play" size={13} weight="fill" />Start test</button></div>
-        </div>
+        <div class="hint"><Icon name="sparkle" size={13} weight="fill" />Try <b>“Start a breathing test for Arthur”</b></div>
 
-        <!-- done -->
-        <div class="stage st-done">
-          <div class="tile wide result"><span class="check"><Icon name="check" size={16} weight="bold" /></span><span><strong>Saved to Arthur's record</strong><small>FEV1 1.92 L · FVC 2.61 L · 3 tries · sample data</small></span><button type="button" class="undo" data-go="details-set"><Icon name="arrow-u-up-left" size={13} />Undo</button></div>
+        <div class="bar">
+          <button type="button" class="round" data-back aria-label="Back"><Icon name="arrow-left" size={15} /></button>
+          <div class="said">
+            <span class="ph-text">Ask Strand to do something</span>
+            <span class="live"><span data-said></span><i class="caret"></i></span>
+            <span class="wave" aria-hidden="true">{bars.map((h, k) => <i style={`--h:${h.toFixed(2)};--k:${k}`}></i>)}</span>
+          </div>
+          <button type="button" class="round" data-close aria-label="Close copilot"><Icon name="x" size={14} /></button>
+          <button type="button" class="mic" data-mic aria-label="Talk to the copilot"><Icon name="microphone" size={18} weight="fill" /></button>
         </div>
-
-        <!-- exit -->
-        <div class="exit" data-exit hidden role="dialog" aria-label="Exit the guide?">
-          <strong>Exit the guide?</strong>
-          <p>This test isn't finished. Nothing will be saved.</p>
-          <div class="acts"><button type="button" class="ghost" data-exit-yes>Exit guide</button><button type="button" class="solid" data-exit-no>Keep going</button></div>
-        </div>
-      </div>
-
-      <div class="dock">
-        <button type="button" class="round back" data-back aria-label="Back"><Icon name="arrow-left" size={17} /></button>
-        <button type="button" class="round close" data-close aria-label="Close copilot"><Icon name="x" size={16} /></button>
-        <button type="button" class="mic" data-mic aria-label="Talk to the copilot"><Icon name="microphone" size={20} weight="fill" /></button>
       </div>
     </div>
   </div>
@@ -114,7 +168,6 @@ const patients = [
   document.querySelectorAll<HTMLElement>("[data-copilot]").forEach((root) => {
     const said = root.querySelector<HTMLElement>("[data-said]")!;
     const exit = root.querySelector<HTMLElement>("[data-exit]")!;
-        const order = ["idle", "listen", "patient", "device", "details", "edit", "details-set", "ready", "done"];
     const lines: Record<string, string> = {
       listen: "Start a breathing test for Arthur",
       patient: "Start a breathing test for Arthur",
@@ -130,17 +183,17 @@ const patients = [
     const go = (s: string) => {
       clear();
       root.dataset.step = s;
-      root.classList.toggle("found-it", false);
+      root.classList.remove("found-it");
       if (s === "details-set") root.dataset.height = "set";
       if (s === "idle" || s === "listen") delete root.dataset.height;
       said.textContent = lines[s] ?? "";
       if (s === "listen") {
         said.textContent = "";
         const text = lines.listen;
-        [...text].forEach((_, i) => timers.push(window.setTimeout(() => (said.textContent = text.slice(0, i + 1)), 400 + i * 38)));
-        timers.push(window.setTimeout(() => go("patient"), 400 + text.length * 38 + 600));
+        [...text].forEach((_, i) => timers.push(window.setTimeout(() => (said.textContent = text.slice(0, i + 1)), 350 + i * 38)));
+        timers.push(window.setTimeout(() => go("patient"), 350 + text.length * 38 + 600));
       }
-      if (s === "device") timers.push(window.setTimeout(() => root.classList.add("found-it"), 1800));
+      if (s === "device") timers.push(window.setTimeout(() => root.classList.add("found-it"), 1600));
     };
     root.querySelectorAll<HTMLElement>("[data-go]").forEach((b) => b.addEventListener("click", () => go(b.dataset.go!)));
     root.querySelector("[data-mic]")!.addEventListener("click", () => {
@@ -162,161 +215,985 @@ const patients = [
     root.querySelector("[data-exit-no]")!.addEventListener("click", () => (exit.hidden = true));
     // Used by the story player to start over from any step.
     root.querySelector("[data-reset-cp]")!.addEventListener("click", () => { exit.hidden = true; go("idle"); });
-    void order;
   });
 </script>
 
 <style>
-  .cp { container-type: inline-size; --ink: #18191b; --mute: #8b8e94; --line: #ececea; --dark: rgb(30 30 32 / 0.9); }
-  .tablet {
-    width: 100%; max-width: 1000px; padding: 14px; border-radius: 36px; background: #1b1b1d;
-    box-shadow: inset 0 0 0 1.5px #3a3a3d, 0 40px 80px -40px rgb(0 0 0 / 0.55);
+  .cp {
+    container-type: inline-size;
+    --ink: #18191b;
+    --ink2: #55585f;
+    --mute: #8b8e95;
+    --line: #ebebe8;
+    --brand: #4a4ad6;
+    --brand-soft: #ececfd;
+    --co: #1c1c1f;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .screen { position: relative; overflow: hidden; height: 650px; border-radius: 24px; background: #fbfbfa; color: var(--ink); font: 13px/1.4 var(--font-sans); }
+  .tablet {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 12px;
+    border-radius: 34px;
+    background: #1c1c1e;
+    box-shadow:
+      inset 0 0 0 1.5px #3b3b3e,
+      0 1px 2px rgb(0 0 0 / 0.1),
+      0 30px 60px -30px rgb(0 0 0 / 0.45);
+  }
+  .screen {
+    position: relative;
+    overflow: hidden;
+    height: 640px;
+    border-radius: 23px;
+    background: #f7f7f5;
+    color: var(--ink);
+    font: 13px/1.4 var(--font-sans);
+    isolation: isolate;
+  }
+  .status {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 26px;
+    padding: 0 20px;
+    font-size: 11.5px;
+    color: var(--ink);
+  }
+  .status span:not(.sys) {
+    color: var(--ink2);
+  }
+  .sys {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+  }
+  .batt {
+    width: 20px;
+    height: 10px;
+    border-radius: 3px;
+    border: 1.2px solid var(--ink);
+    background: linear-gradient(90deg, var(--ink) 70%, transparent 70%) content-box;
+    padding: 1px;
+  }
 
-  /* Underlying app */
-  .app { position: absolute; inset: 0; transition: filter 0.5s ease, transform 0.5s ease, opacity 0.5s; }
-  .cp:not([data-step="idle"]) .app { filter: blur(7px) saturate(0.4); transform: scale(1.015); opacity: 0.55; }
-  .bar { display: flex; align-items: center; padding: 14px 22px; color: #45484d; }
-  .brand { display: flex; align-items: center; gap: 7px; margin: 0 auto; font-weight: 700; font-size: 16px; letter-spacing: -0.02em; color: var(--ink); }
-  .mark { width: 20px; height: 20px; border-radius: 6px; background: radial-gradient(circle at 30% 30%, #8f93f2, #4b4fd6 60%); }
-  .end { display: flex; align-items: center; gap: 14px; }
-  .dash { padding: 4px 26px; }
-  .dh { display: flex; align-items: center; }
-  h4 { margin: 0; font-size: 24px; font-weight: 650; letter-spacing: -0.02em; }
-  .add { margin-left: auto; display: inline-flex; gap: 6px; align-items: center; padding: 7px 12px; border-radius: 9px; background: var(--ink); color: #fff; font-weight: 600; }
-  .lbl { margin: 18px 0 10px; font-size: 12px; font-weight: 600; color: var(--mute); }
-  .recent { display: flex; gap: 26px; }
-  .recent span { display: grid; justify-items: center; gap: 6px; font-size: 12px; color: #55585e; }
-  .av { display: inline-grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%; background: #e6e7fb; color: #3a3ea8; font-weight: 650; font-size: 13px; font-style: normal; }
-  .av.sm { width: 28px; height: 28px; font-size: 10px; }
+  /* App -------------------------------------------------------------- */
+  .app {
+    position: absolute;
+    inset: 26px 0 0;
+    display: grid;
+    grid-template-columns: 290px 1fr;
+  }
+  .side {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 14px 0;
+    background: #fff;
+    border-right: 1px solid var(--line);
+  }
+  .side-h {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 4px 10px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 650;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+  }
+  .mark {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    background: linear-gradient(140deg, #8f93f2, #4b4fd6 65%);
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08);
+  }
+  h4 {
+    margin: 4px 4px 10px;
+    font-size: 22px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 9px;
+    background: #f2f2f0;
+    color: var(--mute);
+  }
+  .seg {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 10px 0 6px;
+    padding: 2px;
+    border-radius: 8px;
+    background: #f2f2f0;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    color: var(--ink2);
+  }
+  .seg span {
+    padding: 4px 0;
+    border-radius: 6px;
+  }
+  .seg .on {
+    background: #fff;
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  }
+  .plist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .plist li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 8px;
+    border-radius: 10px;
+    transition: background 0.35s;
+  }
+  .plist li + li {
+    margin-top: 1px;
+  }
+  .plist span {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+  }
+  .plist strong {
+    font-weight: 550;
+  }
+  .plist small,
+  .plist em {
+    font-size: 11.5px;
+    color: var(--mute);
+    font-style: normal;
+  }
+  .cp:not([data-step="idle"], [data-step="listen"]) .plist .arthur {
+    background: var(--brand-soft);
+  }
+  .av {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 600;
+    font-style: normal;
+  }
+  .av.a { background: #e6e7fb; color: #3a3ea8; }
+  .av.b { background: #fbe6e0; color: #9a3b22; }
+  .av.c { background: #dff1e7; color: #1f6a43; }
+  .av.d { background: #f3ead6; color: #7a5a17; }
+  .av.xs { width: 24px; height: 24px; font-size: 9.5px; }
   .av.warm { background: #f5e7c8; color: #7a5410; }
-  .list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .list li { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px var(--line); color: var(--mute); }
-  .list .av { width: 38px; height: 38px; }
-  .list span { display: grid; flex: 1; }
-  .list strong { color: var(--ink); font-weight: 600; }
-  .list em { font-style: normal; font-size: 12px; font-weight: 600; }
-  .list em::before { content: "● "; font-size: 9px; }
-  .active { color: #23824a; } .pending { color: #a95a0c; } .discharge { color: #b33a3a; }
+  .av.md { width: 38px; height: 38px; font-size: 12px; }
+  .av.lg { width: 44px; height: 44px; font-size: 14px; }
 
-  /* Overlay */
-  .veil { position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 100%, rgb(255 255 255 / 0.6), rgb(245 245 244 / 0.2)); opacity: 0; transition: opacity 0.4s; pointer-events: none; }
-  .cp:not([data-step="idle"]) .veil { opacity: 1; }
-  .layer { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
-  .layer > * { grid-area: 1 / 1; pointer-events: auto; }
-  .said { align-self: start; margin: 70px 0 0; max-width: 620px; text-align: center; font-size: 22px; font-weight: 550; letter-spacing: -0.015em; color: var(--ink); min-height: 31px; }
-  .said .q { color: #b9bbbf; }
-  .cp:is([data-step="idle"]) .said { visibility: hidden; }
-  .dots { align-self: start; margin-top: 40px; list-style: none; padding: 0; display: flex; gap: 6px; }
-  .dots li { width: 18px; height: 3px; border-radius: 2px; background: #d5d6d8; transition: background 0.3s, width 0.3s; }
-  .cp:is([data-step="idle"], [data-step="listen"]) .dots { visibility: hidden; }
+  .main {
+    position: relative;
+    overflow: hidden;
+  }
+  .pane {
+    position: absolute;
+    inset: 0;
+    padding: 18px 26px;
+    transition:
+      opacity 0.45s var(--ease),
+      transform 0.6s var(--ease);
+  }
+  .chart {
+    opacity: 0;
+    transform: translateX(24px);
+    pointer-events: none;
+  }
+  .cp:not([data-step="idle"], [data-step="listen"], [data-step="patient"]) .today {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  .cp:not([data-step="idle"], [data-step="listen"], [data-step="patient"]) .chart {
+    opacity: 1;
+    transform: none;
+  }
+  .ph {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .kick {
+    margin: 0;
+    font-size: 12px;
+    color: var(--mute);
+  }
+  h3 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 9px;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 550;
+    font-size: 12.5px;
+  }
+  .sum {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 18px 0 4px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .sum div {
+    display: grid;
+    padding: 12px 16px;
+  }
+  .sum div + div {
+    border-left: 1px solid var(--line);
+  }
+  .sum b {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .sum small {
+    color: var(--mute);
+    font-size: 12px;
+  }
+  .lbl {
+    margin: 18px 0 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--mute);
+  }
+  .sched {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .sched li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 11px 16px;
+  }
+  .sched li + li {
+    border-top: 1px solid var(--line);
+  }
+  .sched time {
+    width: 40px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink2);
+  }
+  .sched span {
+    display: grid;
+    flex: 1;
+  }
+  .sched strong {
+    font-weight: 550;
+  }
+  .sched small {
+    color: var(--mute);
+    font-size: 12px;
+  }
+  .sched .now time {
+    color: var(--brand);
+    font-weight: 600;
+  }
+  .sched em {
+    font-style: normal;
+    font-size: 11.5px;
+    font-weight: 550;
+    color: var(--brand);
+  }
+  .sched em::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    vertical-align: 1px;
+  }
+
+  .who {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sub {
+    margin: 2px 0 0;
+    color: var(--mute);
+    font-size: 12.5px;
+  }
+  .chip {
+    display: inline-block;
+    margin-left: 6px;
+    vertical-align: 4px;
+    white-space: nowrap;
+    letter-spacing: 0;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 550;
+  }
+  .chip.ok {
+    background: #e3f3e9;
+    color: #1f7a45;
+  }
+  .tabs {
+    display: flex;
+    gap: 20px;
+    margin-top: 16px;
+    border-bottom: 1px solid var(--line);
+    color: var(--mute);
+  }
+  .tabs span {
+    padding: 8px 0;
+  }
+  .tabs .on {
+    color: var(--ink);
+    font-weight: 550;
+    box-shadow: inset 0 -2px 0 var(--ink);
+  }
+  .tests {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+    overflow: hidden;
+  }
+  .tests li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-top: 1px solid var(--line);
+  }
+  .tests li span:nth-child(2) {
+    display: grid;
+    flex: 1;
+  }
+  .tests strong {
+    font-weight: 550;
+  }
+  .tests small {
+    color: var(--mute);
+    font-size: 12px;
+  }
+  .tests b {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .tests em {
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--brand);
+  }
+  .ti {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: #f1f1ef;
+    color: var(--ink2);
+  }
+  /* The new result exists only once the test is done, and slides in. */
+  .tests .new {
+    display: none;
+    border-top: 0;
+    background: color-mix(in srgb, var(--brand-soft) 55%, #fff);
+  }
+  .tests .new + li {
+    border-top: 0;
+  }
+  .cp[data-step="done"] .tests .new {
+    display: flex;
+    animation: slot 0.7s 0.2s var(--ease) both;
+  }
+  .cp[data-step="done"] .tests .new + li {
+    border-top: 1px solid var(--line);
+  }
+  @keyframes slot {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+  .foot-note {
+    margin: 10px 2px 0;
+    font-size: 11.5px;
+    color: var(--mute);
+  }
+
+  /* Copilot ---------------------------------------------------------- */
+  .co {
+    position: absolute;
+    left: 50%;
+    bottom: 18px;
+    z-index: 4;
+    width: min(460px, calc(100% - 28px));
+    transform: translateX(-50%);
+    display: grid;
+    gap: 10px;
+    justify-items: center;
+  }
+  .card {
+    width: 100%;
+    padding: 14px;
+    border-radius: 20px;
+    background: rgb(28 28 31 / 0.94);
+    color: #fff;
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.07),
+      0 24px 48px -20px rgb(0 0 0 / 0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transform-origin: 50% 100%;
+    transition:
+      opacity 0.35s var(--ease),
+      transform 0.45s var(--ease);
+  }
+  .cp:is([data-step="idle"], [data-step="listen"]) .card {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+    pointer-events: none;
+  }
+  .steps {
+    list-style: none;
+    display: flex;
+    gap: 4px;
+    margin: 0 0 12px;
+    padding: 0;
+    font-size: 11px;
+    color: rgb(255 255 255 / 0.4);
+  }
+  .steps li {
+    flex: 1;
+    padding-top: 7px;
+    border-top: 2px solid rgb(255 255 255 / 0.14);
+    transition:
+      color 0.3s,
+      border-color 0.3s;
+  }
   .cp[data-step="patient"] [data-d="patient"],
   .cp[data-step="device"] :is([data-d="patient"], [data-d="device"]),
   .cp:is([data-step="details"], [data-step="edit"], [data-step="details-set"]) :is([data-d="patient"], [data-d="device"], [data-d="details"]),
-  .cp:is([data-step="ready"], [data-step="done"]) .dots li { background: var(--ink); }
+  .cp:is([data-step="ready"], [data-step="done"]) .steps li {
+    border-color: #fff;
+    color: #fff;
+  }
 
-  .st-idle, .st-listen, .st-patient, .st-device, .st-details, .st-ready, .st-done { display: none !important; }
-  .cp[data-step="idle"] .st-idle, .cp[data-step="listen"] .st-listen, .cp[data-step="patient"] .st-patient,
-  .cp[data-step="device"] .st-device, .cp:is([data-step="details"], [data-step="edit"], [data-step="details-set"]) .st-details,
-  .cp[data-step="ready"] .st-ready, .cp[data-step="done"] .st-done { display: grid !important; }
+  .stage {
+    display: none;
+    gap: 12px;
+  }
+  .cp[data-step="patient"] .st-patient,
+  .cp[data-step="device"] .st-device,
+  .cp:is([data-step="details"], [data-step="edit"], [data-step="details-set"]) .st-details,
+  .cp[data-step="ready"] .st-ready,
+  .cp[data-step="done"] .st-done {
+    display: grid;
+    animation: rise 0.4s var(--ease);
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  .ask {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 550;
+    letter-spacing: -0.005em;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.07);
+  }
+  .row > span:not(.ti, .radar, .tick, .ok-dot) {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+  }
+  .row strong {
+    font-weight: 550;
+  }
+  .row small {
+    color: rgb(255 255 255 / 0.6);
+    font-size: 12px;
+  }
+  .row .ti {
+    background: rgb(255 255 255 / 0.1);
+    color: #fff;
+  }
+  .ti.big {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+  .acts {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .acts button,
+  .undo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 550;
+    cursor: pointer;
+  }
+  .solid {
+    background: #fff;
+    color: var(--co);
+  }
+  .ghost,
+  .undo {
+    background: rgb(255 255 255 / 0.1);
+    color: #fff;
+  }
+  .acts button:focus-visible,
+  .undo:focus-visible,
+  .need:focus-visible,
+  .ok:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+  .undo {
+    height: 28px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
 
-  .cp[data-step="idle"] .hint.st-idle { display: flex !important; }
-  .hint { align-self: end; margin-bottom: 92px; white-space: nowrap; align-items: center; gap: 9px; padding: 9px 14px 9px 9px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 12px 28px -14px rgb(0 0 0 / 0.3); color: #55585e; }
-  .cp:not([data-step="idle"]) .hint { display: none !important; }
-  .spark { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff; }
+  /* Device search */
+  .radar {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.1);
+  }
+  .radar i {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgb(255 255 255 / 0.5);
+    animation: ping 1.6s ease-out infinite;
+  }
+  .radar i + i {
+    animation-delay: 0.8s;
+  }
+  @keyframes ping {
+    from {
+      transform: scale(0.9);
+      opacity: 0.8;
+    }
+    to {
+      transform: scale(1.7);
+      opacity: 0;
+    }
+  }
+  .found-it .radar i {
+    animation: none;
+    opacity: 0;
+  }
+  .tick,
+  .ok-dot {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--co);
+  }
+  .ok-dot {
+    width: 30px;
+    height: 30px;
+  }
+  .found {
+    display: none !important;
+  }
+  .found-it .found {
+    display: revert !important;
+  }
+  .found-it .acts.found,
+  .found-it .tick.found {
+    display: flex !important;
+  }
+  .found-it .tick.found {
+    display: grid !important;
+    animation: rise 0.35s var(--ease);
+  }
+  .found-it .searching {
+    display: none;
+  }
 
-  .stage { justify-items: center; gap: 16px; animation: up 0.4s cubic-bezier(.2,.8,.2,1); }
-  @keyframes up { from { opacity: 0; transform: translateY(10px) scale(0.98); } }
-  .ask { margin: 0; font-size: 15px; font-weight: 600; color: #3d4045; display: flex; align-items: center; gap: 6px; }
-  .tile { display: grid; align-content: center; gap: 3px; min-width: 150px; min-height: 92px; padding: 14px 18px; border-radius: 18px; background: var(--dark); color: #fff; text-align: left; border: 0; font: inherit; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.06) inset, 0 18px 36px -18px rgb(0 0 0 / 0.55); backdrop-filter: blur(10px); }
-  .tile strong { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
-  .tile small { color: rgb(255 255 255 / 0.62); font-size: 12px; }
-  .tile.wide { display: flex; align-items: center; gap: 14px; min-width: 420px; }
-  .tile.wide > span { display: grid; gap: 2px; }
-  .tile .av.lg { width: 48px; height: 48px; background: rgb(255 255 255 / 0.14); color: #fff; }
-  .tiles { display: grid; grid-template-columns: repeat(3, 160px); gap: 12px; }
-  .need { position: relative; cursor: pointer; background: #fff; color: var(--ink); box-shadow: 0 0 0 2px var(--ink), 0 18px 36px -18px rgb(0 0 0 / 0.4); }
-  .need small { color: var(--mute); }
-  .need :global(svg) { position: absolute; top: 12px; right: 12px; }
-  .h-set { display: none !important; }
-  .cp[data-height="set"] .h-set { display: revert !important; }
-  .cp[data-height="set"] .h-empty { display: none; }
-  .cp[data-height="set"] .need { background: var(--dark); color: #fff; box-shadow: 0 18px 36px -18px rgb(0 0 0 / 0.55); }
-  .cp[data-height="set"] .need small { color: rgb(255 255 255 / 0.62); }
-  .cp[data-height="set"] .acts.h-set { display: flex !important; }
+  /* Details */
+  .fields {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin: 0;
+  }
+  .fields > * {
+    display: grid;
+    gap: 2px;
+    padding: 9px 10px;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 0.07);
+    text-align: left;
+  }
+  .fields dt {
+    font-size: 11px;
+    color: rgb(255 255 255 / 0.55);
+  }
+  .fields dd {
+    margin: 0;
+    font-weight: 550;
+  }
+  .need {
+    position: relative;
+    border: 0;
+    font: inherit;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.5);
+  }
+  .need :global(svg) {
+    position: absolute;
+    top: 9px;
+    right: 9px;
+    opacity: 0.7;
+  }
+  .cp[data-height="set"] .need {
+    box-shadow: none;
+  }
+  .h-set {
+    display: none !important;
+  }
+  .cp[data-height="set"] .h-set {
+    display: revert !important;
+  }
+  .cp[data-height="set"] .acts.h-set {
+    display: flex !important;
+  }
+  .cp[data-height="set"] .h-empty {
+    display: none !important;
+  }
+  .capsule {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px 6px 12px;
+    border-radius: 14px;
+    background: #fff;
+    color: var(--co);
+  }
+  .cp[data-step="edit"] .capsule {
+    display: flex;
+    animation: rise 0.35s var(--ease);
+  }
+  .num {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+  }
+  .num b {
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .num small {
+    color: #77797f;
+  }
+  .cm {
+    margin-left: auto;
+    color: #77797f;
+    font-size: 12px;
+  }
+  .ok {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--co);
+    color: #fff;
+    cursor: pointer;
+  }
 
-  .st-details { position: relative; }
-  .capsule { position: absolute; inset: 0; margin: auto; width: fit-content; height: fit-content; display: none; align-items: center; gap: 22px; padding: 10px 10px 10px 28px; border-radius: 20px; background: var(--dark); color: #fff; box-shadow: 0 24px 48px -20px rgb(0 0 0 / 0.6); animation: up 0.3s ease-out; }
-  .cp[data-step="edit"] .capsule { display: flex; }
-  .cp[data-step="edit"] .tiles { opacity: 0.25; pointer-events: none; filter: blur(2px); }
-  .num b { font-size: 30px; font-weight: 650; }
-  .num small { margin-left: 4px; color: rgb(255 255 255 / 0.6); }
-  .cm { margin-left: 40px; color: rgb(255 255 255 / 0.6); }
-  .ok { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid rgb(255 255 255 / 0.5); background: none; color: #fff; cursor: pointer; }
+  .exit {
+    display: grid;
+    gap: 6px;
+  }
+  .exit[hidden] {
+    display: none;
+  }
+  .card:has(.exit:not([hidden])) .stage {
+    display: none !important;
+  }
+  .exit p {
+    margin: 0 0 6px;
+    color: rgb(255 255 255 / 0.65);
+  }
 
-  .acts { display: flex; gap: 10px; justify-content: center; }
-  .solid, .ghost { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 999px; font: inherit; font-weight: 600; cursor: pointer; border: 0; }
-  .solid { background: var(--ink); color: #fff; box-shadow: 0 10px 22px -12px rgb(0 0 0 / 0.6); }
-  .ghost { background: #fff; color: var(--ink); box-shadow: 0 0 0 1px #dcdcda; }
-  :is(.solid, .ghost, .ok, .mic, .round, .need, .undo):focus-visible { outline: 2px solid #4b4fd6; outline-offset: 3px; }
+  /* Voice bar */
+  .hint {
+    display: none;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: var(--lift-2);
+    font-size: 12.5px;
+    color: var(--ink2);
+    white-space: nowrap;
+  }
+  .hint b {
+    font-weight: 550;
+    color: var(--ink);
+  }
+  .cp[data-step="idle"] .hint {
+    display: inline-flex;
+    animation: rise 0.4s var(--ease);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    height: 52px;
+    padding: 6px;
+    border-radius: 999px;
+    background: rgb(28 28 31 / 0.94);
+    color: #fff;
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.07),
+      0 18px 36px -18px rgb(0 0 0 / 0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .round {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.1);
+    color: #fff;
+    cursor: pointer;
+  }
+  .cp[data-step="idle"] .round {
+    opacity: 0.35;
+  }
+  .mic {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--co);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .mic:active {
+    transform: scale(0.94);
+  }
+  .round:focus-visible,
+  .mic:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+  .said {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    overflow: hidden;
+  }
+  .said > * {
+    position: absolute;
+    inset: 0 8px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity 0.3s;
+  }
+  .ph-text {
+    color: rgb(255 255 255 / 0.5);
+  }
+  .live {
+    opacity: 0;
+    font-weight: 500;
+    text-overflow: ellipsis;
+  }
+  .caret {
+    width: 1.5px;
+    height: 15px;
+    margin-left: 2px;
+    background: #fff;
+    animation: blink 1s steps(2) infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  .wave {
+    left: auto !important;
+    width: 64px;
+    gap: 2px;
+    justify-content: flex-end;
+    opacity: 0;
+  }
+  .cp[data-step="listen"] .wave {
+    opacity: 1;
+  }
+  .cp[data-step="listen"] .live {
+    right: 80px;
+  }
+  .wave i {
+    width: 2.5px;
+    height: calc(var(--h) * 20px);
+    border-radius: 2px;
+    background: #fff;
+    transform-origin: center;
+    animation: wv 0.9s ease-in-out infinite alternate;
+    animation-delay: calc(var(--k) * -0.07s);
+  }
+  @keyframes wv {
+    from {
+      transform: scaleY(0.25);
+    }
+  }
+  .cp:not([data-step="idle"]) .ph-text {
+    opacity: 0;
+  }
+  .cp:not([data-step="idle"]) .live {
+    opacity: 1;
+  }
+  .cp:not([data-step="listen"]) .caret {
+    display: none;
+  }
+  /* While a step is open, the transcript shows what was last said. */
+  .cp:not([data-step="idle"], [data-step="listen"]) .live {
+    color: rgb(255 255 255 / 0.6);
+  }
 
-  .orb, .rings { position: relative; width: 220px; height: 220px; display: grid !important; place-items: center; }
-  .cp:not([data-step="listen"]) .orb { display: none !important; }
-  .orb span, .rings span { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgb(24 25 27 / 0.18); animation: pulse 2.4s ease-out infinite; }
-  .orb span:nth-child(2), .rings span:nth-child(2) { animation-delay: 0.8s; }
-  .orb span:nth-child(3), .rings span:nth-child(3) { animation-delay: 1.6s; }
-  .orb i, .rings i { display: grid; place-items: center; width: 92px; height: 92px; border-radius: 50%; background: #2a2a2d; color: #fff; box-shadow: 0 0 0 10px rgb(255 255 255 / 0.7), 0 0 0 11px rgb(24 25 27 / 0.12), 0 20px 40px -14px rgb(0 0 0 / 0.5); }
-  @keyframes pulse { from { transform: scale(0.45); opacity: 1; } to { transform: scale(1); opacity: 0; } }
-  .found { display: none !important; }
-  .cp.found-it .found { display: inline-flex !important; }
-  .cp.found-it .searching { display: none; }
-  .cp.found-it .rings span { animation: none; opacity: 0; }
+  /* The copilot centres on the work, not on the list. */
+  @container (min-width: 701px) {
+    .co {
+      left: calc(290px + (100% - 290px) / 2);
+      width: min(460px, calc(100% - 290px - 40px));
+    }
+  }
 
-  .instr :global(svg) { flex: none; }
-  .result { gap: 12px !important; }
-  .check { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #fff; color: var(--ink); flex: none; }
-  .undo { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 999px; border: 0; background: rgb(255 255 255 / 0.12); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
-
-  .exit { display: grid; justify-items: center; gap: 6px; padding: 26px 30px; border-radius: 22px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 30px 60px -24px rgb(0 0 0 / 0.45); z-index: 3; text-align: center; }
-  .exit[hidden] { display: none; }
-  .exit strong { font-size: 19px; }
-  .exit p { margin: 0 0 10px; color: #55585e; }
-
-  .screen::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 170px; background: linear-gradient(rgb(251 251 250 / 0), #fbfbfa 62%); pointer-events: none; z-index: 1; }
-  .layer, .dock { z-index: 2; }
-  .dock { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; justify-content: center; gap: 14px; }
-  .round { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 0; background: #fff; color: var(--ink); cursor: pointer; box-shadow: 0 0 0 1px #e2e2df, 0 8px 18px -10px rgb(0 0 0 / 0.35); transition: opacity 0.3s, transform 0.3s; }
-  .back { position: absolute; left: 24px; background: #3a3a3d; color: #fff; box-shadow: none; }
-  .cp[data-step="idle"] .round { opacity: 0; pointer-events: none; transform: translateY(6px); }
-  .mic { display: grid; place-items: center; width: 56px; height: 56px; margin-top: -5px; border-radius: 50%; border: 0; cursor: pointer; background: var(--ink); color: #fff; box-shadow: 0 0 0 5px rgb(255 255 255 / 0.9), 0 0 0 6px #e2e2df, 0 14px 28px -12px rgb(0 0 0 / 0.6); }
-  .cp[data-step="listen"] .mic { animation: live 1.2s ease-in-out infinite; }
-  @keyframes live { 50% { box-shadow: 0 0 0 9px rgb(255 255 255 / 0.9), 0 0 0 10px #d0d0cd, 0 14px 28px -12px rgb(0 0 0 / 0.6); } }
-
-  @container (max-width: 640px) {
-    .tablet { padding: 8px; border-radius: 26px; }
-    .screen { height: 600px; border-radius: 19px; font-size: 12.5px; }
-    .bar { padding: 12px 16px; } .dash { padding: 2px 16px; }
-    h4 { font-size: 21px; } .add { padding: 6px 10px; }
-    .recent { gap: 14px; overflow: hidden; } .recent span:nth-child(n+5) { display: none; }
-    .list li { padding: 9px 11px; gap: 11px; } .list em { display: none; }
-    .said { margin-top: 56px; padding: 0 18px; font-size: 18px; }
-    .dots { margin-top: 30px; }
-    .cp[data-step="idle"] .hint.st-idle { display: block !important; text-align: center; padding: 10px 14px; border-radius: 16px; }
-    .hint .spark { display: inline-grid; vertical-align: middle; margin-right: 6px; width: 20px; height: 20px; }
-    .hint { white-space: normal; max-width: calc(100% - 32px); margin-bottom: 88px; font-size: 12px; line-height: 1.35; }
-    .stage { width: 100%; padding: 0 16px; box-sizing: border-box; }
-    .tile.wide { min-width: 0; width: 100%; box-sizing: border-box; }
-    .tiles { grid-template-columns: 1fr 1fr; width: 100%; }
-    .tile { min-width: 0; min-height: 78px; padding: 12px 14px; }
-    .tile strong { font-size: 15px; }
-    .capsule { gap: 14px; padding-left: 18px; } .num b { font-size: 26px; } .cm { margin-left: 4px; }
-    .orb, .rings { width: 180px; height: 180px; }
-    .back { left: 14px; }
-    .undo span, .result small { font-size: 11px; }
+  /* Narrow: the tablet loses its list and its bezel. */
+  @container (max-width: 700px) {
+    .tablet {
+      padding: 8px;
+      border-radius: 26px;
+    }
+    .screen {
+      height: 600px;
+      border-radius: 19px;
+    }
+    .app {
+      grid-template-columns: 1fr;
+    }
+    .side {
+      display: none;
+    }
+    .pane {
+      padding: 14px 16px;
+    }
+    .sum div {
+      padding: 10px 12px;
+    }
+    .fields {
+      grid-template-columns: 1fr 1fr;
+    }
+    .sched li:nth-child(n + 4) {
+      display: none;
+    }
+    .hint {
+      white-space: normal;
+      text-align: center;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .orb span, .rings span, .stage, .capsule, .cp[data-step="listen"] .mic { animation: none; }
-    .app { transition: none; }
+    .wave i,
+    .radar i,
+    .caret {
+      animation: none;
+    }
+    .pane,
+    .card {
+      transition: none;
+    }
   }
 </style>
