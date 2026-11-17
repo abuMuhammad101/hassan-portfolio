@@ -40,13 +40,12 @@ const marks: Record<string, string> = {
       <div class="sheet s2"><img class:list={["real", { phone: face[2] }]} src={face[1]} alt="" loading="lazy" decoding="async" /></div>
     </>
   )}
-  <div class="front"><span class="seam"></span>{marks[kind] && <span class="mark"><Icon name={marks[kind]} weight="duotone" size={22} /></span>}</div>
+  <div class="front"><span class="seam"></span>{marks[kind] && <span class="mark"><Icon name={marks[kind]} weight="duotone" size={18} /></span>}</div>
 </div>
 
 <style>
+  /* A paper folder: light, hairline-edged, two screens tucked in. */
   .folder {
-    --f-back: #26272c;
-    --f-front: linear-gradient(180deg, #3b3d45 0%, #2b2d33 100%);
     --paper: #ffffff;
     --p-ink: #1a1a18;
     --p-muted: #8c8a81;
@@ -55,100 +54,89 @@ const marks: Record<string, string> = {
     --ok: #1f8a4c;
     --warn: #b7791f;
     position: relative;
-    height: 212px;
+    height: 200px;
     margin: 10px 0 0;
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  :global(.card:hover) .folder,
-  :global(.card:focus-visible) .folder {
-    transform: translateY(-4px);
-  }
-  :global(.card:hover) .front,
-  :global(.card:focus-visible) .front {
-    box-shadow:
-      0 1px 0 rgb(255 255 255 / 0.12) inset,
-      0 -6px 14px -10px rgb(0 0 0 / 0.45),
-      0 24px 28px -14px rgb(20 20 24 / 0.38);
   }
   .back {
     position: absolute;
-    inset: 16px 0 0;
-    border-radius: 14px;
-    background: var(--f-back);
+    inset: 12px 0 0;
+    border-radius: 12px;
+    background: var(--bg-sunk);
+    box-shadow: inset 0 0 0 1px var(--rule);
   }
   .tab {
     position: absolute;
     left: 0;
-    top: -12px;
-    width: 38%;
-    height: 26px;
-    border-radius: 12px 12px 0 0;
-    background: var(--f-back);
+    top: -10px;
+    width: 34%;
+    height: 22px;
+    border-radius: 10px 10px 0 0;
+    background: var(--bg-sunk);
+    box-shadow: inset 1px 1px 0 var(--rule), inset -1px 0 0 var(--rule);
   }
   .sheet {
     position: absolute;
-    top: 24px;
+    top: 26px;
     left: 50%;
-    width: 58%;
-    height: 150px;
-    border-radius: 10px;
-    background: #f1f0ec;
+    width: 56%;
+    height: 140px;
+    border-radius: 8px;
+    background: #f4f3f0;
     color: var(--p-ink);
-    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.06), 0 8px 18px -8px rgb(0 0 0 / 0.5);
+    box-shadow:
+      0 0 0 1px rgb(20 18 12 / 0.07),
+      0 6px 16px -8px rgb(20 18 12 / 0.22);
     overflow: hidden;
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-    /* Keeps the tilted edges smooth instead of stair-stepped. */
-    outline: 1px solid transparent;
-    backface-visibility: hidden;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     font-size: 9.5px;
     line-height: 1.3;
   }
+  /* Straight, never tilted: screens stay pixel-sharp. */
   .s1 {
-    transform: translateX(-80%) rotate(-6deg);
+    transform: translate(-86%, 0);
   }
   .s2 {
-    transform: translateX(-24%) rotate(6deg);
+    transform: translate(-16%, 10px);
   }
   :global(.card:hover) .s1,
   :global(.card:focus-visible) .s1 {
-    transform: translateX(-88%) translateY(-26px) rotate(-9deg);
+    transform: translate(-88%, -14px);
   }
   :global(.card:hover) .s2,
   :global(.card:focus-visible) .s2 {
-    transform: translateX(-14%) translateY(-30px) rotate(8deg);
+    transform: translate(-14%, -8px);
   }
   .front {
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
-    height: 40%;
-    border-radius: 14px;
-    background: var(--f-front);
+    height: 34%;
+    border-radius: 12px;
+    background: var(--bg-raised);
     box-shadow:
-      0 1px 0 rgb(255 255 255 / 0.12) inset,
-      0 -6px 14px -10px rgb(0 0 0 / 0.45),
-      0 16px 20px -12px rgb(20 20 24 / 0.3);
-    transition: box-shadow 0.45s;
+      inset 0 0 0 1px var(--rule),
+      0 -10px 20px -16px rgb(20 18 12 / 0.28);
   }
   .seam {
     position: absolute;
     left: 14px;
     right: 14px;
-    top: 12px;
-    border-top: 1px solid rgb(255 255 255 / 0.08);
+    top: 10px;
+    border-top: 1px dashed var(--rule);
   }
-  /* A debossed mark: which product this folder holds, felt more than seen. */
+  /* Which product the folder holds, small and quiet. */
   .mark {
     position: absolute;
-    right: 16px;
-    bottom: 14px;
-    color: rgb(255 255 255 / 0.22);
-    transition: color 0.45s;
+    right: 14px;
+    bottom: 12px;
+    color: var(--ink-muted);
+    opacity: 0.6;
+    transition: opacity 0.4s;
   }
   :global(.card:hover) .mark,
   :global(.card:focus-visible) .mark {
-    color: rgb(255 255 255 / 0.5);
+    opacity: 1;
   }
   @media (prefers-reduced-motion: reduce) {
     .sheet {

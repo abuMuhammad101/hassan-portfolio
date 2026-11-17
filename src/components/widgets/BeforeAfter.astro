@@ -6,25 +6,24 @@
 import BrowserFrame from "../BrowserFrame.astro";
 import Icon from "../Icon.astro";
 import Vehicle from "./pilgrim/Vehicle.astro";
-import Scene from "./pilgrim/Scene.astro";
 import "@fontsource/cormorant-garamond/latin-600.css";
 import "@fontsource/cormorant-garamond/latin-700.css";
-const slides = [
-  { t: "VIP Airport Transfers, Door to Door", d: "Meet-and-greet arrivals and a vehicle waiting the moment you land.", art: "dusk" },
-  { t: "Between the Holy Cities, in Comfort", d: "Fixed-price rides with drivers who know the way and the rhythm of the day.", art: "road" },
-  { t: "Ziyarat Tours at Your Pace", d: "Visit the historic sites with a driver who waits while you pray.", art: "palms" },
+// Three ways people ride; each sets the booking card.
+const routes = [
+  { k: "airport", t: "Airport", from: "Jeddah Airport (JED)", to: "Hotel in Makkah", when: "Fri 14 Mar, 02:40", fare: 260, time: "about 1 h 20 min" },
+  { k: "cities", t: "Between cities", from: "Hotel in Makkah", to: "Hotel in Madinah", when: "Sun 16 Mar, 09:00", fare: 520, time: "about 4 h 30 min" },
+  { k: "ziyarat", t: "Ziyarat", from: "Hotel in Madinah", to: "Quba, Uhud, Qiblatayn", when: "Mon 17 Mar, 07:30", fare: 300, time: "half a day, driver waits" },
 ];
 const fleet = [
-  { n: "Sedan", k: "Sedan", v: "sedan", p: 3, b: 2, d: "For individuals and small families." },
-  { n: "Family MPV", k: "MPV", v: "mpv", p: 7, b: 5, d: "Spacious, registered for pilgrim travel." },
-  { n: "Full-size SUV", k: "SUV", v: "suv", p: 7, b: 6, d: "Premium comfort for VIP travel." },
-  { n: "Group Van", k: "Van", v: "van", p: 10, b: 10, d: "High capacity, made for groups." },
+  { n: "Sedan", v: "sedan", p: 3, b: 2, f: 180 },
+  { n: "Family MPV", v: "mpv", p: 7, b: 5, f: 260 },
+  { n: "Full-size SUV", v: "suv", p: 7, b: 6, f: 320 },
+  { n: "Group van", v: "van", p: 10, b: 10, f: 380 },
 ];
-const quotes = ["Always on time and the driver knew every stop.", "Smooth ride between the cities, very professional.", "Helped with all our luggage at 3 am. Highly recommend.", "Our family of seven fit easily. Will book again."];
 const reasons = [
-  { t: "Safe & Comfortable Travel", d: "Every vehicle is registered for pilgrim transport and maintained for comfort on long drives." },
-  { t: "Always on Time", d: "Flight monitoring and support around the clock, with free waiting time for arrivals." },
-  { t: "Updates on WhatsApp", d: "Booking confirmation, reminders, driver details and journey updates, where pilgrims already are." },
+  { i: "seal-check", t: "Registered for pilgrim travel", d: "Every vehicle and driver is licensed for Umrah and Hajj transport." },
+  { i: "airplane-landing", t: "We watch your flight", d: "Late landing? The driver waits, and the first hour is free." },
+  { i: "whatsapp-logo", t: "Updates on WhatsApp", d: "Driver, car and plate the night before. No app to install." },
 ];
 ---
 
@@ -64,90 +63,88 @@ const reasons = [
         <p class="note"><Icon name="info" size={14} />A generic rental template: daily rates, fuel type, model year, "Drive Your Dreams". None of it helps a pilgrim choose a ride from the airport to the Haram.</p>
       </div>
 
-      <!-- AFTER: pilgrim transport -->
+      <!-- AFTER: pilgrim transport, kept to what a family needs -->
       <div class="pg after" data-after>
         <nav class="a-nav">
-          <span class="a-menu" aria-hidden="true"><Icon name="list" size={20} /></span><span class="a-logo"><i></i>Pilgrim Drivers</span>
-          <span class="a-pills"><b><Icon name="house" size={12} weight="fill" />Home</b><span><Icon name="car-profile" size={12} />Fleet <Icon name="caret-down" size={9} /></span><span><Icon name="map-trifold" size={12} />Routes &amp; Pricing</span><span><Icon name="users-three" size={12} />About</span><span><Icon name="phone" size={12} />Contact</span></span>
-          <span class="a-end"><span><Icon name="globe" size={12} />EN</span><span class="a-btn"><Icon name="calendar-check" size={12} />Book Now <Icon name="arrow-right" size={11} /></span></span>
+          <span class="a-logo"><i aria-hidden="true"></i>Pilgrim Drivers</span>
+          <span class="a-links"><b>Book</b><span>Fleet</span><span>Ziyarat</span><span>Help</span></span>
+          <span class="a-end"><span class="lang">EN</span><span class="a-btn">My booking</span></span>
         </nav>
 
-        <section class="hero" data-hero>
-          {slides.map((s, i) => <div class="slide" data-slide={i} aria-hidden={i !== 0 ? "true" : undefined}><Scene kind={s.art as any} /></div>)}
-          <div class="wash"></div>
-          <div class="panel">
-            {slides.map((s, i) => (
-              <div class="copy" data-copy={i} hidden={i !== 0}><h5>{s.t}</h5><i></i><p>{s.d}</p></div>
-            ))}
+        <section class="a-hero">
+          <div class="a-copy">
+            <h5>From the airport to the Haram, booked in a minute.</h5>
+            <p>A fixed fare, a driver who knows the way, and updates on WhatsApp. For families on Umrah and Hajj.</p>
+            <ul class="a-trust">
+              <li><Icon name="seal-check" size={13} />Licensed for Umrah and Hajj</li>
+              <li><Icon name="translate" size={13} />Arabic, English, Urdu</li>
+            </ul>
           </div>
-          <button type="button" class="nav prev" data-prev aria-label="Previous slide"><Icon name="caret-left" size={16} /></button>
-          <button type="button" class="nav next" data-next aria-label="Next slide"><Icon name="caret-right" size={16} /></button>
-          <span class="count"><b data-count>01</b> / 03</span>
-          <span class="dots">{slides.map((_, i) => <button type="button" data-dot={i} aria-label={`Slide ${i + 1}`}><i></i></button>)}</span>
+
+          <div class="bk" data-book data-route="airport">
+            <div class="bk-tabs" role="tablist" aria-label="Kind of ride">
+              {routes.map((r, i) => <button type="button" role="tab" data-route-btn={r.k} aria-selected={i === 0 ? "true" : "false"}>{r.t}</button>)}
+            </div>
+            {routes.map((r, i) => (
+              <div class="bk-body" data-route-pane={r.k} hidden={i !== 0}>
+                <div class="bk-path">
+                  <span class="dot" aria-hidden="true"></span>
+                  <label><small>From</small><b>{r.from}</b></label>
+                  <span class="dot end" aria-hidden="true"></span>
+                  <label><small>To</small><b>{r.to}</b></label>
+                </div>
+                <div class="bk-two">
+                  <label><small>When</small><b>{r.when}</b></label>
+                  <label><small>Travellers</small><b>7 people, 6 bags</b></label>
+                </div>
+                <div class="bk-fare">
+                  <span><small>Fixed fare, Family MPV</small><b>SAR {r.fare}</b></span>
+                  <span class="bk-time">{r.time}</span>
+                </div>
+              </div>
+            ))}
+            <button type="button" class="bk-go" data-next>Continue</button>
+          </div>
         </section>
 
-        <div class="book" aria-label="Book a ride">
-          <label><small>Pick-up</small><span><Icon name="airplane-landing" size={14} />Jeddah Airport (JED)</span></label>
-          <label><small>Drop-off</small><span><Icon name="map-pin" size={14} />Hotel in Makkah</span></label>
-          <label><small>Arrival</small><span><Icon name="calendar-blank" size={14} />Fri 14 Mar · 02:40</span></label>
-          <label><small>Travellers</small><span><Icon name="users" size={14} />7 people · 6 bags</span></label>
-          <span class="a-btn go">See fixed price<Icon name="arrow-right" size={12} /></span>
-        </div>
-
-        <section class="sec sand">
-          <h6>Choose Your Vehicle</h6><i class="rule"></i>
-          <p class="sub">Picked by how many travel and how much they carry.</p>
+        <section class="sec">
+          <div class="sec-h"><h6>Choose by people and bags</h6><span class="link">All vehicles</span></div>
           <div class="cars">
-            {fleet.map((f) => (
-              <article class="car">
-                <div class="art a-car"><span class="kind">{f.k}</span><Vehicle kind={f.v as any} /></div>
-                <b>{f.n}</b>
-                <p>{f.d}</p>
-                <span class="cap"><span><Icon name="users" size={13} />{f.p} passengers</span><span><Icon name="suitcase-rolling" size={13} />{f.b} bags</span></span>
-                <span class="row"><span class="ghost">Routes &amp; Pricing</span><span class="a-btn sm">Book Now</span></span>
+            {fleet.map((f, i) => (
+              <article class:list={["car", { pick: i === 1 }]}>
+                <div class="art"><Vehicle kind={f.v as any} /></div>
+                <span class="car-n"><b>{f.n}</b><span>SAR {f.f}</span></span>
+                <span class="cap"><span><Icon name="user" size={12} />{f.p}</span><span><Icon name="suitcase-rolling" size={12} />{f.b}</span></span>
               </article>
             ))}
           </div>
         </section>
 
         <section class="sec why">
-          <div class="why-l">
-            <h6>Why Choose Pilgrim Drivers</h6><i class="rule"></i>
-            <ol class="reasons">
-              {reasons.map((r, i) => (
-                <li data-reason={i} class={i === 0 ? "open" : ""}>
-                  <span class="track"><i></i></span>
-                  <button type="button" data-open={i} aria-expanded={i === 0 ? "true" : "false"}><b>{r.t}</b><em>0{i + 1}</em></button>
-                  <p>{r.d}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-          <div class="why-r">
-            <Scene kind="dusk" />
-            <div class="wa">
-              <p class="wa-h"><span class="wa-av"><i></i></span><span><b>Pilgrim Drivers</b><small>WhatsApp · now</small></span></p>
-              <p class="bub">Assalamu alaikum. Your driver <b>Yusuf</b> is waiting at <b>Gate 3</b> with your name on a sign.</p>
-              <p class="bub car-b"><Icon name="van" size={14} /><span><b>White Hiace</b> · plate on the confirmation</span></p>
-              <p class="bub me">JazakAllah, we're at baggage claim now</p>
-            </div>
-          </div>
-        </section>
-
-        <section class="sec sand quotes">
-          <h6>What Our Travellers Say</h6><i class="rule"></i>
-          <div class="cols" aria-hidden="true">
-            {[0, 1, 2].map((c) => (
-              <div class={`col c${c}`}>
-                {[...quotes, ...quotes].map((q, i) => (
-                  <div class="q"><span class="stars">★★★★★</span><p>“{q}”</p><small>Sample review {c * 4 + (i % 4) + 1}</small></div>
-                ))}
-              </div>
+          <ol class="reasons">
+            {reasons.map((r, i) => (
+              <li data-reason={i} class={i === 0 ? "open" : ""}>
+                <button type="button" data-open={i} aria-expanded={i === 0 ? "true" : "false"}>
+                  <span class="ri"><Icon name={r.i} size={16} /></span><b>{r.t}</b>
+                </button>
+                <p>{r.d}</p>
+              </li>
             ))}
+          </ol>
+          <div class="wa" aria-hidden="true">
+            <p class="wa-h"><span class="wa-av"><i></i></span><span><b>Pilgrim Drivers</b><small>WhatsApp</small></span></p>
+            <p class="bub">Assalamu alaikum. Your driver <b>Yusuf</b> will meet you at <b>Gate 3</b> with your name on a sign.</p>
+            <p class="bub">White Hiace, plate <b>4721 KSA</b>.</p>
+            <p class="bub me">JazakAllah khair</p>
           </div>
         </section>
 
-        <p class="note ok"><Icon name="check-circle" size={14} />Same backend and data. Vehicles by passengers and bags, fixed routes, real reviews and WhatsApp updates, in a voice that fits the journey.</p>
+        <section class="sec quote">
+          <p class="q">“Our flight landed at 3 am and the driver was already at the gate with our name.”</p>
+          <p class="q-who">Family of six, Umrah · <span>sample review</span></p>
+        </section>
+
+        <p class="note ok"><Icon name="check-circle" size={14} />Same backend and data. Rides by route, vehicles by people and bags, a fixed fare up front, and updates where pilgrims already are.</p>
       </div>
     </div>
   </BrowserFrame>
@@ -164,24 +161,21 @@ const reasons = [
       buttons.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
     }));
 
-    // Hero slider
-    const slides = [...root.querySelectorAll<HTMLElement>("[data-slide]")];
-    const copies = [...root.querySelectorAll<HTMLElement>("[data-copy]")];
-    const dots = [...root.querySelectorAll<HTMLButtonElement>("[data-dot]")];
-    let cur = 0, timer: number | undefined;
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const go = (n: number) => {
-      cur = (n + slides.length) % slides.length;
-      slides.forEach((s, i) => s.classList.toggle("on", i === cur));
-      copies.forEach((c, i) => (c.hidden = i !== cur));
-      dots.forEach((d, i) => d.toggleAttribute("aria-current", i === cur));
-      q("[data-count]").textContent = `0${cur + 1}`;
+    // Booking card: the kind of ride sets the route and the fare.
+    const book = q("[data-book]");
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[data-route-btn]")];
+    const panes = [...root.querySelectorAll<HTMLElement>("[data-route-pane]")];
+    const setRoute = (k: string) => {
+      book.dataset.route = k;
+      tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.routeBtn === k)));
+      panes.forEach((p) => (p.hidden = p.dataset.routePane !== k));
     };
-    const auto = () => { clearInterval(timer); if (!reduce) timer = window.setInterval(() => go(cur + 1), 5000); };
-    q("[data-prev]").addEventListener("click", () => { go(cur - 1); auto(); });
-    q("[data-next]").addEventListener("click", () => { go(cur + 1); auto(); });
-    dots.forEach((d, i) => d.addEventListener("click", () => { go(i); auto(); }));
-    go(0); auto();
+    tabs.forEach((t) => t.addEventListener("click", () => setRoute(t.dataset.routeBtn!)));
+    // "Continue" walks through the kinds of ride, so the story can show each.
+    q("[data-next]").addEventListener("click", () => {
+      const i = tabs.findIndex((t) => t.dataset.routeBtn === book.dataset.route);
+      setRoute(tabs[(i + 1) % tabs.length].dataset.routeBtn!);
+    });
 
     // Reasons accordion
     const items = [...root.querySelectorAll<HTMLElement>("[data-reason]")];
@@ -240,101 +234,86 @@ const reasons = [
   .b-card small { display: flex; align-items: center; gap: 4px; color: #777; }
   .b-price { position: absolute; top: 10px; right: 10px; z-index: 2; padding: 4px 9px; border-radius: 7px; background: var(--or); color: #fff; font-weight: 700; font-size: 12px; }
 
-  /* AFTER */
-  .after { --g9: #00321b; --g6: #27865b; --g1: #e7f2ed; --gold: #c69220; --sand: #faf7f1; --ink: #222; --ink4: #6b6b6b; --line: #e7dfcf; --disp: "Cormorant Garamond", Georgia, serif; color: var(--ink); }
-  .a-nav { display: flex; align-items: center; gap: 16px; padding: 10px 22px; border-bottom: 1px solid var(--line); }
+  /* AFTER: one green, one warm neutral, hairlines, nothing decorative. */
+  .after { --g9: #0f3d2a; --g6: #2d7a55; --g1: #edf4ef; --sand: #f7f5f0; --ink: #1c1d1b; --ink3: #55574f; --ink4: #8a8c84; --line: #e8e6df; --disp: "Cormorant Garamond", Georgia, serif; color: var(--ink); }
+  .a-nav { display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 28px; border-bottom: 1px solid var(--line); }
   .a-logo { display: flex; align-items: center; gap: 8px; font: 700 18px var(--disp); color: var(--g9); }
-  .a-logo i { width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 50% 60%, var(--gold) 0 5px, transparent 6px), var(--g9); box-shadow: inset 0 0 0 2px var(--gold); }
-  .a-pills { display: flex; align-items: center; gap: 4px; margin: 0 auto; color: #3b3b3b; font-size: 12px; }
-  .a-pills > * { display: inline-flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 999px; }
-  .a-pills > * + * { border-left: 1px solid var(--line); border-radius: 0; }
-  .a-pills b { background: var(--g9); color: #fff; font-weight: 600; box-shadow: 0 3px 0 -1px var(--gold); }
-  .a-end { display: flex; align-items: center; gap: 12px; font-size: 12px; }
-  .a-end > span:first-child { display: inline-flex; gap: 4px; align-items: center; }
-  .a-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 9px; background: linear-gradient(180deg, #d19e2c, #b38219); color: #fff; font-weight: 600; box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 6px 14px -8px #8a640f; }
-  .a-btn.sm { padding: 6px 11px; font-size: 12px; }
+  .a-logo i { width: 18px; height: 18px; border-radius: 5px; background: var(--g9); box-shadow: inset 0 0 0 5px var(--g9), inset 0 0 0 9px #fff; }
+  .a-links { display: flex; gap: 24px; margin: 0 auto; color: var(--ink3); font-size: 12.5px; }
+  .a-links b { color: var(--ink); font-weight: 600; }
+  .a-end { display: flex; align-items: center; gap: 16px; font-size: 12.5px; color: var(--ink3); }
+  .a-btn { display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 8px; box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); font-weight: 550; }
 
-  .hero { position: relative; height: 340px; overflow: hidden; }
-  .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s ease, transform 6s ease; transform: scale(1.03); }
-  .slide.on { transform: none; }
-  .slide.on { opacity: 1; }
-  .wash { position: absolute; inset: 0; background: linear-gradient(90deg, rgb(0 0 0 / 0.18), transparent 55%); }
-  .panel { position: absolute; left: 40px; top: 42%; transform: translateY(-50%); width: 300px; padding: 24px 26px; border-radius: 16px; background: rgb(255 255 255 / 0.8); backdrop-filter: blur(12px); box-shadow: 0 24px 50px -20px rgb(0 0 0 / 0.4); }
-  .copy[hidden] { display: none; }
-  .copy { animation: fade 0.5s ease; }
-  .copy h5 { margin: 0; font: 700 27px/1.1 var(--disp); color: var(--ink); }
-  .copy i, .rule { display: block; width: 48px; height: 2px; margin: 12px 0; border-radius: 2px; background: var(--gold); }
-  .copy p { margin: 0; color: #2b2b2b; }
-  @keyframes fade { from { opacity: 0; transform: translateY(4px); } }
-  .nav { position: absolute; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgb(255 255 255 / 0.25); background: rgb(0 0 0 / 0.5); color: #fff; cursor: pointer; }
-  .prev { left: 10px; } .next { right: 10px; }
-  .panel { left: 62px; }
-  .count { position: absolute; right: 18px; bottom: 50px; padding: 4px 11px; border-radius: 999px; background: rgb(0 0 0 / 0.35); color: rgb(255 255 255 / 0.6); font-size: 12px; } .count b { color: #fff; font-size: 14px; }
-  .dots { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); display: flex; }
-  .dots button { display: grid; place-items: center; height: 30px; padding: 0 4px; border: 0; background: none; cursor: pointer; }
-  .dots i { width: 6px; height: 6px; border-radius: 3px; background: rgb(255 255 255 / 0.7); transition: width 0.4s; }
-  .dots [aria-current] i { width: 30px; background: var(--gold); }
-  :is(.nav, .dots button, .why button):focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .a-hero { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: center; padding: 44px 28px 40px; }
+  h5 { margin: 0; font: 600 36px/1.05 var(--disp); letter-spacing: -0.01em; color: var(--g9); max-width: 16ch; }
+  .a-copy p { max-width: 38ch; margin: 14px 0 0; color: var(--ink3); font-size: 14px; line-height: 1.55; }
+  .a-trust { display: flex; gap: 18px; margin: 22px 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--ink4); }
+  .a-trust li { display: inline-flex; align-items: center; gap: 5px; }
+  .a-trust :global(svg) { color: var(--g6); }
 
-  .book { position: relative; z-index: 2; display: grid; grid-template-columns: 1.3fr 1.1fr 1fr 1fr auto; align-items: center; margin: -30px 22px 0; padding: 6px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 20px 40px -22px rgb(0 50 27 / 0.45); }
-  .book label { display: grid; gap: 1px; padding: 7px 12px; min-width: 0; }
-  .book label + label { border-left: 1px solid var(--line); }
-  .book small { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink4); }
-  .book label span { display: flex; align-items: center; gap: 6px; font-weight: 550; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .book label :global(svg) { flex: none; color: var(--g6); }
-  .book .go { height: 42px; padding: 0 16px; white-space: nowrap; }
-  .sec { padding: 26px 26px 28px; }
-  .book + .sec { padding-top: 30px; }
-  .sand { background: var(--sand); }
-  h6 { margin: 0; font: 700 28px/1.1 var(--disp); color: var(--g9); }
-  .sub { margin: 0 0 16px; color: var(--ink4); font-size: 14px; }
-  .cars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-  .car { display: grid; gap: 6px; padding: 10px 10px 12px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 10px 22px -18px rgb(0 50 27 / 0.5); transition: transform 0.25s, box-shadow 0.25s; }
-  .car:hover { transform: translateY(-3px); box-shadow: 0 0 0 1px var(--gold), 0 16px 28px -18px rgb(0 50 27 / 0.6); }
-  .car .art { height: 92px; border-radius: 11px; }
-  .kind { position: absolute; top: 8px; left: 8px; z-index: 2; padding: 2px 8px; border-radius: 999px; background: var(--g9); color: #fff; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
-  .car > b { font: 700 19px var(--disp); color: var(--g9); margin-top: 2px; }
-  .car > p { margin: 0; color: var(--ink4); font-size: 12px; min-height: 36px; }
-  .cap { display: flex; gap: 12px; padding: 7px 0; border-block: 1px dashed var(--line); font-size: 12px; color: #3b3b3b; }
-  .cap span { display: inline-flex; align-items: center; gap: 5px; } .cap :global(svg) { color: var(--g6); }
-  .row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
-  .ghost { color: var(--g9); font-weight: 600; font-size: 12px; text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
+  .bk { display: grid; gap: 10px; padding: 12px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 24px 40px -28px rgb(15 61 42 / 0.35); }
+  .bk-tabs { display: grid; grid-template-columns: repeat(3, 1fr); padding: 3px; border-radius: 10px; background: var(--sand); }
+  .bk-tabs button { height: 28px; border: 0; border-radius: 8px; background: none; font: inherit; font-size: 12px; color: var(--ink3); cursor: pointer; }
+  .bk-tabs [aria-selected="true"] { background: #fff; color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgb(0 0 0 / 0.08); }
+  .bk-body { display: grid; gap: 8px; animation: fade 0.35s ease; }
+  .bk-body[hidden] { display: none; }
+  .bk label { display: grid; gap: 1px; min-width: 0; }
+  .bk small { font-size: 11px; color: var(--ink4); }
+  .bk label b { font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bk-path { position: relative; display: grid; grid-template-columns: 14px 1fr; gap: 8px 10px; align-items: center; padding: 10px 12px; border-radius: 12px; box-shadow: inset 0 0 0 1px var(--line); }
+  .bk-path::before { content: ""; position: absolute; left: 18px; top: 28px; bottom: 28px; border-left: 1px dashed #c9c7bf; }
+  .dot { width: 8px; height: 8px; margin-left: 3px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--g9); background: #fff; }
+  .dot.end { background: var(--g9); }
+  .bk-two { display: grid; grid-template-columns: 1fr 1fr; }
+  .bk-two label { padding: 10px 12px; box-shadow: inset 0 0 0 1px var(--line); }
+  .bk-two label:first-child { border-radius: 12px 0 0 12px; }
+  .bk-two label:last-child { border-radius: 0 12px 12px 0; margin-left: -1px; }
+  .bk-fare { display: flex; align-items: end; justify-content: space-between; padding: 4px 2px 0; }
+  .bk-fare span:first-child { display: grid; }
+  .bk-fare b { font-size: 20px; font-weight: 650; letter-spacing: -0.01em; color: var(--g9); }
+  .bk-time { font-size: 11.5px; color: var(--ink4); }
+  .bk-go { height: 40px; border: 0; border-radius: 10px; background: var(--g9); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+  .bk-go:focus-visible, .bk-tabs button:focus-visible, .why button:focus-visible { outline: 2px solid var(--g6); outline-offset: 2px; }
+  @keyframes fade { from { opacity: 0; transform: translateY(3px); } }
 
-  .why { display: grid; grid-template-columns: 1.1fr 1fr; gap: 26px; align-items: stretch; }
-  .reasons { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
-  .reasons li { padding: 10px 0 8px; }
-  .track { display: block; height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
-  .track i { display: block; height: 100%; width: 0; background: var(--gold); }
-  .reasons li.open .track i { width: 100%; transition: width 5s linear; }
-  .why button { display: flex; width: 100%; justify-content: space-between; align-items: baseline; padding: 9px 0 0; border: 0; background: none; text-align: left; cursor: pointer; }
-  .why button b { font: 700 19px var(--disp); color: var(--ink4); transition: color 0.3s; }
-  .why button em { font-style: normal; color: var(--ink4); font-size: 12px; }
-  .reasons li.open b { color: var(--g9); } .reasons li.open em { color: var(--gold); }
-  .reasons p { display: none; margin: 6px 0 0; color: #3b3b3b; max-width: 380px; }
-  .reasons li.open p { display: block; animation: fade 0.4s ease; }
-  .why-r { position: relative; overflow: hidden; border-radius: 18px; min-height: 250px; isolation: isolate; }
-  .why-r :global(.scene) { position: absolute; inset: 0; }
-  .wa { position: absolute; right: 16px; bottom: 16px; width: min(250px, 78%); display: grid; gap: 6px; padding: 12px; border-radius: 16px; background: rgb(239 234 226 / 0.94); backdrop-filter: blur(8px); box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.5); font-size: 12px; }
+  .sec { padding: 28px 28px 30px; border-top: 1px solid var(--line); }
+  .sec-h { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
+  h6 { margin: 0; font: 600 24px/1.1 var(--disp); color: var(--g9); }
+  .link { font-size: 12.5px; color: var(--ink3); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+  .cars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .car { display: grid; gap: 8px; padding: 8px 8px 10px; border-radius: 14px; box-shadow: inset 0 0 0 1px var(--line); transition: box-shadow 0.2s; }
+  .car:hover, .car.pick { box-shadow: inset 0 0 0 1.5px var(--g9); }
+  .car .art { display: grid; align-items: end; height: 84px; padding: 10px 14px 6px; border-radius: 9px; background: var(--sand); }
+  .car .art :global(svg) { max-width: 100%; }
+  .car-n { display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px; }
+  .car-n b { font-weight: 600; }
+  .car-n span { font-size: 12px; color: var(--ink3); }
+  .cap { display: flex; gap: 12px; padding: 0 4px; font-size: 11.5px; color: var(--ink4); }
+  .cap span { display: inline-flex; align-items: center; gap: 4px; }
+
+  .why { display: grid; grid-template-columns: 1fr 260px; gap: 32px; align-items: center; background: var(--sand); }
+  .reasons { list-style: none; display: grid; margin: 0; padding: 0; }
+  .reasons li { border-bottom: 1px solid var(--line); }
+  .reasons li:first-child { border-top: 1px solid var(--line); }
+  .why button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 0; border: 0; background: none; font: inherit; text-align: left; color: var(--ink3); cursor: pointer; }
+  .why button b { font-weight: 550; }
+  .ri { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); color: var(--ink4); }
+  .reasons li.open button { color: var(--ink); }
+  .reasons li.open .ri { background: var(--g9); color: #fff; box-shadow: none; }
+  .reasons p { display: none; margin: -4px 0 12px 38px; color: var(--ink3); max-width: 44ch; }
+  .reasons li.open p { display: block; animation: fade 0.35s ease; }
+  .wa { display: grid; gap: 5px; padding: 12px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px var(--line); font-size: 12px; }
   .wa p { margin: 0; }
-  .wa-h { display: flex; align-items: center; gap: 8px; padding-bottom: 6px; border-bottom: 1px solid rgb(0 0 0 / 0.06); }
-  .wa-h span:last-child { display: grid; line-height: 1.25; } .wa-h small { color: #6b6b6b; font-size: 11px; }
-  .wa-av { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--g9); box-shadow: inset 0 0 0 2px var(--gold); }
-  .wa-av i { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
-  .bub { justify-self: start; max-width: 92%; padding: 7px 10px; border-radius: 4px 12px 12px 12px; background: #fff; color: #222; line-height: 1.4; box-shadow: 0 1px 1px rgb(0 0 0 / 0.06); }
-  .bub.car-b { display: flex; align-items: center; gap: 6px; color: #3b3b3b; } .car-b :global(svg) { color: var(--g6); flex: none; }
-  .bub.me { justify-self: end; border-radius: 12px 4px 12px 12px; background: #d9f6c9; }
+  .wa-h { display: flex; align-items: center; gap: 8px; padding-bottom: 8px; margin-bottom: 2px; border-bottom: 1px solid var(--line); }
+  .wa-h span:last-child { display: grid; line-height: 1.25; } .wa-h small { color: var(--ink4); font-size: 11px; }
+  .wa-av { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--g9); }
+  .wa-av i { width: 8px; height: 8px; border-radius: 2px; background: #fff; }
+  .bub { justify-self: start; max-width: 92%; padding: 7px 10px; border-radius: 3px 11px 11px 11px; background: var(--sand); line-height: 1.4; }
+  .bub.me { justify-self: end; border-radius: 11px 3px 11px 11px; background: var(--g1); }
 
-
-  .quotes { padding-bottom: 0; }
-  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; height: 220px; margin-top: 8px; overflow: hidden; mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent); }
-  .col { display: grid; gap: 12px; align-content: start; animation: up 22s linear infinite; }
-  .col.c1 { animation-direction: reverse; animation-duration: 26s; }
-  .col.c2 { animation-duration: 30s; }
-  @keyframes up { to { transform: translateY(-50%); } }
-  .q { padding: 13px 15px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
-  .stars { color: var(--gold); letter-spacing: 2px; font-size: 12px; }
-  .q p { margin: 4px 0 6px; font: 600 16px/1.3 var(--disp); color: var(--ink); }
-  .q small { color: var(--ink4); }
+  .quote { text-align: center; padding: 34px 28px; }
+  .q { max-width: 30ch; margin: 0 auto; font: 600 22px/1.25 var(--disp); color: var(--ink); }
+  .q-who { margin: 10px 0 0; font-size: 12px; color: var(--ink4); }
   .note.ok { margin-top: 0; }
 
   .a-menu { display: none; color: var(--g9); }
@@ -344,28 +323,19 @@ const reasons = [
     .b-stats { gap: 22px; } .b-stats b { font-size: 20px; }
     .b-fleet { grid-template-columns: 1fr; padding: 14px 16px; } .b-fleet aside { display: none; }
     .note { padding: 12px 16px; }
-    .a-nav { padding: 10px 14px; gap: 10px; } .a-menu { display: grid; } .a-pills, .a-end > span:first-child { display: none; } .a-end { margin-left: auto; }
-    .a-logo { white-space: nowrap; font-size: 16px; } .a-end .a-btn { white-space: nowrap; padding: 7px 11px; } .a-end .a-btn :global(svg) { display: none; }
-    .hero { height: 380px; }
-    .book { grid-template-columns: 1fr 1fr; margin: -26px 12px 0; }
-    .book label { padding: 6px 9px; } .book label span { font-size: 12px; gap: 5px; }
-    .book label:nth-child(3) { border-left: 0; } .book label:nth-child(n + 3) { border-top: 1px solid var(--line); }
-    .book .go { grid-column: 1 / -1; justify-content: center; margin-top: 4px; }
-    .count { bottom: auto; } .dots { bottom: 30px; }
-    .wa { right: 10px; bottom: 10px; }
-    .panel { left: 14px; right: 14px; top: auto; bottom: 64px; transform: none; width: auto; padding: 16px 18px; }
-    .copy h5 { font-size: 22px; } .copy i { margin: 8px 0; } .copy p { font-size: 12.5px; }
-    .nav { display: none; } .count { top: 14px; bottom: auto; right: 14px; }
-    .sec { padding: 22px 16px; } h6 { font-size: 24px; }
+    .a-nav { padding: 0 14px; } .a-links, .lang { display: none; } .a-end { margin-left: auto; }
+    .a-hero { grid-template-columns: 1fr; gap: 24px; padding: 28px 16px; } h5 { font-size: 30px; }
+    .sec { padding: 22px 16px; } h6 { font-size: 21px; }
     .cars { grid-template-columns: 1fr 1fr; gap: 10px; }
-    .car > b { font-size: 17px; } .car > p { display: none; } .cap { flex-direction: column; gap: 3px; }
-    .row { flex-direction: column; align-items: stretch; gap: 8px; } .row .a-btn { justify-content: center; }
-    .why { grid-template-columns: 1fr; } .why-r { min-height: 160px; order: -1; }
-    .cols { grid-template-columns: 1fr; } .col.c1, .col.c2 { display: none; }
+    .why { grid-template-columns: 1fr; } .q { font-size: 19px; }
+    .a-trust { flex-direction: column; gap: 6px; }
+    .bk-tabs button { white-space: nowrap; font-size: 11px; }
+    .sec-h .link { display: none; }
+    .car-n { flex-direction: column; gap: 1px; } .car-n span { font-size: 11.5px; }
+    .car .art { height: 70px; padding: 8px 8px 4px; }
   }
   @container (max-width: 420px) { .b-cards { grid-template-columns: 1fr; } }
   @media (prefers-reduced-motion: reduce) {
-    .col, .copy, .reasons li.open p { animation: none; }
-    .slide, .reasons li.open .track i { transition: none; }
+    .bk-body, .reasons li.open p { animation: none; }
   }
 </style>

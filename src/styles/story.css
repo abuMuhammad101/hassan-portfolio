@@ -135,12 +135,12 @@
   border-radius: 50%;
 }
 .s-hot b {
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   background: var(--story-accent);
   box-shadow:
-    0 0 0 4px rgb(255 255 255 / 0.9),
-    0 4px 12px rgb(0 0 0 / 0.25);
+    0 0 0 3px rgb(255 255 255 / 0.95),
+    0 2px 6px rgb(0 0 0 / 0.2);
   transition: transform 0.2s;
 }
 .s-hot:hover b {
@@ -149,8 +149,8 @@
 .s-hot::before {
   width: 14px;
   height: 14px;
-  background: color-mix(in srgb, var(--story-accent) 45%, transparent);
-  animation: s-breathe 1.8s ease-out infinite;
+  background: color-mix(in srgb, var(--story-accent) 30%, transparent);
+  animation: s-breathe 2.2s ease-out infinite;
 }
 .s-hot::after {
   width: 46px;
@@ -169,7 +169,7 @@
     opacity: 0.9;
   }
   to {
-    transform: scale(3.2);
+    transform: scale(2.4);
     opacity: 0;
   }
 }
@@ -199,10 +199,10 @@
 }
 @keyframes s-glow {
   from {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--story-accent) 55%, transparent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--story-accent) 28%, transparent);
   }
   to {
-    box-shadow: 0 0 0 12px color-mix(in srgb, var(--story-accent) 0%, transparent);
+    box-shadow: 0 0 0 7px color-mix(in srgb, var(--story-accent) 0%, transparent);
   }
 }
 .tick[data-playing="true"] .on .s-target {
@@ -247,24 +247,24 @@
 }
 .s-call i {
   flex: none;
-  width: 10px;
-  height: 10px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #fff;
-  box-shadow:
-    0 0 0 2px var(--ink),
-    0 2px 6px rgb(0 0 0 / 0.25);
+  background: var(--story-accent);
+  box-shadow: 0 0 0 2.5px #fff;
 }
 .s-call span {
   max-width: 168px;
-  padding: 6px 10px;
-  border-radius: 10px;
-  background: #141414;
-  color: #fff;
-  font-size: 12px;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: #fff;
+  color: #1d1c19;
+  font-size: 11.5px;
   font-weight: 500;
   line-height: 1.35;
-  box-shadow: 0 10px 24px -10px rgb(0 0 0 / 0.5);
+  box-shadow:
+    0 0 0 1px rgb(20 18 12 / 0.08),
+    0 6px 16px -6px rgb(20 18 12 / 0.25);
 }
 
 @media (max-width: 520px) {
@@ -290,8 +290,8 @@
    window's tabs as the chapters. Shared by every story.
    --------------------------------------------------------------------- */
 .s-canvas {
-  --paper: #f6f5f0;
-  --paper-line: #e6e4dc;
+  --paper: #f8f8f6;
+  --paper-line: #e8e7e3;
   position: relative;
   padding: 22px 12px 18px;
   border: 1px solid var(--paper-line);
@@ -574,49 +574,35 @@
   transition: transform 0.15s;
 }
 .s-ghost b {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 17px 0 0 -4px;
-  padding: 3px 9px 3px 3px;
-  border-radius: 999px;
-  background: #141414;
+  margin: 16px 0 0 2px;
+  padding: 2px 7px 3px;
+  border-radius: 4px 7px 7px 7px;
+  background: #1d1c19;
   color: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
   white-space: nowrap;
-  box-shadow:
-    0 0 0 1px rgb(255 255 255 / 0.08),
-    0 8px 18px -8px rgb(0 0 0 / 0.5);
+  box-shadow: 0 4px 10px -4px rgb(0 0 0 / 0.35);
 }
 .s-ghost b i {
-  display: grid;
-  place-items: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--story-accent);
-  color: #fff;
-  font-style: normal;
-  font-size: 10px;
-  font-weight: 700;
+  display: none;
 }
 .s-burst {
   position: absolute;
-  top: -15px;
-  left: -15px;
-  width: 32px;
-  height: 32px;
+  top: -13px;
+  left: -13px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--story-accent) 22%, transparent);
+  border: 1.5px solid rgb(29 28 25 / 0.35);
   opacity: 0;
 }
 .s-ghost.click .s-burst {
-  animation: burst 0.55s ease-out;
+  animation: burst 0.5s ease-out;
 }
 .s-ghost.click svg {
-  animation: press 0.32s ease-out;
+  animation: press 0.3s ease-out;
 }
 @keyframes burst {
   from {
@@ -633,16 +619,12 @@
     transform: scale(0.8) translate(1px, 1px);
   }
 }
-/* The target the cursor rests on, and the moment it's pressed. */
+/* The target the cursor rests on stays itself; only the press shows. */
 [data-ghost-on] {
-  outline: 2px solid color-mix(in srgb, var(--story-accent) 55%, transparent) !important;
-  outline-offset: 3px;
-  transition:
-    outline-offset 0.25s,
-    transform 0.15s;
+  transition: transform 0.15s;
 }
 [data-ghost-press] {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
 @media (prefers-reduced-motion: reduce) {
   .s-ghost {

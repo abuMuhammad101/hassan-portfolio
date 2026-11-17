@@ -1,17 +1,17 @@
 :root {
-  --bg: #faf9f7;
+  --bg: #fcfcfb;
   --bg-raised: #ffffff;
   --ink: #1a1a18;
   --ink-secondary: #55534c;
   --ink-muted: #75736b;
-  --rule: #e5e3dc;
+  --rule: #e8e7e3;
   --ink-tone2: #7c7a71;
   --construct: #d9d6cc;
   --accent-site: #2f4bd8;
   --accent-warm: #e4572e;
   --ok: #1f8a4c;
   --warn: #b7791f;
-  --bg-sunk: #f1efea;
+  --bg-sunk: #f3f3f1;
 
   --hh-global: #9c6b1f;
   --cookiya: #6b5b95;
@@ -93,19 +93,19 @@
   color-scheme: dark;
 }
 :root[data-theme="light"] {
-  --bg: #faf9f7;
+  --bg: #fcfcfb;
   --bg-raised: #ffffff;
   --ink: #1a1a18;
   --ink-secondary: #55534c;
   --ink-muted: #75736b;
-  --rule: #e5e3dc;
+  --rule: #e8e7e3;
   --ink-tone2: #7c7a71;
   --construct: #d9d6cc;
   --accent-site: #2f4bd8;
   --accent-warm: #e4572e;
   --ok: #1f8a4c;
   --warn: #b7791f;
-  --bg-sunk: #f1efea;
+  --bg-sunk: #f3f3f1;
   --resume-accent: #7c3aed;
   color-scheme: light;
 }
@@ -182,14 +182,7 @@ a {
   margin-top: 0;
   margin-bottom: var(--space-3);
 }
-.section-label::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent-warm);
-  flex: none;
-}
+
 
 /* Shared layout and controls for the v2 pages. */
 .wrap-wide {

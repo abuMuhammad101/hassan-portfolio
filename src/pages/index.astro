@@ -3,20 +3,22 @@ import Base from "../layouts/Base.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import TwoToneHeading from "../components/TwoToneHeading.astro";
-import ConstructionLines from "../components/ConstructionLines.astro";
 import CaseThumb from "../components/CaseThumb.astro";
 import Icon from "../components/Icon.astro";
+import PhoneShell from "../components/hero/PhoneShell.astro";
+import ClickerMini from "../components/hero/ClickerMini.astro";
 import { beliefs, workIndex } from "../data/work-index";
 import { resume } from "../data/resume";
 
 const nameOf = (id: string) => workIndex.find((w) => w.id === id)?.name ?? id;
 const featured = workIndex.filter((w) => w.page);
-const rest = workIndex.filter((w) => !featured.includes(w));
-const markets = [
-  { name: "United States" },
-  { name: "GCC" },
-  { name: "Pakistan", home: true },
+// The hero shows the work: three products, as they look in use.
+const stage = [
+  { id: "hh-global", name: "HH Global", what: "Wholesale e-commerce", src: "/media/hh/home.webp", cls: "w-left" },
+  { id: "clicker", name: "Clicker", what: "ERP, my own product", src: "", cls: "w-mid", mini: true },
+  { id: "istyme", name: "isTyme", what: "Local marketplace", src: "/media/istyme/hero-offers.webp", cls: "w-right", phone: true },
 ];
+const rest = workIndex.filter((w) => !featured.includes(w));
 const ways = [
   { icon: "user", title: "Start with the person", body: "And the rules they live under, before any screen." },
   { icon: "list-checks", title: "Map what nobody asked for", body: "Empty, error, partial failure and the edge cases." },
@@ -24,6 +26,25 @@ const ways = [
   { icon: "rocket-launch", title: "Ship in small steps", body: "Reversible changes, and a seat in the architecture conversation." },
   { icon: "signature", title: "Own what ships", body: "Including what goes wrong afterwards." },
 ];
+// Tenure on one axis. Year-only dates cover the whole year; "Present" is
+// the build date.
+const now = new Date();
+const M = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const Y0 = 2021;
+const Y1 = now.getFullYear() + 1;
+const pos = (y: number, m: number) => `${(((y - Y0) * 12 + m) / ((Y1 - Y0) * 12)) * 100}%`;
+const parse = (t: string, end: boolean): [number, number] => {
+  if (t === "Present") return [now.getFullYear(), now.getMonth() + now.getDate() / 31];
+  const [a, b] = t.split(" ");
+  return b ? [Number(b), M.indexOf(a) + (end ? 1 : 0)] : [Number(a), end ? 12 : 0];
+};
+const nowAt = pos(now.getFullYear(), now.getMonth() + now.getDate() / 31);
+const years = Array.from({ length: Y1 - Y0 }, (_, i) => Y0 + i);
+const jobs = resume.experience.map((j) => {
+  const s0 = parse(j.start, false);
+  const e0 = parse(j.end, true);
+  return { role: j.role, company: j.company, start: j.start, end: j.end, now: j.end === "Present", a: pos(...s0), b: pos(...e0) };
+});
 const earlier = [
   ["Inventory Management Tool", "/work/inventory-management/"],
   ["Online Exam Preparation Platform", "/work/online-exam-prep/"],
@@ -41,12 +62,9 @@ const earlier = [
   <Header />
 
   <section class="hero">
-    <div class="hero-inner wrap-wide">
-      <div class="headline">
-        <ConstructionLines />
-        <TwoToneHeading as="h1" size="hero" lead="Less noise." rest="Real products. Owned end to end." />
-      </div>
-      <div class="hero-grid">
+    <div class="frame wrap-wide">
+      <div class="top">
+        <TwoToneHeading as="h1" size="hero" lead="Less noise." rest="Real products, owned end to end." />
         <div class="intro">
           <p>
             I'm Hassan, a senior product designer in Karachi. Healthcare compliance, AI copilots, dense business
@@ -58,398 +76,500 @@ const earlier = [
             <a class="btn ghost" href="/resume/">Resume</a>
           </div>
         </div>
-        <aside class="ledger" aria-label="At a glance">
-          <p class="figs">
-            <span><b>8</b> products featured here</span>
-            <span><b>5+</b> years in SaaS and mobile</span>
-          </p>
-          <ol class="route" aria-label="Markets: United States, GCC, Pakistan">
-            {markets.map((m) => (
-              <li class={m.home ? "home" : ""}><i aria-hidden="true"></i><span>{m.name}</span>{m.home && <em>Based here</em>}</li>
-            ))}
-          </ol>
-        </aside>
       </div>
+
+      <span class="rule" aria-hidden="true"></span>
+
+      <figure class="stage" aria-label="Three of the products">
+        {stage.map((w) => (
+          <a class={`win ${w.cls}`} href={`/work/${w.id}/`} aria-label={`${w.name}, ${w.what}`}>
+            <span class="chip"><b>{w.name}</b>{w.what}</span>
+            {w.phone ? (
+              <PhoneShell src={w.src} />
+            ) : (
+              <span class="screen">
+                <span class="bar" aria-hidden="true"><i></i><i></i><i></i></span>
+                {w.mini ? <ClickerMini /> : <img src={w.src} alt="" loading="eager" decoding="async" />}
+              </span>
+            )}
+          </a>
+        ))}
+      </figure>
+
+      <span class="rule" aria-hidden="true"></span>
+
+      <ol class="facts">
+        <li><span>01 — Now</span><p><b>Senior Product Designer</b> at AST since June 2026, on healthcare compliance and AI agents.</p></li>
+        <li><span>02 — Experience</span><p><b>5+ years</b> in SaaS and mobile, research to production, for teams in the US, the GCC and Pakistan.</p></li>
+        <li><span>03 — On this site</span><p><b>8 products,</b> 5 of them under NDA and re-created with stand-in names and data.</p></li>
+      </ol>
+
+      <span class="rule" aria-hidden="true"></span>
     </div>
   </section>
 
   <main>
-    <section class="wrap-wide band" aria-labelledby="beliefs-h">
-      <div class="band-head">
-        <p class="section-label">What I believe</p>
+    <section class="frame wrap-wide" aria-labelledby="beliefs-h">
+      <div class="band">
         <h2 id="beliefs-h" class="band-title">Four things I don't trade away.</h2>
       </div>
-      <ol class="beliefs">
+      <span class="rule" aria-hidden="true"></span>
+      <ol class="pr" data-live>
         {beliefs.map((b, i) => (
-          <li class="reveal" style={`--i:${i}`} data-belief>
-            <span class="b-top">
-              <span class="b-num tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-              <span class="b-art"><Icon name={b.icon} weight="duotone" size={26} /></span>
-            </span>
-            <p class="belief">{b.text}</p>
-            <p class="note">{b.note}</p>
-            <p class="proof-links"><span>Seen in</span>
-              {b.proof.map((id) => <a href={`#work-${id}`}>{nameOf(id)}</a>)}
-            </p>
+          <li class="reveal" data-live-item>
+            <div class={`vig v${i + 1}`} aria-hidden="true">
+              {i === 0 && (
+                <span class="v1-in">
+                  <span class="v1-q">Why do families call before they book?</span>
+                  <span class="v1-opts"><s>New app</s><s>Chatbot</s><b>Show the fare first</b></span>
+                </span>
+              )}
+              {i === 1 && (
+                <span class="v2-in">
+                  <span class="v2-card">
+                    <span class="v2-hd"><i></i>Agent draft</span>
+                    <span class="v2-ln"></span><span class="v2-ln s"></span>
+                    <span class="v2-acts"><span class="v2-ok"><em>Approve</em><em>Approved</em></span><span>Edit</span></span>
+                  </span>
+                  <span class="v2-cur"><svg viewBox="0 0 18 20"><path d="M2 1.6 15.4 8.5 9.6 10.2 6.9 16.2Z" /></svg></span>
+                </span>
+              )}
+              {i === 2 && (
+                <span class="v3-in">
+                  {[0, 1, 2, 3].map((k) => <i style={`--k:${k}`}><b></b><b></b></i>)}
+                </span>
+              )}
+              {i === 3 && (
+                <span class="v4-in">
+                  <span class="v4-row"><i></i>Shipped</span>
+                  <span class="v4-row warn"><i></i>Something broke</span>
+                  <span class="v4-row fix"><i></i>Fixed, and told everyone</span>
+                </span>
+              )}
+            </div>
+            <div class="pr-body">
+              <span class="pr-n">{String(i + 1).padStart(2, "0")}</span>
+              <h3>{b.text}</h3>
+              <p>{b.note}</p>
+              <p class="pr-seen">
+                {b.proof.map((id) => <a href={`#work-${id}`}>{nameOf(id)}</a>)}
+              </p>
+            </div>
           </li>
         ))}
       </ol>
+      <span class="rule" aria-hidden="true"></span>
     </section>
 
-    <section class="wrap-wide band" id="work" aria-labelledby="work-h">
-      <div class="band-head">
-        <p class="section-label">Selected work</p>
+    <section class="frame wrap-wide" id="work" aria-labelledby="work-h">
+      <div class="band">
         <h2 id="work-h" class="band-title">Eight products, one way of working.</h2>
-      </div>
-      <div class="cards">
-        {featured.map((w, i) => (
-          <a class="card reveal" href={`/work/${w.page}/`} id={`work-${w.id}`}>
-            <CaseThumb kind={w.id} />
+        <div class="cards">
+          {featured.map((w, i) => (
+            <a class="card reveal" href={`/work/${w.page}/`} id={`work-${w.id}`}>
+              <CaseThumb kind={w.id} />
+              <span class="card-top">
+                <span class="card-num">{String(i + 1).padStart(2, "0")}</span>
+                <span class="card-tags">{w.tags.join(" · ")}</span>
+              </span>
+              <span class="card-name" style={`view-transition-name: t-${w.page}`}>{w.name}</span>
+              <span class="card-angle">{w.angle}</span>
+              <span class="card-link">Read the case study <Icon name="arrow-up-right" size={15} /></span>
+            </a>
+          ))}
+          <div class="card more reveal">
+            <div class="mfold" aria-hidden="true">
+              <span class="mb"></span>
+              {earlier.slice(0, 3).map(([label], k) => <span class={`ms ms${k}`}>{label}</span>)}
+              <span class="mf"><span class="seam"></span></span>
+            </div>
             <span class="card-top">
-              <span class="card-num">{String(i + 1).padStart(2, "0")}</span>
-              <span class="card-tags">{w.tags.join(" · ")}</span>
+              <span class="card-num">{String(featured.length + 1).padStart(2, "0")}</span>
+              <span class="card-tags">Side projects · Earlier</span>
             </span>
-            <span class="card-name" style={`view-transition-name: t-${w.page}`}>{w.name}</span>
-            <span class="card-angle">{w.angle}</span>
-            <span class="card-link">Read the case study <Icon name="arrow-up-right" size={15} /></span>
-          </a>
-        ))}
+            <span class="card-name">Earlier work</span>
+            <ul class="more-links">
+              {earlier.map(([label, href]) => <li><a href={href}>{label}<Icon name="arrow-up-right" size={13} /></a></li>)}
+            </ul>
+          </div>
+        </div>
+        {rest.length > 0 && <ol class="rows" start={featured.length + 1}>
+          {rest.map((w, i) => (
+            <li class="reveal" id={`work-${w.id}`}>
+              <span class="row-num">{String(featured.length + i + 1).padStart(2, "0")}</span>
+              <span class="row-name">{w.name}</span>
+              <span class="row-leader" aria-hidden="true"></span>
+              <span class="row-tags">{w.tags.join(" · ")}</span>
+              {w.page ? (
+                <a class="row-status link" href={`/work/${w.page}/`}>Read <Icon name="arrow-up-right" size={14} /></a>
+              ) : (
+                <span class="row-status">Coming soon</span>
+              )}
+            </li>
+          ))}
+        </ol>}
       </div>
-      <ol class="rows" start={featured.length + 1}>
-        {rest.map((w, i) => (
-          <li class="reveal" id={`work-${w.id}`}>
-            <span class="row-num">{String(featured.length + i + 1).padStart(2, "0")}</span>
-            <span class="row-name">{w.name}</span>
-            <span class="row-leader" aria-hidden="true"></span>
-            <span class="row-tags">{w.tags.join(" · ")}</span>
-            {w.page ? (
-              <a class="row-status link" href={`/work/${w.page}/`}>Read <Icon name="arrow-up-right" size={14} /></a>
-            ) : (
-              <span class="row-status">Coming soon</span>
-            )}
-          </li>
-        ))}
-      </ol>
+      <span class="rule" aria-hidden="true"></span>
     </section>
 
-    <section class="wrap-wide band split" aria-labelledby="how-h">
-      <div class="band-head">
-        <p class="section-label">How I work</p>
+    <section class="frame wrap-wide" aria-labelledby="how-h">
+      <div class="band head-row">
         <h2 id="how-h" class="band-title">The same five moves, every time.</h2>
         <p class="tools">Tools change. Right now: Figma, Claude Code, Framer, Webflow and GitHub.</p>
       </div>
-      <ol class="ways">
+      <span class="rule" aria-hidden="true"></span>
+      <ol class="flow" data-live>
         {ways.map((w, i) => (
-          <li class="reveal">
-            <span class="way-num">{i + 1}</span>
-            <span class="way-text"><b>{w.title}</b><span>{w.body}</span></span>
-            <Icon name={w.icon} size={20} />
+          <li data-live-item style={`--k:${i}`}>
+            <span class="flow-n">{String(i + 1).padStart(2, "0")}</span>
+            <b>{w.title}</b>
+            <span>{w.body}</span>
           </li>
         ))}
       </ol>
+      <span class="rule" aria-hidden="true"></span>
     </section>
 
-    <section class="wrap-wide band split" aria-labelledby="exp-h">
-      <div class="band-head">
-        <p class="section-label">Experience</p>
+    <section class="frame wrap-wide" aria-labelledby="exp-h">
+      <div class="band">
         <h2 id="exp-h" class="band-title">Where I've worked.</h2>
-      </div>
-      <ul class="jobs">
-        {resume.experience.map((job) => (
-          <li class="reveal">
-            <span class="job-role">{job.role}</span>
-            <span class="job-co">{job.company}</span>
-            <span class="job-dates tabular-nums">{job.start} – {job.end}</span>
-          </li>
-        ))}
-        <li class="earlier">
-          <span>Earlier projects</span>
-          <span class="earlier-links">
-            {earlier.map(([label, href]) => <a href={href}>{label}</a>)}
-          </span>
-        </li>
-      </ul>
-    </section>
-
-    <section class="wrap-wide band" id="contact" aria-labelledby="contact-h">
-      <div class="contact">
-        <p class="section-label">Contact</p>
-        <TwoToneHeading as="h2" size="3xl" lead="Have a product that needs an owner?" rest="Let's talk." />
-        <div class="cta">
-          <a class="btn" href="mailto:hassank.uiux@gmail.com"><Icon name="envelope-simple" size={16} /> hassank.uiux@gmail.com</a>
-          <a class="btn ghost" href="#message" data-open-chat><Icon name="chat-circle-text" size={16} /> Send a message</a>
-          <a class="btn ghost" href="/resume/"><Icon name="read-cv-logo" size={16} /> Resume</a>
-          <a class="btn ghost" href="https://www.linkedin.com/in/muhammad-hassan-khan-ui-ux-designer/" target="_blank" rel="noopener noreferrer"><Icon name="linkedin-logo" size={16} /> LinkedIn</a>
-          <a class="btn ghost" href="https://github.com/abuMuhammad101" target="_blank" rel="noopener noreferrer"><Icon name="github-logo" size={16} /> GitHub</a>
-          <a class="btn ghost" href="https://layers.to/hassankuiux" target="_blank" rel="noopener noreferrer">layers.to <Icon name="arrow-up-right" size={14} /></a>
+        <div class="gantt" style={`--yrs:${years.length};--now:${nowAt}`}>
+          <div class="g-axis" aria-hidden="true">
+            <span></span>
+            <span class="g-years">
+              {years.map((y) => <span>{y}</span>)}
+              <em class="g-now">Now</em>
+            </span>
+            <span></span>
+          </div>
+          <ul class="g-rows">
+            {jobs.map((j) => (
+              <li class:list={["g-row", { now: j.now }]} data-live-item>
+                <span class="g-who"><b>{j.role}</b><span>{j.company}</span></span>
+                <span class="g-track" aria-hidden="true"><i style={`--a:${j.a};--b:${j.b}`}></i></span>
+                <span class="g-when tabular-nums">{j.start} – {j.end}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
+      <span class="rule" aria-hidden="true"></span>
+    </section>
+
+    <section class="frame wrap-wide" id="contact" aria-labelledby="contact-h">
+      <div class="end">
+        <span class="end-h tl" aria-hidden="true"></span><span class="end-h tr" aria-hidden="true"></span>
+        <span class="end-h bl" aria-hidden="true"></span><span class="end-h br" aria-hidden="true"></span>
+        <div class="end-copy">
+          <h2 id="contact-h" class="end-title"><span>Have a product that needs an owner?</span> <span class="rest">Let's talk.</span></h2>
+          <p class="end-time">Karachi <b data-clock>—</b> · UTC+5</p>
+        </div>
+        <div class="end-act">
+          <div class="end-mail">
+            <a class="btn" href="mailto:hassank.uiux@gmail.com"><Icon name="envelope-simple" size={16} /> hassank.uiux@gmail.com</a>
+            <button type="button" class="btn ghost end-copybtn" data-copy="hassank.uiux@gmail.com" aria-label="Copy email address"><Icon name="copy" size={16} /><span data-copy-label>Copy</span></button>
+          </div>
+          <a class="btn ghost" href="#message" data-open-chat><Icon name="chat-circle-text" size={16} /> Send a message</a>
+          <ul class="end-links">
+            <li><a href="/resume/">Resume <Icon name="arrow-up-right" size={13} /></a></li>
+            <li><a href="https://www.linkedin.com/in/muhammad-hassan-khan-ui-ux-designer/" target="_blank" rel="noopener noreferrer">LinkedIn <Icon name="arrow-up-right" size={13} /></a></li>
+            <li><a href="https://github.com/abuMuhammad101" target="_blank" rel="noopener noreferrer">GitHub <Icon name="arrow-up-right" size={13} /></a></li>
+            <li><a href="https://layers.to/hassankuiux" target="_blank" rel="noopener noreferrer">layers.to <Icon name="arrow-up-right" size={13} /></a></li>
+          </ul>
+        </div>
+      </div>
+      <span class="rule" aria-hidden="true"></span>
     </section>
   </main>
+
+  <script>
+    // Sections that come alive as they arrive: vignettes resolve, the five
+    // moves draw their line, the tenure bars grow.
+    const items = document.querySelectorAll<HTMLElement>("[data-live-item]");
+    if (!("IntersectionObserver" in window)) items.forEach((el) => el.classList.add("is-on"));
+    else {
+      const io = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("is-on");
+              io.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.6 },
+      );
+      items.forEach((el) => io.observe(el));
+    }
+    // Karachi time, to the minute.
+    const clock = document.querySelector<HTMLElement>("[data-clock]");
+    const tick = () => {
+      if (clock) clock.textContent = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Karachi", hour: "2-digit", minute: "2-digit" }).format(new Date());
+    };
+    tick();
+    setInterval(tick, 30000);
+    // Copy the address.
+    document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((b) =>
+      b.addEventListener("click", async () => {
+        const label = b.querySelector<HTMLElement>("[data-copy-label]");
+        try {
+          await navigator.clipboard.writeText(b.dataset.copy!);
+          if (label) label.textContent = "Copied";
+        } catch {
+          location.href = `mailto:${b.dataset.copy}`;
+        }
+        setTimeout(() => label && (label.textContent = "Copy"), 1800);
+      }),
+    );
+  </script>
 
   <Footer />
 </Base>
 
 <style>
+  /* Hero ------------------------------------------------------------------
+     A ruled frame, like a page in a design file: two rails down the sides,
+     hairlines across, a + where they meet. Title and intro side by side,
+     then the work itself, then three facts. */
   .hero {
     overflow: clip;
   }
-  .hero-inner {
-    padding-top: var(--space-4);
-    padding-bottom: var(--space-6);
-  }
-  .headline {
+  .frame {
     position: relative;
-    padding: var(--space-6) 0 var(--space-6);
+    --rail: 32px;
   }
-  .hero-grid {
+  .frame::before,
+  .frame::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid var(--rule);
+  }
+  .frame::before {
+    left: calc(var(--space-3) - var(--rail));
+  }
+  .frame::after {
+    right: calc(var(--space-3) - var(--rail));
+  }
+  .rule {
+    position: relative;
+    display: block;
+    height: 1px;
+    margin: 0 -100vw;
+    background: var(--rule);
+  }
+  /* The + marks where a hairline crosses a rail. */
+  .rule::before,
+  .rule::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    width: 11px;
+    height: 11px;
+    background:
+      linear-gradient(var(--ink-muted), var(--ink-muted)) center / 11px 1px no-repeat,
+      linear-gradient(var(--ink-muted), var(--ink-muted)) center / 1px 11px no-repeat;
+  }
+  .rule::before {
+    left: calc(100vw - var(--rail) - 5px);
+  }
+  .rule::after {
+    right: calc(100vw - var(--rail) - 5px);
+  }
+
+  .top {
     display: grid;
-    gap: var(--space-6);
-    padding-top: var(--space-6);
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 32px 64px;
+    align-items: end;
+    padding: clamp(48px, 7vw, 96px) 0 clamp(36px, 4vw, 48px);
+  }
+  .top :global(h1) {
+    font-size: clamp(2.5rem, 4.8vw, 3.9rem);
+    line-height: 1.04;
   }
   .intro p {
-    font-size: var(--text-lg);
+    max-width: 46ch;
+    margin: 0 0 24px;
+    font-size: var(--text-base);
+    line-height: 1.6;
     color: var(--ink-secondary);
-    margin: 0 0 var(--space-3);
-    max-width: 52ch;
   }
   .cta {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
   }
-  .ledger {
-    display: grid;
-    gap: 26px;
-    align-content: start;
-  }
-  .figs {
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 36px;
-    color: var(--ink-secondary);
-    font-size: var(--text-sm);
-  }
-  .figs span {
-    display: grid;
-    gap: 2px;
-  }
-  .figs b {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(2.6rem, 5vw, 3.4rem);
-    line-height: 1;
-    letter-spacing: -0.03em;
-    color: var(--ink);
-  }
-  .route {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+  /* The work, on a dotted board. */
+  .stage {
     position: relative;
+    height: clamp(300px, 36vw, 440px);
+    margin: 0 calc(-1 * var(--rail) + 0px);
+    overflow: hidden;
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--ink) 11%, transparent) 0.9px, transparent 1.6px);
+    background-size: 18px 18px;
+    background-position: 9px 9px;
   }
-  .route::before {
+  .stage::after {
     content: "";
     position: absolute;
-    left: 4px;
-    right: calc(33.333% - 4px);
-    top: 4px;
-    border-top: 1px dashed color-mix(in srgb, var(--ink) 35%, transparent);
+    inset: auto 0 0;
+    height: 56px;
+    background: linear-gradient(transparent, var(--bg));
+    pointer-events: none;
   }
-  .route li {
-    position: relative;
-    display: grid;
-    gap: 2px;
-    padding-top: 20px;
-    font-size: var(--text-sm);
-    color: var(--ink);
-  }
-  .route i {
+  .win {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--bg);
-    box-shadow: inset 0 0 0 1.5px var(--ink);
-  }
-  .route .home i {
-    background: var(--accent-warm);
-    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent-warm) 16%, transparent);
-  }
-  .route em {
-    font-style: normal;
-    font-size: 12px;
-    color: var(--ink-muted);
-  }
-  @media (min-width: 900px) {
-    .hero-grid {
-      grid-template-columns: 1.1fr 1fr;
-      align-items: start;
-    }
-  }
-
-  .band {
-    padding-top: var(--space-12);
-  }
-  .band-head {
-    margin-bottom: var(--space-4);
-  }
-  .band-title {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-    margin: 0;
-    max-width: 18ch;
-    text-wrap: balance;
-  }
-  @media (min-width: 900px) {
-    .split {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: var(--space-8);
-      align-items: start;
-    }
-    .split .band-head {
-      position: sticky;
-      top: 96px;
-    }
-  }
-
-  .beliefs {
-    list-style: none;
-    margin: 0;
-    padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 14px;
+    gap: 10px;
+    justify-items: start;
+    color: inherit;
+    text-decoration: none;
+    transition:
+      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.3s;
   }
-  .beliefs li {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-height: 300px;
-    padding: 22px 22px 20px;
-    border-radius: 22px;
-    background:
-      radial-gradient(120% 70% at 100% 0%, color-mix(in srgb, var(--accent-warm) 7%, transparent), transparent 60%),
-      var(--bg-raised);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 6%, transparent), 0 1px 2px rgb(0 0 0 / 0.04);
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
+  .stage:hover .win:not(:hover) {
+    opacity: 0.55;
   }
-  .beliefs li:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 9%, transparent), 0 24px 44px -28px rgb(0 0 0 / 0.35);
+  .win:hover {
+    transform: translateY(-6px);
   }
-  .b-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: auto;
+  .w-left {
+    left: 4%;
+    top: 22%;
+    width: 40%;
   }
-  .b-num {
-    font-family: var(--font-display);
-    font-size: 15px;
-    color: var(--ink-muted);
+  .w-mid {
+    left: 25%;
+    top: 12%;
+    width: 52%;
+    z-index: 2;
   }
-  .b-art {
-    display: grid;
-    place-items: center;
-    width: 52px;
-    height: 52px;
-    border-radius: 16px;
-    color: var(--ink);
-    background: linear-gradient(160deg, var(--bg-raised), var(--bg-sunk));
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.7),
-      0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent),
-      0 8px 18px -12px rgb(0 0 0 / 0.35);
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s;
+  .w-right {
+    right: 5%;
+    top: 9%;
+    width: 15.5%;
+    z-index: 3;
   }
-  .beliefs li:hover .b-art {
-    transform: rotate(-6deg) scale(1.04);
-    color: var(--accent-warm);
-  }
-  .belief {
-    font-family: var(--font-display);
-    font-size: var(--text-xl);
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-    color: var(--ink);
-    margin: 28px 0 8px;
-  }
-  .note {
-    margin: 0 0 18px;
-    color: var(--ink-secondary);
-    font-size: var(--text-sm);
-  }
-  .proof-links {
-    margin: 0;
-    padding-top: 14px;
-    border-top: 1px dashed color-mix(in srgb, var(--ink) 14%, transparent);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 4px 12px;
-    font-size: 12.5px;
-  }
-  .proof-links span {
-    color: var(--ink-muted);
-    width: 100%;
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 26px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: var(--bg-raised);
+    box-shadow: var(--lift-1);
+    font-family: var(--font-mono);
     font-size: 11.5px;
+    color: var(--ink-muted);
+    white-space: nowrap;
   }
-  .proof-links a {
+  .chip b {
+    font-weight: 500;
     color: var(--ink);
-    text-decoration: underline;
-    text-decoration-color: color-mix(in srgb, var(--ink) 25%, transparent);
-    text-underline-offset: 3px;
   }
-  .proof-links a:hover {
-    text-decoration-color: var(--accent-warm);
+  .screen {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: var(--lift-3);
   }
-  /* Phone: the beliefs stack like a deck. Each card sticks below the
-     header, and the next one slides up over it. */
-  @media (max-width: 700px) {
-    .beliefs {
-      display: block;
+  .screen .bar {
+    display: flex;
+    gap: 5px;
+    padding: 8px 10px;
+    background: #f3f2ef;
+    border-bottom: 1px solid #e7e5df;
+  }
+  .screen .bar i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #d6d3cb;
+  }
+  .screen img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Three facts, read like a numbered list. */
+  .facts {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px 48px;
+    margin: 0;
+    padding: 28px 0 32px;
+  }
+  .facts span {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .facts p {
+    margin: 0;
+    max-width: 34ch;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-secondary);
+  }
+  .facts b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  @media (max-width: 900px) {
+    .top {
+      grid-template-columns: 1fr;
+      align-items: start;
     }
-    .beliefs li {
-      position: sticky;
-      top: calc(92px + var(--i) * 10px);
-      min-height: 280px;
-      margin-bottom: 18px;
-      box-shadow:
-        0 0 0 1px color-mix(in srgb, var(--ink) 7%, transparent),
-        0 -10px 30px -18px rgb(0 0 0 / 0.28);
-      transform-origin: 50% 0;
+    .facts {
+      grid-template-columns: 1fr;
+      gap: 20px;
     }
-    .beliefs li:last-child {
-      margin-bottom: 0;
+  }
+  @media (max-width: 760px) {
+    .frame::before,
+    .frame::after,
+    .rule::before,
+    .rule::after {
+      display: none;
     }
-    /* The card underneath fades toward the page, but stays solid, so the
-       deck never shows through itself. */
-    .beliefs li::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: var(--bg);
-      opacity: calc(var(--dim, 0) * 0.6);
-      pointer-events: none;
+    .stage {
+      height: 280px;
+      margin: 0 calc(-1 * var(--space-3));
     }
-    .beliefs li:hover {
-      transform: none;
+    .w-left {
+      display: none;
+    }
+    .w-mid {
+      left: 5%;
+      width: 84%;
+      top: 10%;
+    }
+    .w-mid {
+      width: 82%;
+    }
+    .w-right {
+      right: 4%;
+      width: 29%;
+      top: 22%;
+    }
+    .chip {
+      display: none;
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .beliefs li, .beliefs li:hover { transition: none; transform: none; }
-    .beliefs li:hover .b-art { transform: none; }
+    .win {
+      transition: none;
+    }
   }
 
   .cards {
@@ -481,6 +601,7 @@ const earlier = [
   }
   .card-name {
     font-family: var(--font-display);
+    font-weight: 500;
     font-size: var(--text-xl);
     line-height: 1.2;
     margin-top: 6px;
@@ -497,6 +618,102 @@ const earlier = [
     gap: 6px;
     font-size: var(--text-sm);
     font-weight: 500;
+  }
+  /* The ninth folder: paper, holding the earlier projects. */
+  .more {
+    color: var(--ink);
+  }
+  .mfold {
+    position: relative;
+    height: 200px;
+    margin: 10px 0 0;
+  }
+  .mb,
+  .mf {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-radius: 14px;
+  }
+  .mb {
+    inset: 12px 0 0;
+    border-radius: 12px;
+    background: var(--bg-sunk);
+    box-shadow: inset 0 0 0 1px var(--rule);
+  }
+  .mb::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -10px;
+    width: 34%;
+    height: 22px;
+    border-radius: 10px 10px 0 0;
+    background: inherit;
+    box-shadow: inset 1px 1px 0 var(--rule), inset -1px 0 0 var(--rule);
+  }
+  .ms {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    height: 120px;
+    padding: 6px 12px;
+    border-radius: 9px;
+    background: var(--bg-raised);
+    box-shadow: var(--lift-2);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--ink);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .ms0 { top: 34px; transform: translateX(-3%); }
+  .ms1 { top: 60px; transform: translateX(2%); }
+  .ms2 { top: 86px; }
+  .mf {
+    bottom: 0;
+    height: 34%;
+    border-radius: 12px;
+    background: var(--bg-raised);
+    box-shadow:
+      inset 0 0 0 1px var(--rule),
+      0 -10px 20px -16px rgb(20 18 12 / 0.28);
+  }
+  .mf .seam {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    top: 10px;
+    border-top: 1px dashed var(--rule);
+  }
+  .more:hover .ms0 { transform: translate(-3%, -12px); }
+  .more:hover .ms1 { transform: translate(2%, -8px); }
+  .more:hover .ms2 { transform: translateY(-6px); }
+  .more-links {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0 2px;
+    border-top: 1px solid var(--rule);
+  }
+  .more-links li {
+    break-inside: avoid;
+  }
+  .more-links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 13.5px;
+    color: var(--ink-secondary);
+    text-decoration: none;
+  }
+  .more-links a:hover {
+    color: var(--ink);
   }
   .rows {
     list-style: none;
@@ -519,6 +736,7 @@ const earlier = [
   }
   .row-name {
     font-family: var(--font-display);
+    font-weight: 500;
     font-size: var(--text-lg);
   }
   .row-leader {
@@ -566,105 +784,695 @@ const earlier = [
     }
   }
 
-  .tools {
-    margin: var(--space-2) 0 0;
-    font-size: var(--text-sm);
-    color: var(--ink-muted);
-    max-width: 34ch;
+  /* Every section sits in the same ruled frame as the hero: rails down
+     the sides, a hairline with + marks between sections. */
+  main {
+    overflow: clip;
   }
-  .ways,
-  .jobs {
+  .band {
+    padding: clamp(64px, 9vw, 112px) 0 clamp(36px, 4vw, 48px);
+  }
+  .band-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.9rem, 3.6vw, 2.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    margin: 0;
+    max-width: 18ch;
+    text-wrap: balance;
+  }
+  .head-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px 48px;
+  }
+  .tools {
+    margin: 0;
+    max-width: 34ch;
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--ink-muted);
+  }
+
+  /* Principles ------------------------------------------------------------
+     Four cells in a ruled row. Each one opens on a small working scene of
+     the idea; hover (or arriving, on touch) plays it out. */
+  .pr {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0 calc(-1 * var(--rail));
+    padding: 0;
+  }
+  .pr li {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .pr li + li {
+    border-left: 1px solid var(--rule);
+  }
+  .vig {
+    --dot: color-mix(in srgb, var(--ink) 11%, transparent);
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 196px;
+    border-bottom: 1px solid var(--rule);
+    background-image: radial-gradient(circle, var(--dot) 0.9px, transparent 1.6px);
+    background-size: 18px 18px;
+    background-position: 9px 9px;
+    overflow: hidden;
+  }
+  .pr-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 26px var(--rail) 30px;
+  }
+  .pr-n {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .pr-body h3 {
+    margin: 14px 0 10px;
+    font-family: var(--font-display);
+    font-size: 1.32rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  .pr-body p {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--ink-secondary);
+  }
+  .pr-body .pr-seen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 22px;
+  }
+  .pr-seen a {
+    white-space: nowrap;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: var(--bg-sunk);
+    color: var(--ink-secondary);
+    font-size: 12px;
+    text-decoration: none;
+    transition: color 0.2s, background 0.2s;
+  }
+  .pr-seen a:hover {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 9%, transparent);
+  }
+
+  /* The scenes. Small, quiet surfaces in the page's own colours. */
+  .vig {
+    --card: var(--bg-raised);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    font-size: 12px;
+  }
+  .v1-in,
+  .v2-card,
+  .v4-in {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--lift-2);
+  }
+  /* 01: one question, three answers, one kept. */
+  .v1-in {
+    display: grid;
+    gap: 12px;
+    width: min(212px, 80%);
+    padding: 14px;
+  }
+  .v1-q {
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--ink);
+  }
+  .v1-opts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .v1-opts > * {
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: all 0.5s var(--ease);
+  }
+  .v1-opts b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  li:is(:hover, .is-on) .v1-opts s {
+    opacity: 0.45;
+    text-decoration: line-through;
+  }
+  li:is(:hover, .is-on) .v1-opts b {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+    transition-delay: 0.25s;
+  }
+  /* 02: the agent drafts, the person approves. */
+  .v2-in {
+    position: relative;
+    width: min(212px, 80%);
+  }
+  .v2-card {
+    display: grid;
+    gap: 8px;
+    padding: 14px;
+  }
+  .v2-hd {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 500;
+    color: var(--ink-muted);
+  }
+  .v2-hd i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent-site);
+  }
+  .v2-ln {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--bg-sunk);
+  }
+  .v2-ln.s {
+    width: 64%;
+  }
+  .v2-acts {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .v2-acts > span {
+    display: grid;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    color: var(--ink-secondary);
+  }
+  .v2-acts .v2-ok {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+    transition: background 0.3s;
+  }
+  .v2-ok em {
+    grid-area: 1 / 1;
+    font-style: normal;
+    transition: opacity 0.25s;
+  }
+  .v2-ok em + em {
+    opacity: 0;
+  }
+  .v2-cur {
+    position: absolute;
+    left: 78%;
+    top: 112%;
+    width: 16px;
+    transition: transform 0.9s var(--ease);
+  }
+  .v2-cur svg {
+    display: block;
+    width: 16px;
+    fill: var(--ink);
+    stroke: var(--bg);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+  li:is(:hover, .is-on) .v2-cur {
+    transform: translate(-92px, -34px);
+  }
+  li:is(:hover, .is-on) .v2-ok {
+    background: var(--accent-site);
+    border-color: var(--accent-site);
+    transition-delay: 0.85s;
+  }
+  li:is(:hover, .is-on) .v2-ok em {
+    opacity: 0;
+    transition-delay: 0.85s;
+  }
+  li:is(:hover, .is-on) .v2-ok em + em {
+    opacity: 1;
+  }
+  /* 03: loose notes settle into a grid. */
+  .v3-in {
+    position: relative;
+    width: 156px;
+    height: 104px;
+  }
+  .v3-in i {
+    position: absolute;
+    display: grid;
+    align-content: center;
+    gap: 6px;
+    width: 74px;
+    height: 48px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px dashed color-mix(in srgb, var(--ink) 28%, transparent);
+    background: var(--card);
+    transition:
+      transform 0.8s var(--ease),
+      border 0.4s;
+    transition-delay: calc(var(--k) * 60ms);
+  }
+  .v3-in i:nth-child(2n) { left: 82px; }
+  .v3-in i:nth-child(n + 3) { top: 56px; }
+  .v3-in i:nth-child(1) { transform: translate(-26px, -16px); }
+  .v3-in i:nth-child(2) { transform: translate(22px, 12px); }
+  .v3-in i:nth-child(3) { transform: translate(14px, 14px); }
+  .v3-in i:nth-child(4) { transform: translate(-20px, -10px); }
+  .v3-in b {
+    height: 5px;
+    border-radius: 3px;
+    background: var(--bg-sunk);
+  }
+  .v3-in b + b {
+    width: 60%;
+  }
+  li:is(:hover, .is-on) .v3-in i {
+    transform: none;
+    border: 1px solid var(--rule);
+    box-shadow: var(--lift-1);
+  }
+  /* 04: shipped, broke, fixed. The line fills to the fix. */
+  .v4-in {
+    position: relative;
+    display: grid;
+    gap: 14px;
+    width: min(212px, 80%);
+    padding: 16px 14px;
+  }
+  .v4-in::before,
+  .v4-in::after {
+    content: "";
+    position: absolute;
+    left: 18px;
+    top: 24px;
+    bottom: 24px;
+    width: 1px;
+    background: var(--rule);
+  }
+  .v4-in::after {
+    background: var(--accent-site);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 1s var(--ease);
+  }
+  .v4-row {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink-secondary);
+  }
+  .v4-row i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--card);
+    box-shadow: inset 0 0 0 1.5px var(--ink-muted);
+    transition: box-shadow 0.4s;
+  }
+  .v4-row:first-child i {
+    box-shadow: inset 0 0 0 4.5px var(--ink);
+  }
+  .v4-row.warn {
+    color: var(--ink-muted);
+  }
+  .v4-row.fix {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  li:is(:hover, .is-on) .v4-in::after {
+    transform: scaleY(1);
+  }
+  li:is(:hover, .is-on) .v4-row.fix i {
+    box-shadow: inset 0 0 0 4.5px var(--accent-site), 0 0 0 3px color-mix(in srgb, var(--accent-site) 16%, transparent);
+    transition-delay: 0.8s;
+  }
+
+  @media (max-width: 1100px) {
+    .pr {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .pr li:nth-child(3) {
+      border-left: 0;
+    }
+    .pr li:nth-child(n + 3) {
+      border-top: 1px solid var(--rule);
+    }
+  }
+  @media (max-width: 760px) {
+    .pr,
+    .flow {
+      margin: 0;
+    }
+    .pr-body {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+  @media (max-width: 640px) {
+    .pr {
+      grid-template-columns: 1fr;
+    }
+    .pr li + li {
+      border-left: 0;
+      border-top: 1px solid var(--rule);
+    }
+    .vig {
+      height: 176px;
+      margin: 0 calc(-1 * var(--space-3));
+    }
+    .pr-body {
+      padding: 22px 0 28px;
+    }
+  }
+
+  /* Five moves, side by side in ruled columns. */
+  .flow {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin: 0 calc(-1 * var(--rail));
+    padding: 0;
+  }
+  .flow li {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 30px 22px 36px var(--rail);
+  }
+  .flow li + li {
+    padding-left: 22px;
+    border-left: 1px solid var(--rule);
+  }
+  .flow li:last-child {
+    padding-right: var(--rail);
+  }
+  .flow-n {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .flow b {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .flow li > span:last-child {
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--ink-secondary);
+  }
+  @media (max-width: 900px) {
+    .flow {
+      grid-template-columns: 1fr;
+      margin: 0;
+    }
+    .flow li,
+    .flow li + li,
+    .flow li:last-child {
+      padding: 22px 0;
+      border-left: 0;
+    }
+    .flow li + li {
+      border-top: 1px solid var(--rule);
+    }
+  }
+
+  /* Tenure on one axis: year bands, one bar per role, a line for today. */
+  .gantt {
+    --who: minmax(0, 15rem);
+    --when: 10.5rem;
+    --band: color-mix(in srgb, var(--bg-sunk) 70%, transparent);
+    margin-top: clamp(32px, 4vw, 48px);
+  }
+  .g-axis,
+  .g-row {
+    display: grid;
+    grid-template-columns: var(--who) minmax(0, 1fr) var(--when);
+    gap: 0 28px;
+    align-items: center;
+  }
+  /* Every other year sits on a faint band, so the eye can count years
+     without gridlines. */
+  .g-years,
+  .g-track {
+    position: relative;
+    align-self: stretch;
+    background: linear-gradient(90deg, transparent 50%, var(--band) 50%) 0 0 / calc(200% / var(--yrs)) 100%;
+  }
+  .g-years {
+    display: grid;
+    grid-template-columns: repeat(var(--yrs), minmax(0, 1fr));
+    height: 34px;
+  }
+  .g-years > span {
+    align-self: center;
+    padding-left: 10px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink-muted);
+  }
+  .g-now {
+    position: absolute;
+    left: var(--now);
+    top: 50%;
+    z-index: 2;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--accent-site);
+    color: var(--bg);
+    font: 500 10.5px/1.4 var(--font-mono);
+    font-style: normal;
+    transform: translate(-50%, -50%);
+  }
+  .g-rows {
     list-style: none;
     margin: 0;
     padding: 0;
     border-top: 1px solid var(--rule);
   }
-  .ways li {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--rule);
-    color: var(--ink-muted);
-  }
-  .way-num {
-    width: 28px;
-    height: 28px;
-    flex: none;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    border: 1px solid var(--rule);
-    background: var(--bg-raised);
-    font-size: 12px;
-    color: var(--ink);
-  }
-  .way-text {
-    flex: 1;
-    display: grid;
-  }
-  .way-text b {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: var(--text-lg);
-    color: var(--ink);
-  }
-  .way-text span {
-    font-size: var(--text-sm);
-    color: var(--ink-secondary);
-  }
-  .jobs li {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 2px 16px;
-    padding: 16px 0;
+  .g-row {
+    min-height: 68px;
     border-bottom: 1px solid var(--rule);
   }
-  .job-role {
-    color: var(--ink);
+  .g-who {
+    display: grid;
+    gap: 3px;
+    padding: 14px 0;
+  }
+  .g-who b {
     font-weight: 500;
   }
-  .job-co {
-    grid-column: 1;
-    font-size: var(--text-sm);
-    color: var(--ink-secondary);
-  }
-  .job-dates {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    align-self: center;
+  .g-who span,
+  .g-when {
     font-size: var(--text-sm);
     color: var(--ink-muted);
   }
-  .jobs .earlier {
-    grid-template-columns: 1fr;
-    font-size: var(--text-sm);
-    color: var(--ink-muted);
-    border-bottom: none;
+  .g-when {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
   }
-  .earlier-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 14px;
+  .g-track::after {
+    content: "";
+    position: absolute;
+    left: var(--now);
+    top: 0;
+    bottom: -1px;
+    width: 1px;
+    background: var(--accent-site);
   }
-  .earlier-links a {
-    color: var(--ink-secondary);
-    text-decoration: underline;
-    text-decoration-color: var(--rule);
-    text-underline-offset: 3px;
+  .g-track i {
+    position: absolute;
+    left: var(--a);
+    top: 50%;
+    width: calc(var(--b) - var(--a));
+    height: 10px;
+    margin-top: -5px;
+    border-radius: 5px;
+    background: color-mix(in srgb, var(--ink) 78%, transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition:
+      transform 1s cubic-bezier(0.22, 1, 0.36, 1),
+      background 0.2s;
   }
-  .earlier-links a:hover {
+  .g-row.is-on .g-track i {
+    transform: scaleX(1);
+  }
+  .g-row:hover .g-track i {
+    background: var(--ink);
+  }
+  .g-row:hover .g-when {
     color: var(--ink);
   }
-
-  .contact {
-    background: var(--bg-sunk);
-    border-radius: 24px;
-    padding: clamp(24px, 6vw, 64px);
-    display: grid;
-    gap: var(--space-3);
+  .g-row.now .g-track i,
+  .g-row.now:hover .g-track i {
+    background: var(--accent-site);
   }
-  .contact .section-label {
+  .g-row.now .g-when {
+    color: var(--accent-site);
+    font-weight: 500;
+  }
+  @media (max-width: 760px) {
+    .g-axis {
+      display: none;
+    }
+    .g-row {
+      grid-template-columns: 1fr auto;
+      gap: 0 16px;
+      padding-bottom: 16px;
+    }
+    .g-who {
+      padding: 16px 0 12px;
+    }
+    .g-track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      height: 14px;
+    }
+    .g-track::after {
+      bottom: 0;
+    }
+    .g-when {
+      align-self: start;
+      padding-top: 16px;
+    }
+  }
+
+  /* The ask, set like the hero: a board inside the rails, corner handles,
+     the line on the left, the ways in on the right. */
+  .end {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 40px 64px;
+    align-items: end;
+    margin: clamp(56px, 8vw, 96px) calc(-1 * var(--rail)) 0;
+    padding: clamp(40px, 6vw, 72px) var(--rail);
+    border-top: 1px solid var(--rule);
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--ink) 11%, transparent) 0.9px, transparent 1.6px);
+    background-size: 18px 18px;
+    background-position: 9px 9px;
+  }
+  .end-h {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+    background: var(--bg);
+  }
+  .end-h.tl { top: -4px; left: -4px; }
+  .end-h.tr { top: -4px; right: -4px; }
+  .end-h.bl,
+  .end-h.br {
+    display: none;
+  }
+  .end-title {
     margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.25rem, 4.6vw, 3.75rem);
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .end-title .rest {
+    color: var(--ink-tone2);
+  }
+  .end-time {
+    margin: 22px 0 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .end-time b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .end-act {
+    display: grid;
+    justify-items: start;
+    gap: 10px;
+  }
+  .end-mail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .end-copybtn {
+    background: var(--bg-raised);
+  }
+  .end-act > .btn.ghost {
+    background: var(--bg-raised);
+  }
+  .end-links {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin: 14px 0 0;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--rule);
+    width: 100%;
+  }
+  .end-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--text-sm);
+    color: var(--ink-secondary);
+    text-decoration: none;
+  }
+  .end-links a:hover {
+    color: var(--ink);
+  }
+  @media (max-width: 900px) {
+    .end {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+  }
+  @media (max-width: 760px) {
+    .end {
+      margin-left: calc(-1 * var(--space-3));
+      margin-right: calc(-1 * var(--space-3));
+      padding: 44px var(--space-3);
+    }
+    .end-h {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .vig *,
+    .g-track i {
+      transition: none !important;
+    }
   }
 </style>

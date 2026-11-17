@@ -86,20 +86,26 @@ const steps = [
   .ph {
     margin: 0;
     width: 250px;
-    padding: 8px;
+    padding: 6px;
     border-radius: 38px;
-    background: #1c1c1e;
+    background: linear-gradient(145deg, #3a3a3c, #1c1c1e 40%, #29292b);
     box-shadow:
-      inset 0 0 0 1.5px #3b3b3e,
-      0 30px 50px -30px rgb(0 0 0 / 0.5);
+      inset 0 0 0 1px rgb(255 255 255 / 0.12),
+      inset 0 0 0 3px #0e0e0f,
+      0 0 0 1px rgb(0 0 0 / 0.3),
+      0 1px 2px rgb(0 0 0 / 0.1),
+      0 34px 60px -30px rgb(20 18 12 / 0.45);
+  }
+  .ph {
+    position: relative;
   }
   .ph + .ph {
     margin-top: 40px;
   }
   .scr {
     height: 500px;
-    padding: 0 14px;
-    border-radius: 31px;
+    padding: 0 16px;
+    border-radius: 32px;
     background: #fbfaf8;
     color: var(--ink);
     font: 12px/1.4 var(--font-sans);
@@ -159,14 +165,20 @@ const steps = [
     align-items: center;
     gap: 7px;
     padding: 9px 10px;
-    border-radius: 12px;
+    border-radius: 10px;
     background: #fff;
     box-shadow: 0 0 0 1px var(--line);
     font-weight: 500;
+    color: #4a4844;
+  }
+  .cat :global(svg) {
+    color: var(--mute);
   }
   .cat.on {
-    background: var(--brand-soft);
-    box-shadow: 0 0 0 1.5px var(--brand);
+    box-shadow: 0 0 0 1.5px var(--ink);
+    color: var(--ink);
+  }
+  .cat.on :global(svg) {
     color: var(--brand);
   }
   .ta {
@@ -199,11 +211,12 @@ const steps = [
   }
   .seg {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     padding: 3px;
     border-radius: 10px;
-    background: #efeee9;
+    background: #f0efea;
     text-align: center;
+    font-size: 11px;
     font-weight: 500;
     color: #5d5a54;
   }
@@ -252,8 +265,8 @@ const steps = [
     place-items: center;
     width: 36px;
     height: 36px;
-    border-radius: 11px;
-    background: var(--brand-soft);
+    border-radius: 10px;
+    background: #f3f2ee;
     color: var(--brand);
   }
   .tl {
@@ -274,36 +287,31 @@ const steps = [
     position: relative;
     z-index: 1;
     flex: none;
-    width: 16px;
-    height: 16px;
-    margin-top: 1px;
+    width: 9px;
+    height: 9px;
+    margin: 4px 3px 0;
     border-radius: 50%;
     background: #fff;
-    box-shadow: inset 0 0 0 1.5px #d6d3cc;
+    box-shadow: inset 0 0 0 1.5px #cfccc4;
   }
   .tl li:not(:last-child)::before {
     content: "";
     position: absolute;
-    left: 7.25px;
-    top: 16px;
-    bottom: 0;
-    width: 1.5px;
+    left: 7px;
+    top: 15px;
+    bottom: -2px;
+    width: 1px;
     background: #e3e1db;
   }
   .tl .done i {
-    background: var(--brand);
+    background: var(--ink);
     box-shadow: none;
   }
   .tl .done::before {
-    background: var(--brand) !important;
+    background: var(--ink) !important;
   }
   .tl .now i {
-    box-shadow:
-      inset 0 0 0 4.5px var(--brand),
-      0 0 0 4px var(--brand-soft);
-  }
-  .tl .now b {
-    color: var(--brand);
+    box-shadow: inset 0 0 0 4.5px var(--brand);
   }
   .tl li:not(.done, .now) b {
     color: var(--mute);
@@ -324,8 +332,8 @@ const steps = [
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #e4ecf4;
-    color: #2d5a85;
+    background: #efeee9;
+    color: #55534d;
     font-size: 11px;
     font-weight: 650;
   }
@@ -335,8 +343,9 @@ const steps = [
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #e3f3e9;
-    color: #1f7a45;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px var(--line);
+    color: var(--ink);
   }
   .hist {
     display: flex;

@@ -174,7 +174,7 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan", address = "", 
 
     // Put the widget in the state chapter i starts from, without the cursor.
     const replayTo = async (i: number, my: number) => {
-      if (root.dataset.reset) press(find(root.dataset.reset));
+      if (root.dataset.reset) root.dataset.reset.split(",").forEach((sel) => press(find(sel.trim())));
       await wait(80);
       for (let k = 0; k < i; k++) {
         for (const st of chapters[k].steps) {
@@ -196,7 +196,7 @@ const { chapters, reset = "", accent = "#2f4bd8", who = "Hassan", address = "", 
       for (let i = from; ; i = (i + 1) % chapters.length) {
         if (my !== run) return;
         if (i === 0 && root.dataset.reset) {
-          press(find(root.dataset.reset));
+          root.dataset.reset.split(",").forEach((sel) => press(find(sel.trim())));
           await wait(250);
         }
         const c = chapters[i];

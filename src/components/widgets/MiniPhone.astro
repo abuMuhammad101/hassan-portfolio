@@ -23,18 +23,21 @@ const { label, bg = "#fbfaf8", dark = false, class: cls = "" } = Astro.props;
     flex: none;
     margin: 0;
     width: 230px;
-    padding: 7px;
-    border-radius: 36px;
-    background: #1c1c1e;
+    position: relative;
+    padding: 6px;
+    border-radius: 38px;
+    background: linear-gradient(145deg, #3a3a3c, #1c1c1e 40%, #29292b);
     box-shadow:
-      inset 0 0 0 1.5px #3b3b3e,
+      inset 0 0 0 1px rgb(255 255 255 / 0.12),
+      inset 0 0 0 3px #0e0e0f,
+      0 0 0 1px rgb(0 0 0 / 0.3),
       0 1px 2px rgb(0 0 0 / 0.1),
-      0 30px 50px -30px rgb(0 0 0 / 0.5);
+      0 34px 60px -30px rgb(20 18 12 / 0.45);
   }
   .scr {
     position: relative;
     height: 470px;
-    border-radius: 29px;
+    border-radius: 32px;
     background: var(--scr);
     color: #1c1b1a;
     font: 11.5px/1.4 var(--font-sans);
@@ -73,15 +76,34 @@ const { label, bg = "#fbfaf8", dark = false, class: cls = "" } = Astro.props;
     background: linear-gradient(90deg, currentColor 70%, transparent 70%) content-box;
     padding: 1px;
   }
+  /* Side keys. */
+  .mp::before,
+  .mp::after {
+    content: "";
+    position: absolute;
+    top: 110px;
+    width: 3px;
+    border-radius: 2px;
+    background: #3a3a3c;
+  }
+  .mp::before {
+    left: -2px;
+    height: 46px;
+  }
+  .mp::after {
+    right: -2px;
+    top: 124px;
+    height: 64px;
+  }
   @container (max-width: 640px) {
     .mp {
       width: 200px;
-      padding: 6px;
-      border-radius: 32px;
+      padding: 5px;
+      border-radius: 33px;
     }
     .scr {
       height: 410px;
-      border-radius: 26px;
+      border-radius: 28px;
       font-size: 10.5px;
     }
   }
