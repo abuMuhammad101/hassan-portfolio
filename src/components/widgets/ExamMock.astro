@@ -188,11 +188,11 @@ const review = [
     color: var(--mute);
   }
   .qn em {
-    padding: 1px 8px;
-    border-radius: 999px;
-    background: var(--soft);
     font-style: normal;
-    font-size: 11.5px;
+  }
+  .qn em::before {
+    content: "·";
+    margin-right: 10px;
   }
   h5 {
     margin: 0 0 16px;
@@ -213,29 +213,35 @@ const review = [
     align-items: center;
     gap: 12px;
     padding: 11px 14px;
-    border-radius: 12px;
+    border-radius: 10px;
     box-shadow: 0 0 0 1px var(--line);
+    color: var(--ink2);
   }
   .opts li b {
     display: grid;
     place-items: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 7px;
-    background: var(--soft);
-    font-size: 12px;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 1px var(--line);
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--mute);
   }
   .opts li span {
     flex: 1;
   }
   .opts .pick {
-    background: var(--acc-soft);
-    box-shadow: 0 0 0 1.5px var(--acc);
-    color: var(--acc);
+    box-shadow: 0 0 0 1.5px var(--ink);
+    color: var(--ink);
   }
   .opts .pick b {
-    background: var(--acc);
+    background: var(--ink);
+    box-shadow: none;
     color: #fff;
+  }
+  .opts .pick :global(svg) {
+    color: var(--ink);
   }
   .nav {
     display: flex;
@@ -245,7 +251,7 @@ const review = [
   .grid {
     padding: 18px;
     border-left: 1px solid var(--line);
-    background: var(--soft);
+    background: #fff;
   }
   .grid p {
     margin: 0 0 10px;
@@ -270,20 +276,28 @@ const review = [
     color: var(--ink2);
     font-variant-numeric: tabular-nums;
   }
+  .grid li {
+    position: relative;
+  }
   .grid li.done {
-    background: var(--ink);
-    color: #fff;
+    background: #f1f1f4;
+    color: var(--ink);
     box-shadow: none;
   }
   .grid li.now {
-    box-shadow: 0 0 0 1.5px var(--acc);
-    color: var(--acc);
+    box-shadow: 0 0 0 1.5px var(--ink);
+    color: var(--ink);
     font-weight: 600;
   }
-  .grid li.flag {
-    background: #fdf3e1;
-    color: #9a6412;
-    box-shadow: none;
+  .grid li.flag::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #d9962b;
   }
   .key {
     display: flex;
@@ -303,25 +317,28 @@ const review = [
     border-radius: 3px;
   }
   .key .done {
-    background: var(--ink);
+    background: #e4e4e9;
   }
   .key .flag {
-    background: #f2c46b;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #d9962b;
   }
   .bar,
   .tb {
     display: block;
-    height: 6px;
-    border-radius: 3px;
-    background: #e9e9ee;
+    height: 4px;
+    border-radius: 2px;
+    background: #ededf1;
     overflow: hidden;
   }
   .bar i,
   .tb i {
     display: block;
     height: 100%;
-    border-radius: 3px;
-    background: var(--acc);
+    border-radius: 2px;
+    background: var(--ink);
   }
   .grid small {
     display: block;
@@ -392,13 +409,13 @@ const review = [
     font-variant-numeric: tabular-nums;
   }
   .tb i.ok {
-    background: #2f9e5b;
+    background: var(--ink);
   }
   .tb i.warn {
-    background: #e0a526;
+    background: #a1a1aa;
   }
   .tb i.bad {
-    background: #d0453f;
+    background: #c2410c;
   }
   .next {
     display: flex;

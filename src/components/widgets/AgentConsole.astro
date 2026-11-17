@@ -434,12 +434,7 @@ const queue = [
   .st-ic {
     display: grid;
     place-items: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 7px;
-    background: var(--soft);
-    box-shadow: 0 0 0 1px var(--line);
-    color: var(--ink2);
+    color: var(--mute);
   }
   .st-top :global(.st-arrow) {
     margin-left: auto;
@@ -452,7 +447,8 @@ const queue = [
   }
   .st-bar {
     height: 4px;
-    border-radius: 2px;
+    height: 2px;
+    border-radius: 1px;
     background: #f0f1f3;
     overflow: hidden;
   }
@@ -460,8 +456,8 @@ const queue = [
     display: block;
     width: var(--w);
     height: 100%;
-    border-radius: 2px;
-    background: var(--acc);
+    border-radius: 1px;
+    background: var(--ink);
   }
   .stages small {
     font-size: 11.5px;
@@ -474,14 +470,13 @@ const queue = [
     background: none;
   }
   .stages .loop .st-ic {
-    background: #fff;
     color: var(--red);
   }
   .stages .loop .st-bar i {
     background: var(--red);
   }
   .ac:not([data-state="loop"]) .stages .loop .st-bar i {
-    background: var(--acc);
+    background: var(--ink);
   }
   .flagtxt {
     color: var(--red);
@@ -514,7 +509,7 @@ const queue = [
   }
   .row.head {
     min-height: 32px;
-    background: var(--soft);
+    background: #fff;
     font-size: 11.5px;
     font-weight: 550;
     color: var(--mute);
@@ -529,10 +524,10 @@ const queue = [
     width: 30px;
     height: 24px;
     border-radius: 6px;
-    background: var(--soft);
-    box-shadow: 0 0 0 1px var(--line);
+    font-family: var(--font-mono);
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
+    color: var(--ink2);
   }
   .cl {
     display: grid;
@@ -561,8 +556,8 @@ const queue = [
     font-variant-numeric: tabular-nums;
   }
   .due.hot {
-    color: var(--red);
-    font-weight: 550;
+    color: var(--ink);
+    font-weight: 600;
   }
   .tag {
     display: inline-flex;
@@ -572,21 +567,46 @@ const queue = [
     font-size: 11.5px;
     font-weight: 550;
   }
-  .tag.red { background: var(--red-soft); color: var(--red); }
-  .tag.green { background: var(--acc-soft); color: var(--acc); }
-  .tag.blue { background: #e8edfd; color: var(--blue); }
+  .tag {
+    gap: 6px;
+    align-items: center;
+    padding: 0;
+    background: none;
+    color: var(--ink2);
+  }
+  .tag::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .tag.red { color: var(--red); }
+  .tag.green { color: var(--acc); }
+  .tag.blue { color: var(--blue); }
   .alert {
-    background: color-mix(in srgb, var(--red-soft) 60%, #fff);
+    position: relative;
+    background: #fff;
   }
-  .alert.ok {
-    background: color-mix(in srgb, var(--acc-soft) 55%, #fff);
+  .alert::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--red);
   }
-  .alert.mine {
-    background: #f4f6fe;
+  .alert.ok::before {
+    background: var(--acc);
   }
-  .loopsc { background: var(--red); color: #fff; box-shadow: none; }
-  .oksc { background: var(--acc); color: #fff; box-shadow: none; }
-  .minesc { background: #f1e3c8; color: #6b4a10; box-shadow: none; font-size: 10.5px; }
+  .alert.mine::before {
+    background: var(--ink);
+  }
+  .loopsc { color: var(--red); }
+  .oksc { color: var(--acc); }
+  .minesc { color: var(--ink); font-size: 10.5px; }
   .sw-fixed,
   .sw-mine {
     display: none !important;

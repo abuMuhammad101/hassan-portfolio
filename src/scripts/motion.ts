@@ -71,20 +71,6 @@ if (!reduced) {
     });
   });
 
-  // Phone: as each belief card slides over the one before, that one settles
-  // back a little, like a deck being dealt.
-  gsap.matchMedia().add("(max-width: 700px)", () => {
-    const cards = [...document.querySelectorAll<HTMLElement>("[data-belief]")];
-    cards.slice(0, -1).forEach((card, i) => {
-      gsap.to(card, {
-        scale: 0.94,
-        "--dim": 1,
-        ease: "none",
-        scrollTrigger: { trigger: cards[i + 1], start: "top bottom-=80", end: "top top+=140", scrub: true },
-      });
-    });
-  });
-
   // Case pages: the stage settles into place as it comes into view.
   document.querySelectorAll<HTMLElement>(".proof .widget").forEach((el) => {
     if (el.getBoundingClientRect().top < fold) return;

@@ -59,7 +59,7 @@ const spark = "M0 34 L8 30 L16 32 L24 22 L32 26 L40 18 L48 21 L56 12 L64 16 L72 
         </div>
       </MiniPhone>
 
-      <MiniPhone label="Receipt" bg="#d9d7cf">
+      <MiniPhone label="Receipt" bg="#e7e5dd">
         <div class="dim" aria-hidden="true"><b class="logo">PURE PREP</b></div>
         <div class="sheet">
           <span class="ok"><Icon name="check" size={16} weight="bold" /></span>
@@ -294,8 +294,9 @@ const spark = "M0 34 L8 30 L16 32 L24 22 L32 26 L40 18 L48 21 L56 12 L64 16 L72 
     gap: 6px;
     margin-top: 12px;
     padding: 14px 14px 12px;
-    border-radius: 18px;
-    background: var(--y);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line), 0 10px 24px -16px rgb(0 0 0 / 0.25);
     text-align: center;
   }
   .qrcard p {
@@ -307,10 +308,10 @@ const spark = "M0 34 L8 30 L16 32 L24 22 L32 26 L40 18 L48 21 L56 12 L64 16 L72 
     height: 150px;
     padding: 0;
     border-radius: 12px;
-    background: #fff9dc;
+    background: #fff;
   }
   .qrcard small {
-    color: #6f5d10;
+    color: var(--mute);
     font-size: 10px;
   }
   .after {

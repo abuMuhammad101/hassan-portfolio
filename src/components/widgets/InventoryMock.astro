@@ -308,11 +308,9 @@ const sheet = [
     color: #fff;
     box-shadow: none;
   }
-  .chip.warn {
-    color: #9a6412;
-  }
+  .chip.warn,
   .chip.bad {
-    color: #b42318;
+    color: var(--ink2);
   }
   .table {
     border-radius: 10px;
@@ -335,7 +333,7 @@ const sheet = [
   }
   .th {
     min-height: 30px;
-    background: var(--soft);
+    background: #fff;
     color: var(--mute);
     font-size: 11.5px;
     font-weight: 550;
@@ -362,22 +360,31 @@ const sheet = [
     font-variant-numeric: tabular-nums;
   }
   .qty {
-    display: inline-block;
-    min-width: 30px;
-    padding: 1px 7px;
-    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
     font-style: normal;
     font-variant-numeric: tabular-nums;
-    text-align: center;
-    background: var(--soft);
+  }
+  .qty.low::before,
+  .qty.out::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #d9962b;
   }
   .qty.low {
-    background: #fdf3e1;
-    color: #9a6412;
+    color: #8a5a0c;
+    font-weight: 500;
   }
   .qty.out {
-    background: #fdebea;
     color: #b42318;
+    font-weight: 500;
+  }
+  .qty.out::before {
+    background: #d64535;
   }
 
   .pos {
@@ -588,7 +595,7 @@ const sheet = [
     font-variant-numeric: tabular-nums;
   }
   .warn-t {
-    color: #9a6412;
+    color: inherit;
   }
   .tfoot {
     display: flex;
