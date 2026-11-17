@@ -110,10 +110,10 @@ const earlier = [
         </li>
         <li>
           <span class="f-top">
-            <b class="big" data-count="8">8</b><em>products</em>
+            <b class="big" data-count="8">8</b><em>products showcased here</em>
             <span class="dots" aria-hidden="true">{Array.from({ length: 8 }, (_, k) => <i class:list={{ nda: k >= 3 }}></i>)}</span>
           </span>
-          <p>5 of them under NDA, re-created with stand-in names and data.</p>
+          <p>Three as the real thing. Five under NDA, re-created with stand-in names and data.</p>
         </li>
       </ul>
 
@@ -551,6 +551,7 @@ const earlier = [
   }
   .f-top {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     gap: 8px;
     min-height: 46px;
