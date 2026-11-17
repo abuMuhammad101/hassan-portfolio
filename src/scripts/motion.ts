@@ -3,6 +3,7 @@
 // nothing runs when the visitor prefers reduced motion.
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 import Lenis from "lenis";
 
 // A belief link opens the work row it points to.
@@ -17,7 +18,7 @@ openTarget();
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 if (!reduced) {
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, SplitText);
 
   // Smooth wheel scrolling on desktop only. Phones and tablets keep their own
   // momentum scrolling, which is smoother than anything layered on top of it.
@@ -46,15 +47,24 @@ if (!reduced) {
     });
   });
 
-  // Section titles rise in a beat after their label.
-  document.querySelectorAll<HTMLElement>(".band-title").forEach((el) => {
+  // Headings: each word rises out of its own line as the heading arrives.
+  // Only headings below the first screen; the split is undone afterwards.
+  document.querySelectorAll<HTMLElement>(".band-title, .end-title, .sh em").forEach((el) => {
     if (el.getBoundingClientRect().top < fold) return;
-    gsap.from(el, {
-      opacity: 0,
-      y: 18,
-      duration: 0.9,
-      ease: "power3.out",
-      scrollTrigger: { trigger: el, start: "top 90%", once: true },
+    SplitText.create(el, {
+      type: "words",
+      mask: "words",
+      wordsClass: "sw",
+      autoSplit: true,
+      onSplit: (self) =>
+        gsap.from(self.words, {
+          yPercent: 110,
+          duration: 0.85,
+          ease: "power3.out",
+          stagger: 0.045,
+          scrollTrigger: { trigger: el, start: "top 88%", once: true },
+          onComplete: () => self.revert(),
+        }),
     });
   });
 

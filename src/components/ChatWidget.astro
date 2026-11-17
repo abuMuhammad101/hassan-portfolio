@@ -1,48 +1,47 @@
 ---
-/* "Message Hassan": a one-way note that lands in his inbox. He answers by
-   email. Sent through Web3Forms when PUBLIC_WEB3FORMS_KEY is set; without a
-   key it falls back to opening the visitor's mail app, so it never breaks. */
+/* "Message Hassan": a one-way note that lands in his inbox, set out like a
+   chat. The visitor writes, then leaves an email; Hassan answers by email.
+   Sent through Web3Forms when PUBLIC_WEB3FORMS_KEY is set; without a key it
+   falls back to the visitor's mail app, so it never breaks. */
 import Icon from "./Icon.astro";
 const key = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
 const email = "hassank.uiux@gmail.com";
+const starts = [
+  ["I'm hiring", "Hi Hassan, I'm hiring for a role: "],
+  ["I have a product", "Hi Hassan, I have a product that needs a designer: "],
+  ["Just saying hi", "Hi Hassan, "],
+];
 ---
 
-<div class="chat" data-chat data-state="closed" data-key={key} data-email={email}>
+<div class="chat" data-chat data-state="closed" data-step="message" data-key={key} data-email={email}>
   <section class="panel" id="chat-panel" role="dialog" aria-modal="false" aria-labelledby="chat-h" hidden>
     <header class="ph">
       <span class="av" aria-hidden="true">H<i></i></span>
-      <div>
-        <h2 id="chat-h">Message Hassan</h2>
-        <p>Goes straight to my inbox. I reply by email, usually within a day.</p>
+      <div class="who">
+        <h2 id="chat-h">Hassan Khan</h2>
+        <p><i aria-hidden="true"></i>Replies by email</p>
       </div>
       <button type="button" class="x" data-chat-close aria-label="Close"><Icon name="x" size={15} /></button>
     </header>
 
-    <form class="form" data-chat-form novalidate>
-      <label class="fld">
-        <span>Message</span>
-        <textarea name="message" rows="4" required maxlength="2000" placeholder="A role, a product, a question…"></textarea>
-      </label>
-      <div class="two">
-        <label class="fld">
-          <span>Your name</span>
-          <input name="name" autocomplete="name" placeholder="Optional" />
-        </label>
-        <label class="fld">
-          <span>Your email</span>
-          <input name="email" type="email" autocomplete="email" required placeholder="So I can reply" />
-        </label>
+    <div class="thread" data-thread role="log" aria-live="polite">
+      <p class="day">Today</p>
+      <div class="msg in">
+        <p>Hi, I'm Hassan.</p>
+        <p>Tell me about the role, the product or the question. It goes straight to my inbox and I answer by email.</p>
       </div>
-      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
-      <p class="err" data-chat-err role="alert" hidden></p>
-      <button type="submit" class="send"><span>Send message</span><Icon name="paper-plane-tilt" size={15} weight="fill" /></button>
-    </form>
-
-    <div class="done" data-chat-done hidden>
-      <span class="tick"><Icon name="check" size={18} weight="bold" /></span>
-      <p><b>Sent.</b> Thanks, I'll reply to <span data-chat-to></span>.</p>
-      <button type="button" class="again" data-chat-again>Write another</button>
+      <div class="starts" data-starts>
+        {starts.map(([label, text]) => <button type="button" data-start={text}>{label}</button>)}
+      </div>
     </div>
+
+    <form class="composer" data-chat-form novalidate>
+      <label class="sr-only" for="chat-input" data-label>Message</label>
+      <textarea id="chat-input" name="message" rows="1" maxlength="2000" placeholder="Write a message…" data-input></textarea>
+      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <button type="submit" class="send" aria-label="Send" disabled><Icon name="arrow-up" size={16} weight="bold" /></button>
+    </form>
+    <p class="foot" data-foot>Enter to send · Shift + Enter for a new line</p>
   </section>
 
   <button type="button" class="fab" data-chat-open aria-expanded="false" aria-controls="chat-panel">
@@ -54,79 +53,196 @@ const email = "hassank.uiux@gmail.com";
 <script>
   document.querySelectorAll<HTMLElement>("[data-chat]").forEach((root) => {
     const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
-    const panel = $("#chat-panel"), fab = $<HTMLButtonElement>("[data-chat-open]");
-    const form = $<HTMLFormElement>("[data-chat-form]"), err = $("[data-chat-err]"), done = $("[data-chat-done]");
-    const send = form.querySelector<HTMLButtonElement>(".send")!;
+    const panel = $("#chat-panel"),
+      fab = $<HTMLButtonElement>("[data-chat-open]"),
+      form = $<HTMLFormElement>("[data-chat-form]"),
+      thread = $("[data-thread]"),
+      starts = $("[data-starts]"),
+      input = $<HTMLTextAreaElement>("[data-input]"),
+      label = $("[data-label]"),
+      foot = $("[data-foot]"),
+      send = form.querySelector<HTMLButtonElement>(".send")!;
     const draftKey = "chat-draft";
+    let message = "";
 
     const set = (open: boolean) => {
       root.dataset.state = open ? "open" : "closed";
       panel.hidden = !open;
       fab.setAttribute("aria-expanded", String(open));
-      if (open) form.querySelector<HTMLTextAreaElement>("textarea")!.focus({ preventScroll: true });
-      else fab.focus({ preventScroll: true });
+      if (open) {
+        input.focus({ preventScroll: true });
+        thread.scrollTop = thread.scrollHeight;
+      } else fab.focus({ preventScroll: true });
     };
     fab.addEventListener("click", () => set(root.dataset.state !== "open"));
     $("[data-chat-close]").addEventListener("click", () => set(false));
-    root.addEventListener("keydown", (e) => { if ((e as KeyboardEvent).key === "Escape" && root.dataset.state === "open") set(false); });
+    root.addEventListener("keydown", (e) => {
+      if ((e as KeyboardEvent).key === "Escape" && root.dataset.state === "open") set(false);
+    });
     // Any "contact" link on the page can open it too.
-    document.querySelectorAll<HTMLElement>("[data-open-chat]").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); set(true); }));
+    document.querySelectorAll<HTMLElement>("[data-open-chat]").forEach((a) =>
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        set(true);
+      }),
+    );
 
-    // Keep an unsent draft for this visitor.
-    const ta = form.querySelector<HTMLTextAreaElement>("textarea")!;
-    try { ta.value = localStorage.getItem(draftKey) ?? ""; } catch {}
-    ta.addEventListener("input", () => { try { localStorage.setItem(draftKey, ta.value); } catch {} });
+    // The composer grows with the text, up to a few lines.
+    const fit = () => {
+      input.style.height = "auto";
+      input.style.height = `${Math.min(input.scrollHeight, 132)}px`;
+      send.disabled = !input.value.trim();
+    };
+    input.addEventListener("input", () => {
+      fit();
+      if (root.dataset.step === "message") {
+        try {
+          localStorage.setItem(draftKey, input.value);
+        } catch {}
+      }
+    });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+    try {
+      input.value = localStorage.getItem(draftKey) ?? "";
+    } catch {}
+    fit();
+
+    // Quick starts fill the composer; the visitor finishes the sentence.
+    starts.querySelectorAll<HTMLButtonElement>("[data-start]").forEach((b) =>
+      b.addEventListener("click", () => {
+        input.value = b.dataset.start!;
+        fit();
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+      }),
+    );
+
+    const bubble = (side: "in" | "out", text: string, cls = "") => {
+      const el = document.createElement("div");
+      el.className = `msg ${side} ${cls}`.trim();
+      text.split(/\n+/).forEach((line) => {
+        const p = document.createElement("p");
+        p.textContent = line;
+        el.append(p);
+      });
+      thread.append(el);
+      thread.scrollTop = thread.scrollHeight;
+      return el;
+    };
+    const typing = () => {
+      const el = document.createElement("div");
+      el.className = "msg in typing";
+      el.setAttribute("aria-label", "Hassan is typing");
+      el.innerHTML = "<i></i><i></i><i></i>";
+      thread.append(el);
+      thread.scrollTop = thread.scrollHeight;
+      return el;
+    };
+    const reply = (text: string, cls = "") =>
+      new Promise<HTMLElement>((done) => {
+        const t = typing();
+        setTimeout(() => {
+          t.remove();
+          done(bubble("in", text, cls));
+        }, 650);
+      });
+    const mode = (step: "message" | "email" | "done") => {
+      root.dataset.step = step;
+      if (step === "email") {
+        input.value = "";
+        input.setAttribute("inputmode", "email");
+        input.setAttribute("autocomplete", "email");
+        input.placeholder = "you@company.com";
+        label.textContent = "Your email";
+        foot.textContent = "Only used to reply to you";
+      } else {
+        input.removeAttribute("inputmode");
+        input.removeAttribute("autocomplete");
+        input.placeholder = "Write a message…";
+        label.textContent = "Message";
+        foot.textContent = "Enter to send · Shift + Enter for a new line";
+      }
+      fit();
+    };
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      err.hidden = true;
-      const data = new FormData(form);
-      const message = String(data.get("message") ?? "").trim();
-      const email = String(data.get("email") ?? "").trim();
-      if (!message) return show("Write a message first.");
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return show("Add an email I can reply to.");
-      if (data.get("botcheck")) return;
+      const value = input.value.trim();
+      if (!value || form.querySelector<HTMLInputElement>(".hp")!.checked) return;
 
-      const key = root.dataset.key;
-      if (!key) {
-        // No key configured: hand over to the visitor's mail app.
-        const body = encodeURIComponent(`${message}\n\n${data.get("name") ?? ""} <${email}>`);
-        location.href = `mailto:${root.dataset.email}?subject=${encodeURIComponent("Hello from hassank.space")}&body=${body}`;
+      if (root.dataset.step === "message") {
+        message = value;
+        starts.remove();
+        bubble("out", value);
+        mode("email");
+        await reply("Got it. Where should I reply?");
+        input.focus();
         return;
       }
-      send.disabled = true;
-      root.dataset.sending = "true";
-      try {
-        const res = await fetch("https://api.web3forms.com/submit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({
-            access_key: key,
-            subject: `New message from ${data.get("name") || email} via hassank.space`,
-            from_name: "hassank.space",
-            name: data.get("name") || "",
-            email,
-            replyto: email,
-            message,
-            page: location.pathname,
-          }),
-        });
-        const json = await res.json().catch(() => ({}));
-        if (!res.ok || json.success === false) throw new Error();
-        $("[data-chat-to]").textContent = email;
-        form.hidden = true;
-        done.hidden = false;
-        form.reset();
-        try { localStorage.removeItem(draftKey); } catch {}
-      } catch {
-        show(`It didn't go through. Try again, or email ${root.dataset.email}.`);
-      } finally {
-        send.disabled = false;
-        delete root.dataset.sending;
+
+      if (root.dataset.step === "email") {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          await reply("That doesn't look like an email address. Could you check it?");
+          return;
+        }
+        bubble("out", value);
+        input.value = "";
+        fit();
+        const key = root.dataset.key;
+        if (!key) {
+          // No key configured: hand over to the visitor's mail app.
+          const body = encodeURIComponent(`${message}\n\n${value}`);
+          location.href = `mailto:${root.dataset.email}?subject=${encodeURIComponent("Hello from hassank.space")}&body=${body}`;
+          await reply("Your mail app should open with the message ready to send.");
+          return;
+        }
+        root.dataset.sending = "true";
+        const status = bubble("in", "Sending…", "note");
+        try {
+          const res = await fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({
+              access_key: key,
+              subject: `New message from ${value} via hassank.space`,
+              from_name: "hassank.space",
+              email: value,
+              replyto: value,
+              message,
+              page: location.pathname,
+            }),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (!res.ok || json.success === false) throw new Error();
+          status.remove();
+          await reply(`Sent. Thanks, I'll reply to ${value}.`, "ok");
+          try {
+            localStorage.removeItem(draftKey);
+          } catch {}
+          mode("done");
+          const again = document.createElement("div");
+          again.className = "starts";
+          again.innerHTML = '<button type="button">Write another</button>';
+          again.querySelector("button")!.addEventListener("click", () => {
+            again.remove();
+            mode("message");
+            input.focus();
+          });
+          thread.append(again);
+          thread.scrollTop = thread.scrollHeight;
+        } catch {
+          status.remove();
+          await reply(`It didn't go through. Send your email again to retry, or write to ${root.dataset.email}.`, "err");
+        } finally {
+          delete root.dataset.sending;
+        }
       }
     });
-    const show = (m: string) => { err.textContent = m; err.hidden = false; };
-    $("[data-chat-again]").addEventListener("click", () => { done.hidden = true; form.hidden = false; ta.focus(); });
   });
 </script>
 
@@ -178,8 +294,8 @@ const email = "hassank.uiux@gmail.com";
   .fab:focus-visible,
   .x:focus-visible,
   .send:focus-visible,
-  .again:focus-visible {
-    outline: 2px solid var(--accent-warm);
+  .thread :global(.starts button:focus-visible) {
+    outline: 2px solid var(--accent-site);
     outline-offset: 2px;
   }
   .chat[data-state="open"] .fab .lbl {
@@ -221,12 +337,19 @@ const email = "hassank.uiux@gmail.com";
     box-shadow: 0 0 0 2px var(--bg-raised);
   }
 
+  /* The window. */
   .panel {
-    width: min(360px, calc(100vw - 32px));
-    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    width: min(380px, calc(100vw - 32px));
+    height: min(560px, calc(100dvh - 110px));
+    border-radius: 22px;
     background: var(--bg-raised);
     color: var(--ink);
-    box-shadow: var(--lift-3);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--ink) 7%, transparent),
+      0 24px 60px -20px rgb(20 18 12 / 0.35),
+      0 8px 20px -10px rgb(20 18 12 / 0.18);
     overflow: hidden;
     transform-origin: 100% 100%;
     animation: pop 0.32s cubic-bezier(0.22, 1, 0.36, 1);
@@ -242,141 +365,247 @@ const email = "hassank.uiux@gmail.com";
   }
   .ph {
     display: flex;
-    gap: 12px;
-    padding: 16px 16px 14px;
+    align-items: center;
+    gap: 11px;
+    padding: 14px 14px 12px 16px;
     border-bottom: 1px solid var(--rule);
   }
-  .ph div {
+  .who {
     flex: 1;
   }
   h2 {
     margin: 0;
-    font-size: 15px;
+    font-size: 14.5px;
     font-weight: 600;
   }
-  .ph p {
-    margin: 2px 0 0;
-    font-size: 12.5px;
-    line-height: 1.45;
-    color: var(--ink-secondary);
+  .who p {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 1px 0 0;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .who p i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2f9e5b;
   }
   .x {
     display: grid;
     place-items: center;
     flex: none;
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border: 0;
-    border-radius: 8px;
-    background: var(--bg-sunk);
+    border-radius: 50%;
+    background: transparent;
     color: var(--ink-secondary);
     cursor: pointer;
+    transition: background 0.2s;
   }
-  .form {
-    display: grid;
-    gap: 10px;
-    padding: 14px 16px 16px;
+  .x:hover {
+    background: var(--bg-sunk);
   }
-  .form[hidden],
-  .done[hidden],
-  .err[hidden] {
-    display: none;
-  }
-  .two {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+
+  /* The conversation. */
+  .thread {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     gap: 8px;
+    padding: 14px 14px 10px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
   }
-  .fld {
-    display: grid;
-    gap: 4px;
-    font-size: 12px;
+  .day {
+    align-self: center;
+    margin: 0 0 4px;
+    font-size: 11px;
     color: var(--ink-muted);
   }
-  .fld textarea,
-  .fld input {
-    width: 100%;
-    padding: 9px 11px;
+  .thread :global(.msg) {
+    display: grid;
+    gap: 6px;
+    max-width: 84%;
+    padding: 9px 13px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    animation: rise 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .thread :global(.msg p) {
+    margin: 0;
+  }
+  .thread :global(.msg.in) {
+    align-self: flex-start;
+    border-bottom-left-radius: 6px;
+    background: var(--bg-sunk);
+    color: var(--ink);
+  }
+  .thread :global(.msg.out) {
+    align-self: flex-end;
+    border-bottom-right-radius: 6px;
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .thread :global(.msg.note) {
+    color: var(--ink-muted);
+  }
+  .thread :global(.msg.ok) {
+    background: color-mix(in srgb, #2f9e5b 12%, var(--bg-raised));
+  }
+  .thread :global(.msg.err) {
+    background: color-mix(in srgb, #c0392b 10%, var(--bg-raised));
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  .thread :global(.typing) {
+    display: flex;
+    gap: 4px;
+    padding: 13px 14px;
+  }
+  .thread :global(.typing i) {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ink-muted);
+    animation: dot 1s infinite ease-in-out;
+  }
+  .thread :global(.typing i:nth-child(2)) {
+    animation-delay: 0.15s;
+  }
+  .thread :global(.typing i:nth-child(3)) {
+    animation-delay: 0.3s;
+  }
+  @keyframes dot {
+    0%,
+    80%,
+    100% {
+      opacity: 0.35;
+      transform: none;
+    }
+    40% {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+  }
+  .thread :global(.starts) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 6px;
+  }
+  .thread :global(.starts button) {
+    padding: 7px 12px;
     border: 0;
-    border-radius: 10px;
-    background: var(--bg);
+    border-radius: 999px;
+    background: transparent;
     box-shadow: inset 0 0 0 1px var(--rule);
     color: var(--ink);
     font: inherit;
-    font-size: 14px;
-    resize: none;
+    font-size: 13px;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      box-shadow 0.2s;
+  }
+  .thread :global(.starts button:hover) {
+    background: var(--bg-sunk);
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+
+  /* The composer: one pill, a round send button inside it. */
+  .composer {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin: 0 12px;
+    padding: 6px 6px 6px 14px;
+    border-radius: 22px;
+    background: var(--bg);
+    box-shadow: inset 0 0 0 1px var(--rule);
     transition: box-shadow 0.2s;
   }
-  .fld textarea:focus,
-  .fld input:focus {
-    outline: none;
+  .composer:focus-within {
     box-shadow:
-      inset 0 0 0 1px var(--ink),
-      0 0 0 3px color-mix(in srgb, var(--ink) 8%, transparent);
+      inset 0 0 0 1px color-mix(in srgb, var(--ink) 40%, transparent),
+      0 0 0 3px color-mix(in srgb, var(--ink) 6%, transparent);
+  }
+  .composer textarea {
+    flex: 1;
+    min-height: 32px;
+    max-height: 132px;
+    padding: 6px 0;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 14.5px;
+    line-height: 20px;
+    resize: none;
+    outline: none;
+  }
+  .composer textarea::placeholder {
+    color: var(--ink-muted);
+  }
+  .send {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--bg);
+    cursor: pointer;
+    transition:
+      opacity 0.2s,
+      transform 0.2s;
+  }
+  .send:disabled {
+    opacity: 0.25;
+    cursor: default;
+  }
+  .send:not(:disabled):hover {
+    transform: scale(1.06);
+  }
+  .chat[data-sending] .send {
+    opacity: 0.25;
+    pointer-events: none;
+  }
+  .chat[data-step="done"] .composer,
+  .chat[data-step="done"] .foot {
+    visibility: hidden;
+  }
+  .foot {
+    margin: 0;
+    padding: 7px 0 10px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-muted);
   }
   .hp {
     position: absolute;
     left: -9999px;
   }
-  .err {
-    margin: 0;
-    font-size: 12.5px;
-    color: #c0392b;
-  }
-  .send {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    height: 40px;
-    border: 0;
-    border-radius: 11px;
-    background: var(--ink);
-    color: var(--bg);
-    font: inherit;
-    font-weight: 550;
-    cursor: pointer;
-  }
-  .send:disabled {
-    opacity: 0.6;
-    cursor: progress;
-  }
-  .chat[data-sending] .send span::after {
-    content: "…";
-  }
-  .done {
-    display: grid;
-    justify-items: start;
-    gap: 10px;
-    padding: 18px 16px 18px;
-  }
-  .done p {
-    margin: 0;
-    font-size: 14px;
-    color: var(--ink-secondary);
-  }
-  .done b {
-    color: var(--ink);
-  }
-  .tick {
-    display: grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: color-mix(in srgb, #2f9e5b 14%, transparent);
-    color: #2f9e5b;
-  }
-  .again {
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--ink);
-    font: inherit;
-    font-size: 13px;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    cursor: pointer;
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
 
   @media (max-width: 560px) {
@@ -387,15 +616,24 @@ const email = "hassank.uiux@gmail.com";
     }
     .panel {
       width: 100%;
-    }
-    .two {
-      grid-template-columns: 1fr;
+      height: min(560px, calc(100dvh - 90px));
     }
     .fab .lbl {
       display: none;
     }
     .fab {
       padding: 0 6px;
+    }
+    .composer textarea {
+      font-size: 16px;
+    }
+  }
+  /* On touch there is no Enter key hint to give. */
+  @media (pointer: coarse) {
+    .chat[data-step="message"] .foot {
+      visibility: hidden;
+      padding: 0 0 6px;
+      font-size: 0;
     }
   }
   @media print {
@@ -405,10 +643,13 @@ const email = "hassank.uiux@gmail.com";
   }
   @media (prefers-reduced-motion: reduce) {
     .panel,
-    .fab {
+    .fab,
+    .thread :global(.msg),
+    .thread :global(.typing i) {
       animation: none;
     }
-    .fab {
+    .fab,
+    .send {
       transition: none;
     }
   }
