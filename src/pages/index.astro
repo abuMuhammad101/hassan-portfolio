@@ -2,438 +2,715 @@
 import Base from "../layouts/Base.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import TwoToneHeading from "../components/TwoToneHeading.astro";
-import ConstructionLines from "../components/ConstructionLines.astro";
-import CaseThumb from "../components/CaseThumb.astro";
+import ContactForm from "../components/ContactForm.astro";
 import Icon from "../components/Icon.astro";
 import { beliefs, workIndex } from "../data/work-index";
 import { resume } from "../data/resume";
 
 const nameOf = (id: string) => workIndex.find((w) => w.id === id)?.name ?? id;
 const featured = workIndex.filter((w) => w.page);
-const rest = workIndex.filter((w) => !featured.includes(w));
-const markets = [
-  { name: "United States" },
-  { name: "GCC" },
-  { name: "Pakistan", home: true },
+
+// What each card shows: a real screen from the product, on a quiet tint
+// taken from that product's own palette.
+const visuals: Record<string, { src: string; tint: string; phone?: boolean }> = {
+  "pilgrim-transport": { src: "/media/work/pilgrim.webp", tint: "#2f6b4a" },
+  "therapy-documentation": { src: "/media/work/therapy.webp", tint: "#b07a12" },
+  "clinical-copilot": { src: "/media/work/copilot.webp", tint: "#4a4ad6" },
+  "claims-agent-console": { src: "/media/work/claims.webp", tint: "#0f7a6a" },
+  clicker: { src: "/media/clicker/w-aging-light.webp", tint: "#4a3fcf" },
+  istyme: { src: "/media/istyme/en-offers.webp", tint: "#e08a00", phone: true },
+  "quick-service-app": { src: "/media/work/quick-service.webp", tint: "#9a4f1c" },
+  "hh-global": { src: "/media/hh/home.webp", tint: "#8a6a3a" },
+};
+
+// The hero shows the work itself, one product at a time.
+const reel = [
+  { id: "clicker", name: "Clicker", what: "ERP, my own product", src: "/media/clicker/w-aging-light.webp" },
+  { id: "therapy-documentation", name: "Therapy Documentation", what: "Healthcare compliance", src: "/media/work/therapy.webp" },
+  { id: "hh-global", name: "HH Global", what: "Wholesale e-commerce, shipped", src: "/media/hh/home.webp" },
 ];
-const ways = [
-  { icon: "user", title: "Start with the person", body: "And the rules they live under, before any screen." },
-  { icon: "list-checks", title: "Map what nobody asked for", body: "Empty, error, partial failure and the edge cases." },
-  { icon: "steering-wheel", title: "Direct the agents", body: "They draft at speed. I decide what's right." },
-  { icon: "rocket-launch", title: "Ship in small steps", body: "Reversible changes, and a seat in the architecture conversation." },
-  { icon: "signature", title: "Own what ships", body: "Including what goes wrong afterwards." },
-];
+
 const earlier = [
-  ["Inventory Management Tool", "/work/inventory-management/"],
-  ["Online Exam Preparation Platform", "/work/online-exam-prep/"],
-  ["Landlord Mobile App", "/work/landlord-app/"],
-  ["Meal Purchase E-Wallet", "/work/meal-wallet/"],
-  ["Cookiya", "/work/cookiya/"],
-  ["Motion starter kit", "/work/motions/"],
+  ["Inventory Management Tool", "Workshop ERP · under NDA", "/work/inventory-management/"],
+  ["Online Exam Preparation", "Web platform", "/work/online-exam-prep/"],
+  ["Landlord Mobile App", "Property maintenance", "/work/landlord-app/"],
+  ["Meal Purchase E-Wallet", "Mobile wallet", "/work/meal-wallet/"],
+  ["Cookiya", "Cooking app", "/work/cookiya/"],
+  ["Motion starter kit", "After Effects templates", "/work/motions/"],
 ];
 ---
 
 <Base
   title="Muhammad Hassan Khan — Senior Product Designer"
   description="Less noise. Real products. Owned end to end. Senior product designer in Karachi working on healthcare compliance, AI copilots, dense business software and local marketplaces."
+  chat={false}
 >
   <Header />
 
-  <section class="hero">
-    <div class="hero-inner wrap-wide">
-      <div class="headline">
-        <ConstructionLines />
-        <TwoToneHeading as="h1" size="hero" lead="Less noise." rest="Real products. Owned end to end." />
-      </div>
-      <div class="hero-grid">
-        <div class="intro">
-          <p>
-            I'm Hassan, a senior product designer in Karachi. Healthcare compliance, AI copilots, dense business
-            software and local marketplaces: I decide what's right for the people using them, ship it, and own
-            what happens next.
-          </p>
-          <div class="cta">
-            <a class="btn" href="#work">See the work <Icon name="arrow-right" size={16} /></a>
-            <a class="btn ghost" href="/resume/">Resume</a>
-          </div>
-        </div>
-        <aside class="ledger" aria-label="At a glance">
-          <p class="figs">
-            <span><b>8</b> products featured here</span>
-            <span><b>5+</b> years in SaaS and mobile</span>
-          </p>
-          <ol class="route" aria-label="Markets: United States, GCC, Pakistan">
-            {markets.map((m) => (
-              <li class={m.home ? "home" : ""}><i aria-hidden="true"></i><span>{m.name}</span>{m.home && <em>Based here</em>}</li>
-            ))}
-          </ol>
-        </aside>
-      </div>
-    </div>
-  </section>
-
   <main>
-    <section class="wrap-wide band" aria-labelledby="beliefs-h">
-      <div class="band-head">
-        <p class="section-label">What I believe</p>
-        <h2 id="beliefs-h" class="band-title">Four things I don't trade away.</h2>
+    <section class="wrap-wide hero">
+      <div class="hero-text">
+        <h1><span>Less noise.</span> <span>Real products.</span> <span>Owned end to end.</span></h1>
+        <p class="lede">
+          I'm Hassan, a senior product designer in Karachi. Healthcare compliance, AI copilots, dense business software and
+          local marketplaces: I decide what's right for the people using them, ship it, and own what happens next.
+        </p>
+        <div class="cta">
+          <a class="btn" href="#work">See the work</a>
+          <a class="btn ghost" href="/resume/">Resume</a>
+        </div>
       </div>
+
+      <figure class="reel" data-reel aria-label="Products I designed">
+        <div class="reel-screen">
+          {reel.map((r, i) => (
+            <a href={`/work/${r.id}/`} class:list={["reel-shot", { on: i === 0 }]} data-shot={i} tabindex={i === 0 ? 0 : -1} aria-hidden={i !== 0 ? "true" : undefined}>
+              <img src={r.src} alt={`${r.name}, ${r.what}`} width="1600" height="1000" loading={i === 0 ? "eager" : "lazy"} decoding="async" />
+            </a>
+          ))}
+        </div>
+        <figcaption class="reel-cap">
+          <span class="reel-names">
+            {reel.map((r, i) => (
+              <button type="button" class:list={["reel-tab", { on: i === 0 }]} data-go={i} aria-label={`Show ${r.name}`}>
+                <span class="bar"><i></i></span>
+                <b>{r.name}</b>
+                <small>{r.what}</small>
+              </button>
+            ))}
+          </span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="wrap-wide facts" aria-label="At a glance">
+      <p><b>Senior Product Designer</b> at AST, since June 2026.</p>
+      <p><b>5+ years</b> designing SaaS and mobile products, research to production.</p>
+      <p><b>Healthcare, ERP and AI agents,</b> plus local marketplaces.</p>
+      <p><b>Built for teams</b> in the US, the Gulf and Pakistan.</p>
+    </section>
+
+    <section class="wrap-wide work" id="work" aria-labelledby="work-h">
+      <header class="sec-head">
+        <h2 id="work-h">Selected work</h2>
+        <p>Eight products, from compliance software to a pilgrim's ride from the airport. Five are under NDA and re-created with stand-in names and data.</p>
+      </header>
+      <div class="cards">
+        {featured.map((w) => {
+          const v = visuals[w.id];
+          return (
+            <a class="card reveal" href={`/work/${w.page}/`} id={`work-${w.id}`} style={`--tint:${v.tint}`}>
+              <span class:list={["shot", { phone: v.phone }]}>
+                <img src={v.src} alt="" loading="lazy" decoding="async" />
+              </span>
+              <span class="meta">
+                <span class="name" style={`view-transition-name: t-${w.page}`}>{w.name}</span>
+                <span class="tags">{w.tags.join(", ")}</span>
+              </span>
+              <span class="angle">{w.angle}</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    <section class="wrap-wide about" id="about" aria-labelledby="about-h">
+      <header class="sec-head side">
+        <h2 id="about-h">How I work</h2>
+        <p>Tools change. Right now: Figma, Claude Code, Framer, Webflow and GitHub.</p>
+      </header>
       <ol class="beliefs">
         {beliefs.map((b, i) => (
           <li class="reveal" style={`--i:${i}`} data-belief>
-            <span class="b-top">
-              <span class="b-num tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-              <span class="b-art"><Icon name={b.icon} weight="duotone" size={26} /></span>
-            </span>
-            <p class="belief">{b.text}</p>
-            <p class="note">{b.note}</p>
-            <p class="proof-links"><span>Seen in</span>
-              {b.proof.map((id) => <a href={`#work-${id}`}>{nameOf(id)}</a>)}
+            <p><b>{b.text}</b> {b.note}</p>
+            <p class="seen">
+              {b.proof.map((id, k) => <>{k > 0 && <span aria-hidden="true">, </span>}<a href={`#work-${id}`}>{nameOf(id)}</a></>)}
             </p>
           </li>
         ))}
       </ol>
     </section>
 
-    <section class="wrap-wide band" id="work" aria-labelledby="work-h">
-      <div class="band-head">
-        <p class="section-label">Selected work</p>
-        <h2 id="work-h" class="band-title">Eight products, one way of working.</h2>
+    <section class="wrap-wide exp" aria-labelledby="exp-h">
+      <header class="sec-head side">
+        <h2 id="exp-h">Experience</h2>
+        <p><a class="inline" href="/resume/">Full resume</a></p>
+      </header>
+      <div class="lists">
+        <ul class="jobs">
+          {resume.experience.map((job) => (
+            <li>
+              <span class="role">{job.role}</span>
+              <span class="co">{job.company}</span>
+              <span class="dates tabular-nums">{job.start} – {job.end}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="sub">Earlier projects</p>
+        <ul class="early">
+          {earlier.map(([label, what, href]) => (
+            <li><a href={href}><span class="role">{label}</span><span class="co">{what}</span><Icon name="arrow-right" size={14} /></a></li>
+          ))}
+        </ul>
       </div>
-      <div class="cards">
-        {featured.map((w, i) => (
-          <a class="card reveal" href={`/work/${w.page}/`} id={`work-${w.id}`}>
-            <CaseThumb kind={w.id} />
-            <span class="card-top">
-              <span class="card-num">{String(i + 1).padStart(2, "0")}</span>
-              <span class="card-tags">{w.tags.join(" · ")}</span>
-            </span>
-            <span class="card-name" style={`view-transition-name: t-${w.page}`}>{w.name}</span>
-            <span class="card-angle">{w.angle}</span>
-            <span class="card-link">Read the case study <Icon name="arrow-up-right" size={15} /></span>
-          </a>
-        ))}
-      </div>
-      <ol class="rows" start={featured.length + 1}>
-        {rest.map((w, i) => (
-          <li class="reveal" id={`work-${w.id}`}>
-            <span class="row-num">{String(featured.length + i + 1).padStart(2, "0")}</span>
-            <span class="row-name">{w.name}</span>
-            <span class="row-leader" aria-hidden="true"></span>
-            <span class="row-tags">{w.tags.join(" · ")}</span>
-            {w.page ? (
-              <a class="row-status link" href={`/work/${w.page}/`}>Read <Icon name="arrow-up-right" size={14} /></a>
-            ) : (
-              <span class="row-status">Coming soon</span>
-            )}
-          </li>
-        ))}
-      </ol>
     </section>
 
-    <section class="wrap-wide band split" aria-labelledby="how-h">
-      <div class="band-head">
-        <p class="section-label">How I work</p>
-        <h2 id="how-h" class="band-title">The same five moves, every time.</h2>
-        <p class="tools">Tools change. Right now: Figma, Claude Code, Framer, Webflow and GitHub.</p>
+    <section class="wrap-wide contact" id="contact" aria-labelledby="contact-h">
+      <div class="contact-text">
+        <h2 id="contact-h">Have a product that needs an owner?</h2>
+        <p>Write a line about the role or the product. It goes straight to my inbox, and I reply by email, usually within a day.</p>
+        <ul class="direct">
+          <li><a href="mailto:hassank.uiux@gmail.com">hassank.uiux@gmail.com</a></li>
+          <li><a href="https://www.linkedin.com/in/muhammad-hassan-khan-ui-ux-designer/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          <li><a href="https://github.com/abuMuhammad101" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a href="https://layers.to/hassankuiux" target="_blank" rel="noopener noreferrer">layers.to</a></li>
+        </ul>
       </div>
-      <ol class="ways">
-        {ways.map((w, i) => (
-          <li class="reveal">
-            <span class="way-num">{i + 1}</span>
-            <span class="way-text"><b>{w.title}</b><span>{w.body}</span></span>
-            <Icon name={w.icon} size={20} />
-          </li>
-        ))}
-      </ol>
-    </section>
-
-    <section class="wrap-wide band split" aria-labelledby="exp-h">
-      <div class="band-head">
-        <p class="section-label">Experience</p>
-        <h2 id="exp-h" class="band-title">Where I've worked.</h2>
-      </div>
-      <ul class="jobs">
-        {resume.experience.map((job) => (
-          <li class="reveal">
-            <span class="job-role">{job.role}</span>
-            <span class="job-co">{job.company}</span>
-            <span class="job-dates tabular-nums">{job.start} – {job.end}</span>
-          </li>
-        ))}
-        <li class="earlier">
-          <span>Earlier projects</span>
-          <span class="earlier-links">
-            {earlier.map(([label, href]) => <a href={href}>{label}</a>)}
-          </span>
-        </li>
-      </ul>
-    </section>
-
-    <section class="wrap-wide band" id="contact" aria-labelledby="contact-h">
-      <div class="contact">
-        <p class="section-label">Contact</p>
-        <TwoToneHeading as="h2" size="3xl" lead="Have a product that needs an owner?" rest="Let's talk." />
-        <div class="cta">
-          <a class="btn" href="mailto:hassank.uiux@gmail.com"><Icon name="envelope-simple" size={16} /> hassank.uiux@gmail.com</a>
-          <a class="btn ghost" href="#message" data-open-chat><Icon name="chat-circle-text" size={16} /> Send a message</a>
-          <a class="btn ghost" href="/resume/"><Icon name="read-cv-logo" size={16} /> Resume</a>
-          <a class="btn ghost" href="https://www.linkedin.com/in/muhammad-hassan-khan-ui-ux-designer/" target="_blank" rel="noopener noreferrer"><Icon name="linkedin-logo" size={16} /> LinkedIn</a>
-          <a class="btn ghost" href="https://github.com/abuMuhammad101" target="_blank" rel="noopener noreferrer"><Icon name="github-logo" size={16} /> GitHub</a>
-          <a class="btn ghost" href="https://layers.to/hassankuiux" target="_blank" rel="noopener noreferrer">layers.to <Icon name="arrow-up-right" size={14} /></a>
-        </div>
-      </div>
+      <ContactForm />
     </section>
   </main>
 
   <Footer />
 </Base>
 
+<script>
+  // The hero reel: one product at a time, with a progress bar under its name.
+  document.querySelectorAll<HTMLElement>("[data-reel]").forEach((reel) => {
+    const shots = [...reel.querySelectorAll<HTMLElement>("[data-shot]")];
+    const tabs = [...reel.querySelectorAll<HTMLButtonElement>("[data-go]")];
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let i = 0;
+    let timer = 0;
+    const show = (n: number) => {
+      i = (n + shots.length) % shots.length;
+      shots.forEach((s, k) => {
+        s.classList.toggle("on", k === i);
+        s.toggleAttribute("aria-hidden", k !== i);
+        s.tabIndex = k === i ? 0 : -1;
+      });
+      tabs.forEach((t, k) => {
+        t.classList.remove("on");
+        void t.offsetWidth; // restart the bar
+        t.classList.toggle("on", k === i);
+      });
+      window.clearTimeout(timer);
+      if (!reduced && !reel.matches(":hover")) timer = window.setTimeout(() => show(i + 1), 5200);
+    };
+    tabs.forEach((t, k) => t.addEventListener("click", () => show(k)));
+    reel.addEventListener("mouseenter", () => { window.clearTimeout(timer); reel.classList.add("hold"); });
+    reel.addEventListener("mouseleave", () => { reel.classList.remove("hold"); show(i); });
+    show(0);
+  });
+</script>
+
 <style>
+  /* Hero ---------------------------------------------------------------- */
   .hero {
-    overflow: clip;
-  }
-  .hero-inner {
-    padding-top: var(--space-4);
-    padding-bottom: var(--space-6);
-  }
-  .headline {
-    position: relative;
-    padding: var(--space-6) 0 var(--space-6);
-  }
-  .hero-grid {
     display: grid;
-    gap: var(--space-6);
-    padding-top: var(--space-6);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+    padding-top: clamp(40px, 7vw, 96px);
+    padding-bottom: clamp(48px, 7vw, 96px);
   }
-  .intro p {
-    font-size: var(--text-lg);
+  h1 span {
+    display: block;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 380;
+    font-size: clamp(2.6rem, 4.4vw, 4rem);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    font-variation-settings: "opsz" 72;
+  }
+  .lede {
+    max-width: 46ch;
+    margin: 24px 0 0;
+    font-size: 1.0625rem;
+    line-height: 1.6;
     color: var(--ink-secondary);
-    margin: 0 0 var(--space-3);
-    max-width: 52ch;
   }
   .cta {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
+    margin-top: 32px;
   }
-  .ledger {
-    display: grid;
-    gap: 26px;
-    align-content: start;
-  }
-  .figs {
+
+  .reel {
     margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 36px;
-    color: var(--ink-secondary);
-    font-size: var(--text-sm);
   }
-  .figs span {
+  .reel-screen {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border-radius: 12px;
+    background: var(--bg-raised);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent),
+      0 2px 6px rgb(0 0 0 / 0.04),
+      0 30px 60px -30px rgb(0 0 0 / 0.25);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .reel-shot {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: scale(1.015);
+    transition:
+      opacity 0.7s ease,
+      transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reel-shot.on {
+    opacity: 1;
+    transform: none;
+    z-index: 1;
+  }
+  .reel-shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left top;
+  }
+  .reel-cap {
+    margin-top: 14px;
+  }
+  .reel-names {
     display: grid;
-    gap: 2px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
   }
-  .figs b {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(2.6rem, 5vw, 3.4rem);
-    line-height: 1;
-    letter-spacing: -0.03em;
+  .reel-tab {
+    display: grid;
+    align-content: start;
+    gap: 2px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+    color: var(--ink-muted);
+    cursor: pointer;
+  }
+  .reel-tab .bar {
+    display: block;
+    height: 2px;
+    margin-bottom: 8px;
+    border-radius: 1px;
+    background: var(--rule);
+    overflow: hidden;
+  }
+  .reel-tab .bar i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--ink);
+  }
+  .reel-tab.on .bar i {
+    animation: fill 5.2s linear forwards;
+  }
+  .reel.hold .reel-tab.on .bar i {
+    animation-play-state: paused;
+  }
+  @keyframes fill {
+    to {
+      width: 100%;
+    }
+  }
+  .reel-tab b {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    transition: color 0.2s;
+  }
+  .reel-tab small {
+    font-size: 13px;
+  }
+  .reel-tab.on b,
+  .reel-tab:hover b {
     color: var(--ink);
   }
-  .route {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    position: relative;
+  .reel-tab:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
   }
-  .route::before {
+
+  /* Facts: four sentences on one ruled line, read left to right. --------- */
+  .facts {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .facts::before,
+  .facts::after,
+  .contact::before {
     content: "";
     position: absolute;
-    left: 4px;
-    right: calc(33.333% - 4px);
-    top: 4px;
-    border-top: 1px dashed color-mix(in srgb, var(--ink) 35%, transparent);
+    left: var(--space-3);
+    right: var(--space-3);
+    top: 0;
+    border-top: 1px solid var(--rule);
   }
-  .route li {
-    position: relative;
-    display: grid;
-    gap: 2px;
-    padding-top: 20px;
-    font-size: var(--text-sm);
+  .facts::after {
+    top: auto;
+    bottom: 0;
+  }
+  .facts p {
+    margin: 0;
+    padding: 20px 24px 22px 0;
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--ink-secondary);
+  }
+  .facts p + p {
+    padding-left: 24px;
+    border-left: 1px solid var(--rule);
+  }
+  .facts b {
+    font-weight: 500;
     color: var(--ink);
   }
-  .route i {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--bg);
-    box-shadow: inset 0 0 0 1.5px var(--ink);
-  }
-  .route .home i {
-    background: var(--accent-warm);
-    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent-warm) 16%, transparent);
-  }
-  .route em {
-    font-style: normal;
-    font-size: 12px;
-    color: var(--ink-muted);
-  }
-  @media (min-width: 900px) {
-    .hero-grid {
-      grid-template-columns: 1.1fr 1fr;
-      align-items: start;
-    }
-  }
 
-  .band {
-    padding-top: var(--space-12);
-  }
-  .band-head {
-    margin-bottom: var(--space-4);
-  }
-  .band-title {
+  /* Section heads: the title says what it is. No labels above it. ------- */
+  .sec-head h2 {
+    margin: 0;
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
-    line-height: 1.12;
+    font-size: clamp(2rem, 3.4vw, 2.75rem);
+    line-height: 1.08;
     letter-spacing: -0.02em;
-    margin: 0;
-    max-width: 18ch;
-    text-wrap: balance;
   }
-  @media (min-width: 900px) {
-    .split {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: var(--space-8);
-      align-items: start;
-    }
-    .split .band-head {
-      position: sticky;
-      top: 96px;
-    }
+  .sec-head p {
+    max-width: 52ch;
+    margin: 12px 0 0;
+    color: var(--ink-secondary);
   }
 
+  /* Work ---------------------------------------------------------------- */
+  .work {
+    padding-top: clamp(72px, 9vw, 128px);
+  }
+  .work .sec-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: end;
+    margin-bottom: 40px;
+  }
+  .work .sec-head p {
+    margin: 0;
+    justify-self: end;
+    max-width: 44ch;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 56px 24px;
+  }
+  .card {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .shot {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 14px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--tint) 13%, var(--bg-raised));
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .shot img {
+    position: absolute;
+    left: 9%;
+    top: 11%;
+    width: 112%;
+    max-width: none;
+    height: auto;
+    border-radius: 8px;
+    box-shadow:
+      0 0 0 1px rgb(0 0 0 / 0.06),
+      0 20px 40px -18px rgb(0 0 0 / 0.3);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .shot.phone img {
+    left: 50%;
+    width: 44%;
+    top: 9%;
+    border-radius: 22px;
+    transform: translateX(-50%);
+    box-shadow:
+      0 0 0 6px #18181a,
+      0 0 0 7px #3a3a3d,
+      0 24px 40px -18px rgb(0 0 0 / 0.4);
+  }
+  .card:hover .shot img {
+    transform: translateY(-6px);
+  }
+  .card:hover .shot.phone img {
+    transform: translate(-50%, -6px);
+  }
+  .meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .name {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .tags {
+    flex: none;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .angle {
+    max-width: 52ch;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink-secondary);
+  }
+  .card:focus-visible {
+    outline: none;
+  }
+  .card:focus-visible .shot {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  /* About, experience: a title column and a content column. ------------ */
+  .about,
+  .exp {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 24px 48px;
+    padding-top: clamp(80px, 10vw, 144px);
+  }
+  .side p {
+    max-width: 30ch;
+    font-size: 15px;
+  }
   .beliefs {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .beliefs li {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 24px 28px 26px 0;
+    border-bottom: 1px solid var(--rule);
+    background: var(--bg);
+  }
+  .beliefs li:nth-child(even) {
+    padding: 24px 0 26px 28px;
+    border-left: 1px solid var(--rule);
+  }
+  .beliefs p {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink-secondary);
+  }
+  .beliefs b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .seen {
+    font-size: 13.5px !important;
+    color: var(--ink-muted) !important;
+  }
+  .seen a,
+  .inline,
+  .direct a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.2s;
+  }
+  .seen a:hover,
+  .inline:hover,
+  .direct a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .jobs,
+  .early {
     list-style: none;
     margin: 0;
     padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .jobs li,
+  .early a {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 14px;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 132px;
+    gap: 16px;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
   }
-  .beliefs li {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-height: 300px;
-    padding: 22px 22px 20px;
-    border-radius: 22px;
-    background:
-      radial-gradient(120% 70% at 100% 0%, color-mix(in srgb, var(--accent-warm) 7%, transparent), transparent 60%),
-      var(--bg-raised);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 6%, transparent), 0 1px 2px rgb(0 0 0 / 0.04);
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
+  .role {
+    font-weight: 500;
   }
-  .beliefs li:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 9%, transparent), 0 24px 44px -28px rgb(0 0 0 / 0.35);
+  .co,
+  .dates {
+    color: var(--ink-secondary);
   }
-  .b-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: auto;
-  }
-  .b-num {
-    font-family: var(--font-display);
-    font-size: 15px;
+  .dates {
+    justify-self: end;
+    font-size: 14px;
     color: var(--ink-muted);
   }
-  .b-art {
+  .early a :global(svg) {
+    justify-self: end;
+  }
+  .sub {
+    margin: 40px 0 0;
+    padding-bottom: 10px;
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+  .early a {
+    color: inherit;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .early a :global(svg) {
+    color: var(--ink-muted);
+    transition:
+      transform 0.25s,
+      color 0.2s;
+  }
+  .early a:hover :global(svg) {
+    transform: translateX(3px);
+    color: var(--ink);
+  }
+
+  /* Contact: words left, the form right. --------------------------------- */
+  .contact {
     display: grid;
-    place-items: center;
-    width: 52px;
-    height: 52px;
-    border-radius: 16px;
-    color: var(--ink);
-    background: linear-gradient(160deg, var(--bg-raised), var(--bg-sunk));
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.7),
-      0 0 0 1px color-mix(in srgb, var(--ink) 8%, transparent),
-      0 8px 18px -12px rgb(0 0 0 / 0.35);
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 48px;
+    position: relative;
+    margin-top: clamp(80px, 10vw, 144px);
+    padding-top: 48px;
   }
-  .beliefs li:hover .b-art {
-    transform: rotate(-6deg) scale(1.04);
-    color: var(--accent-warm);
-  }
-  .belief {
-    font-family: var(--font-display);
-    font-size: var(--text-xl);
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-    color: var(--ink);
-    margin: 28px 0 8px;
-  }
-  .note {
-    margin: 0 0 18px;
-    color: var(--ink-secondary);
-    font-size: var(--text-sm);
-  }
-  .proof-links {
+  .contact h2 {
     margin: 0;
-    padding-top: 14px;
-    border-top: 1px dashed color-mix(in srgb, var(--ink) 14%, transparent);
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2rem, 3.4vw, 2.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+  .contact-text p {
+    max-width: 42ch;
+    margin: 16px 0 0;
+    color: var(--ink-secondary);
+  }
+  .direct {
+    list-style: none;
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
-    gap: 4px 12px;
-    font-size: 12.5px;
+    gap: 6px 20px;
+    margin: 28px 0 0;
+    padding: 0;
+    font-size: 15px;
   }
-  .proof-links span {
-    color: var(--ink-muted);
-    width: 100%;
-    font-size: 11.5px;
+
+  /* Phone ---------------------------------------------------------------- */
+  @media (max-width: 900px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+    .facts {
+      grid-template-columns: 1fr 1fr;
+    }
+    .facts p + p:nth-child(3) {
+      padding-left: 0;
+      border-left: 0;
+    }
+    .facts p:nth-child(n + 3) {
+      border-top: 1px solid var(--rule);
+    }
+    .about,
+    .exp,
+    .contact {
+      grid-template-columns: 1fr;
+    }
   }
-  .proof-links a {
-    color: var(--ink);
-    text-decoration: underline;
-    text-decoration-color: color-mix(in srgb, var(--ink) 25%, transparent);
-    text-underline-offset: 3px;
-  }
-  .proof-links a:hover {
-    text-decoration-color: var(--accent-warm);
-  }
-  /* Phone: the beliefs stack like a deck. Each card sticks below the
-     header, and the next one slides up over it. */
-  @media (max-width: 700px) {
+  @media (max-width: 640px) {
+    .facts {
+      grid-template-columns: 1fr;
+    }
+    .facts p,
+    .facts p + p {
+      padding: 14px 0;
+      border-left: 0;
+    }
+    .facts p + p {
+      border-top: 1px solid var(--rule);
+    }
+    .work .sec-head {
+      grid-template-columns: 1fr;
+    }
+    .work .sec-head p {
+      justify-self: start;
+    }
+    .cards {
+      grid-template-columns: 1fr;
+      gap: 44px;
+    }
+    .reel-tab small {
+      display: none;
+    }
+    .jobs li,
+    .early a {
+      grid-template-columns: 1fr auto;
+    }
+    .jobs .co,
+    .early .co {
+      grid-column: 1;
+      grid-row: 2;
+      font-size: 14px;
+    }
+    .jobs .dates {
+      grid-row: 1;
+      grid-column: 2;
+    }
+    /* The beliefs deal like a deck: each one sticks under the header and
+       the next slides over it. */
     .beliefs {
       display: block;
+      border-top: 0;
     }
-    .beliefs li {
+    .beliefs li,
+    .beliefs li:nth-child(even) {
       position: sticky;
-      top: calc(92px + var(--i) * 10px);
-      min-height: 280px;
-      margin-bottom: 18px;
-      box-shadow:
-        0 0 0 1px color-mix(in srgb, var(--ink) 7%, transparent),
-        0 -10px 30px -18px rgb(0 0 0 / 0.28);
+      top: calc(76px + var(--i) * 10px);
+      min-height: 200px;
+      margin-bottom: 14px;
+      padding: 22px 20px;
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      background: var(--bg-raised);
+      box-shadow: 0 -10px 30px -18px rgb(0 0 0 / 0.25);
       transform-origin: 50% 0;
     }
-    .beliefs li:last-child {
-      margin-bottom: 0;
-    }
-    /* The card underneath fades toward the page, but stays solid, so the
-       deck never shows through itself. */
     .beliefs li::after {
       content: "";
       position: absolute;
@@ -443,228 +720,5 @@ const earlier = [
       opacity: calc(var(--dim, 0) * 0.6);
       pointer-events: none;
     }
-    .beliefs li:hover {
-      transform: none;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .beliefs li, .beliefs li:hover { transition: none; transform: none; }
-    .beliefs li:hover .b-art { transform: none; }
-  }
-
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 44px 32px;
-  }
-  .card {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    text-decoration: none;
-    color: var(--ink);
-    scroll-margin-top: 96px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-  .card:hover {
-    transform: none;
-  }
-  .card > span {
-    padding: 0 2px;
-  }
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 18px;
-    font-size: 12px;
-    color: var(--ink-muted);
-  }
-  .card-name {
-    font-family: var(--font-display);
-    font-size: var(--text-xl);
-    line-height: 1.2;
-    margin-top: 6px;
-  }
-  .card-angle {
-    font-size: var(--text-sm);
-    color: var(--ink-secondary);
-    margin: 6px 0 var(--space-2);
-  }
-  .card-link {
-    margin-top: auto;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: var(--text-sm);
-    font-weight: 500;
-  }
-  .rows {
-    list-style: none;
-    margin: var(--space-4) 0 0;
-    padding: 0;
-    border-top: 1px solid var(--rule);
-  }
-  .rows li {
-    display: flex;
-    align-items: baseline;
-    gap: 14px;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--rule);
-    scroll-margin-top: 96px;
-  }
-  .row-num {
-    font-size: 12px;
-    color: var(--ink-muted);
-    font-variant-numeric: tabular-nums;
-  }
-  .row-name {
-    font-family: var(--font-display);
-    font-size: var(--text-lg);
-  }
-  .row-leader {
-    flex: 1;
-    min-width: 16px;
-    border-bottom: 1px dotted var(--ink-muted);
-    opacity: 0.6;
-    transform: translateY(-4px);
-  }
-  .row-tags {
-    font-size: var(--text-sm);
-    color: var(--ink-muted);
-  }
-  .row-status {
-    font-size: 12px;
-    color: var(--ink-secondary);
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    padding: 2px 10px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  .row-status.link {
-    color: var(--ink);
-    border-color: var(--ink);
-  }
-  @media (max-width: 620px) {
-    .rows li {
-      flex-wrap: wrap;
-      row-gap: 4px;
-    }
-    .row-leader {
-      display: none;
-    }
-    .row-name {
-      flex: 1;
-    }
-    .row-tags {
-      order: 5;
-      flex-basis: 100%;
-      padding-left: 30px;
-    }
-  }
-
-  .tools {
-    margin: var(--space-2) 0 0;
-    font-size: var(--text-sm);
-    color: var(--ink-muted);
-    max-width: 34ch;
-  }
-  .ways,
-  .jobs {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    border-top: 1px solid var(--rule);
-  }
-  .ways li {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--rule);
-    color: var(--ink-muted);
-  }
-  .way-num {
-    width: 28px;
-    height: 28px;
-    flex: none;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    border: 1px solid var(--rule);
-    background: var(--bg-raised);
-    font-size: 12px;
-    color: var(--ink);
-  }
-  .way-text {
-    flex: 1;
-    display: grid;
-  }
-  .way-text b {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: var(--text-lg);
-    color: var(--ink);
-  }
-  .way-text span {
-    font-size: var(--text-sm);
-    color: var(--ink-secondary);
-  }
-  .jobs li {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 2px 16px;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--rule);
-  }
-  .job-role {
-    color: var(--ink);
-    font-weight: 500;
-  }
-  .job-co {
-    grid-column: 1;
-    font-size: var(--text-sm);
-    color: var(--ink-secondary);
-  }
-  .job-dates {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    align-self: center;
-    font-size: var(--text-sm);
-    color: var(--ink-muted);
-  }
-  .jobs .earlier {
-    grid-template-columns: 1fr;
-    font-size: var(--text-sm);
-    color: var(--ink-muted);
-    border-bottom: none;
-  }
-  .earlier-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 14px;
-  }
-  .earlier-links a {
-    color: var(--ink-secondary);
-    text-decoration: underline;
-    text-decoration-color: var(--rule);
-    text-underline-offset: 3px;
-  }
-  .earlier-links a:hover {
-    color: var(--ink);
-  }
-
-  .contact {
-    background: var(--bg-sunk);
-    border-radius: 24px;
-    padding: clamp(24px, 6vw, 64px);
-    display: grid;
-    gap: var(--space-3);
-  }
-  .contact .section-label {
-    margin: 0;
   }
 </style>

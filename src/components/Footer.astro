@@ -1,17 +1,122 @@
-<footer class="footer wrap-wide">
-  <span>Muhammad Hassan Khan</span>
-  <span>Karachi, Pakistan · UTC+5</span>
+---
+/* Footer: the name, where to find the work, where to find me. */
+const work = [
+  ["Pilgrim Transport", "/work/pilgrim-transport/"],
+  ["Therapy Documentation", "/work/therapy-documentation/"],
+  ["Clinical Copilot", "/work/clinical-copilot/"],
+  ["Claims Agent Console", "/work/claims-agent-console/"],
+  ["Clicker", "/work/clicker/"],
+  ["isTyme", "/work/istyme/"],
+  ["Quick-Service App", "/work/quick-service-app/"],
+  ["HH Global", "/work/hh-global/"],
+];
+const elsewhere = [
+  ["Email", "mailto:hassank.uiux@gmail.com"],
+  ["LinkedIn", "https://www.linkedin.com/in/muhammad-hassan-khan-ui-ux-designer/"],
+  ["GitHub", "https://github.com/abuMuhammad101"],
+  ["layers.to", "https://layers.to/hassankuiux"],
+];
+---
+
+<footer class="footer">
+  <div class="wrap-wide grid">
+    <div class="who">
+      <p class="name">Muhammad Hassan Khan</p>
+      <p>Senior product designer, Karachi.</p>
+    </div>
+    <nav aria-label="Work">
+      <p class="h">Work</p>
+      <ul>{work.map(([l, h]) => <li><a href={h}>{l}</a></li>)}</ul>
+    </nav>
+    <nav aria-label="Elsewhere">
+      <p class="h">Elsewhere</p>
+      <ul>{elsewhere.map(([l, h]) => <li><a href={h} target={h.startsWith("http") ? "_blank" : undefined} rel={h.startsWith("http") ? "noopener noreferrer" : undefined}>{l}</a></li>)}</ul>
+    </nav>
+    <nav aria-label="Site">
+      <p class="h">Site</p>
+      <ul>
+        <li><a href="/resume/">Resume</a></li>
+        <li><a href="/#about">How I work</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="wrap-wide base">
+    <span>© 2026 Muhammad Hassan Khan</span>
+    <span>Karachi, UTC+5</span>
+  </div>
 </footer>
 
 <style>
   .footer {
+    margin-top: clamp(96px, 12vw, 160px);
+    font-size: 14px;
+  }
+  .grid,
+  .base {
+    position: relative;
+  }
+  .grid::before,
+  .base::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: var(--space-3);
+    right: var(--space-3);
+    border-top: 1px solid var(--rule);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 32px;
+    padding-top: 48px;
+    padding-bottom: 64px;
+  }
+  .who p {
+    margin: 0;
+    color: var(--ink-secondary);
+  }
+  .who .name {
+    margin-bottom: 4px;
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .h {
+    margin: 0 0 12px;
+    color: var(--ink-muted);
+  }
+  ul {
+    list-style: none;
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+  }
+  a {
+    color: var(--ink-secondary);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  a:hover {
+    color: var(--ink);
+  }
+  .base {
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding-top: var(--space-8);
-    padding-bottom: var(--space-6);
-    font-size: var(--text-sm);
+    gap: 16px;
+    padding-top: 20px;
+    padding-bottom: 28px;
     color: var(--ink-muted);
+    font-size: 13px;
+  }
+  @media (max-width: 760px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .who {
+      grid-column: 1 / -1;
+    }
   }
 </style>

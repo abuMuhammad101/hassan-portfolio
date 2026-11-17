@@ -47,7 +47,7 @@ if (!reduced) {
   });
 
   // Section titles rise in a beat after their label.
-  document.querySelectorAll<HTMLElement>(".band-title").forEach((el) => {
+  document.querySelectorAll<HTMLElement>(".sec-head h2").forEach((el) => {
     if (el.getBoundingClientRect().top < fold) return;
     gsap.from(el, {
       opacity: 0,
@@ -109,12 +109,11 @@ if (!reduced) {
   if (first) {
     const order = [
       ".hero .crumbs, .early .crumbs",
-      ".headline h1 .lead",
-      ".headline h1 .rest",
+      ".hero-text h1",
       ".hero .vt-title, .early h1",
-      ".hero .angle, .early .angle",
-      ".hero-grid .intro",
-      ".hero-grid .ledger",
+      ".hero .lede, .hero .angle, .early .angle",
+      ".hero-text .cta",
+      ".reel",
       ".hero .facts, .early .facts",
     ];
     const els = order.flatMap((sel) => [...document.querySelectorAll<HTMLElement>(sel)]).filter((el) => el.getBoundingClientRect().top < window.innerHeight);

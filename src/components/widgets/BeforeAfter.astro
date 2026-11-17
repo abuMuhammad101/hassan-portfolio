@@ -10,9 +10,9 @@ import Scene from "./pilgrim/Scene.astro";
 import "@fontsource/cormorant-garamond/latin-600.css";
 import "@fontsource/cormorant-garamond/latin-700.css";
 const slides = [
-  { t: "VIP Airport Transfers, Door to Door", d: "Meet-and-greet arrivals and a vehicle waiting the moment you land.", art: "dusk" },
-  { t: "Between the Holy Cities, in Comfort", d: "Fixed-price rides with drivers who know the way and the rhythm of the day.", art: "road" },
-  { t: "Ziyarat Tours at Your Pace", d: "Visit the historic sites with a driver who waits while you pray.", art: "palms" },
+  { t: "Airport pick-up, door to door", d: "Meet-and-greet arrivals and a vehicle waiting the moment you land.", art: "dusk" },
+  { t: "Between the holy cities, in comfort", d: "Fixed-price rides with drivers who know the way and the rhythm of the day.", art: "road" },
+  { t: "Ziyarat at your own pace", d: "Visit the historic sites with a driver who waits while you pray.", art: "palms" },
 ];
 const fleet = [
   { n: "Sedan", k: "Sedan", v: "sedan", p: 3, b: 2, d: "For individuals and small families." },
@@ -20,10 +20,18 @@ const fleet = [
   { n: "Full-size SUV", k: "SUV", v: "suv", p: 7, b: 6, d: "Premium comfort for VIP travel." },
   { n: "Group Van", k: "Van", v: "van", p: 10, b: 10, d: "High capacity, made for groups." },
 ];
-const quotes = ["Always on time and the driver knew every stop.", "Smooth ride between the cities, very professional.", "Helped with all our luggage at 3 am. Highly recommend.", "Our family of seven fit easily. Will book again."];
+// Sample reviews, written for the re-creation.
+const quotes = [
+  ["Our flight landed at 3 am and the driver was already at the gate with our name.", "Family of six, Umrah"],
+  ["Makkah to Madinah with my parents. He stopped whenever they needed a rest.", "Travelling with parents"],
+  ["Seven of us and eleven bags, and the van still had room.", "Group booking"],
+  ["Ziyarat in one morning, with a driver who knew every site.", "Madinah ziyarat"],
+  ["The fixed price was the price. Nothing added at the end.", "Airport transfer"],
+  ["Booked on WhatsApp in five minutes and got the plate number the night before.", "First visit"],
+];
 const reasons = [
-  { t: "Safe & Comfortable Travel", d: "Every vehicle is registered for pilgrim transport and maintained for comfort on long drives." },
-  { t: "Always on Time", d: "Flight monitoring and support around the clock, with free waiting time for arrivals." },
+  { t: "Registered and comfortable", d: "Every vehicle is registered for pilgrim transport and maintained for comfort on long drives." },
+  { t: "On time, every time", d: "Flight monitoring and support around the clock, with free waiting time for arrivals." },
   { t: "Updates on WhatsApp", d: "Booking confirmation, reminders, driver details and journey updates, where pilgrims already are." },
 ];
 ---
@@ -95,7 +103,7 @@ const reasons = [
         </div>
 
         <section class="sec sand">
-          <h6>Choose Your Vehicle</h6><i class="rule"></i>
+          <h6>Choose your vehicle</h6><i class="rule"></i>
           <p class="sub">Picked by how many travel and how much they carry.</p>
           <div class="cars">
             {fleet.map((f) => (
@@ -112,7 +120,7 @@ const reasons = [
 
         <section class="sec why">
           <div class="why-l">
-            <h6>Why Choose Pilgrim Drivers</h6><i class="rule"></i>
+            <h6>Why families book with us</h6><i class="rule"></i>
             <ol class="reasons">
               {reasons.map((r, i) => (
                 <li data-reason={i} class={i === 0 ? "open" : ""}>
@@ -135,12 +143,12 @@ const reasons = [
         </section>
 
         <section class="sec sand quotes">
-          <h6>What Our Travellers Say</h6><i class="rule"></i>
+          <h6>What travellers say</h6><i class="rule"></i><span class="sample">Sample reviews</span>
           <div class="cols" aria-hidden="true">
             {[0, 1, 2].map((c) => (
               <div class={`col c${c}`}>
-                {[...quotes, ...quotes].map((q, i) => (
-                  <div class="q"><span class="stars">★★★★★</span><p>“{q}”</p><small>Sample review {c * 4 + (i % 4) + 1}</small></div>
+                {[...quotes.slice(c * 2), ...quotes.slice(0, c * 2), ...quotes].map(([q, who]) => (
+                  <div class="q"><span class="stars">★★★★★</span><p>“{q}”</p><small>{who}</small></div>
                 ))}
               </div>
             ))}
@@ -198,7 +206,7 @@ const reasons = [
   .switch [aria-pressed="true"] { background: var(--bg-raised); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
   .ba { container-type: inline-size; }
   .fit { width: 100%; }
-  .pg { font: 13px/1.5 var(--font-sans); background: #fff; }
+  .pg { font: 13px/1.5 var(--font-product); background: #fff; }
   .pg[hidden] { display: none; }
   .note { display: flex; align-items: center; gap: 8px; margin: 0; padding: 12px 26px; background: #fff4e5; color: #7a4a0c; font-size: 12.5px; }
   .note.ok { background: #e7f2ed; color: #0b4a2c; }
@@ -248,10 +256,10 @@ const reasons = [
   .a-pills { display: flex; align-items: center; gap: 4px; margin: 0 auto; color: #3b3b3b; font-size: 12px; }
   .a-pills > * { display: inline-flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 999px; }
   .a-pills > * + * { border-left: 1px solid var(--line); border-radius: 0; }
-  .a-pills b { background: var(--g9); color: #fff; font-weight: 600; box-shadow: 0 3px 0 -1px var(--gold); }
+  .a-pills b { background: var(--g9); color: #fff; font-weight: 600; }
   .a-end { display: flex; align-items: center; gap: 12px; font-size: 12px; }
   .a-end > span:first-child { display: inline-flex; gap: 4px; align-items: center; }
-  .a-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 9px; background: linear-gradient(180deg, #d19e2c, #b38219); color: #fff; font-weight: 600; box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 6px 14px -8px #8a640f; }
+  .a-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 10px; background: var(--g9); color: #fff; font-weight: 600; }
   .a-btn.sm { padding: 6px 11px; font-size: 12px; }
 
   .hero { position: relative; height: 340px; overflow: hidden; }
@@ -325,7 +333,8 @@ const reasons = [
   .bub.me { justify-self: end; border-radius: 12px 4px 12px 12px; background: #d9f6c9; }
 
 
-  .quotes { padding-bottom: 0; }
+  .quotes { position: relative; padding-bottom: 0; }
+  .sample { position: absolute; top: 30px; right: 26px; font-size: 11px; color: var(--ink4); }
   .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; height: 220px; margin-top: 8px; overflow: hidden; mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent); }
   .col { display: grid; gap: 12px; align-content: start; animation: up 22s linear infinite; }
   .col.c1 { animation-direction: reverse; animation-duration: 26s; }

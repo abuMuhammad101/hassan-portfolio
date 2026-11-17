@@ -1,0 +1,157 @@
+---
+/* The contact form on the home page: a one-way note that lands in Hassan's
+   inbox through Web3Forms. Without PUBLIC_WEB3FORMS_KEY it opens the
+   visitor's mail app instead, so it never breaks. */
+import Icon from "./Icon.astro";
+const key = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
+const email = "hassank.uiux@gmail.com";
+---
+
+<form class="cf" data-cf data-key={key} data-email={email} novalidate>
+  <div class="two">
+    <label class="fld"><span>Name</span><input name="name" autocomplete="name" /></label>
+    <label class="fld"><span>Email</span><input name="email" type="email" autocomplete="email" required /></label>
+  </div>
+  <label class="fld"><span>Message</span><textarea name="message" rows="5" required maxlength="2000"></textarea></label>
+  <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <p class="err" data-err role="alert" hidden></p>
+  <div class="row">
+    <button type="submit" class="btn" data-send>Send message</button>
+    <span class="note">Goes to my inbox. No newsletter.</span>
+  </div>
+  <div class="done" data-done hidden role="status">
+    <Icon name="check-circle" size={20} weight="fill" />
+    <p><b>Sent.</b> Thanks, I'll reply to <span data-to></span>.</p>
+  </div>
+</form>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>("[data-cf]").forEach((form) => {
+    const err = form.querySelector<HTMLElement>("[data-err]")!;
+    const done = form.querySelector<HTMLElement>("[data-done]")!;
+    const send = form.querySelector<HTMLButtonElement>("[data-send]")!;
+    const show = (m: string) => { err.textContent = m; err.hidden = false; };
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      err.hidden = true;
+      const data = new FormData(form);
+      const message = String(data.get("message") ?? "").trim();
+      const email = String(data.get("email") ?? "").trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return show("Add an email I can reply to.");
+      if (!message) return show("Write a message first.");
+      if (data.get("botcheck")) return;
+      const key = form.dataset.key;
+      if (!key) {
+        const body = encodeURIComponent(`${message}\n\n${data.get("name") ?? ""} <${email}>`);
+        location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent("Hello from hassank.space")}&body=${body}`;
+        return;
+      }
+      send.disabled = true;
+      send.textContent = "Sending…";
+      try {
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            access_key: key,
+            subject: `New message from ${data.get("name") || email} via hassank.space`,
+            from_name: "hassank.space",
+            name: data.get("name") || "",
+            email,
+            replyto: email,
+            message,
+          }),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || json.success === false) throw new Error();
+        form.querySelector<HTMLElement>("[data-to]")!.textContent = email;
+        form.classList.add("is-done");
+        done.hidden = false;
+        form.reset();
+      } catch {
+        show(`It didn't go through. Try again, or email ${form.dataset.email}.`);
+      } finally {
+        send.disabled = false;
+        send.textContent = "Send message";
+      }
+    });
+  });
+</script>
+
+<style>
+  .cf {
+    display: grid;
+    gap: 20px;
+    align-content: start;
+  }
+  .two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .fld {
+    display: grid;
+    gap: 6px;
+    font-size: 13.5px;
+    color: var(--ink-secondary);
+  }
+  .fld input,
+  .fld textarea {
+    width: 100%;
+    padding: 8px 0 10px;
+    border: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: 0;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 16px;
+    resize: vertical;
+    transition: border-color 0.2s;
+  }
+  .fld input:focus,
+  .fld textarea:focus {
+    outline: none;
+    border-bottom-color: var(--ink);
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+  }
+  .err {
+    margin: 0;
+    font-size: 14px;
+    color: #c0392b;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .note {
+    font-size: 13.5px;
+    color: var(--ink-muted);
+  }
+  .done {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ok);
+  }
+  .done p {
+    margin: 0;
+    color: var(--ink-secondary);
+  }
+  .done b {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .is-done > :not(.done) {
+    display: none;
+  }
+  @media (max-width: 560px) {
+    .two {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -290,49 +290,20 @@
    window's tabs as the chapters. Shared by every story.
    --------------------------------------------------------------------- */
 .s-canvas {
-  --paper: #f6f5f0;
-  --paper-line: #e6e4dc;
   position: relative;
-  padding: 22px 12px 18px;
-  border: 1px solid var(--paper-line);
-  background: var(--paper);
+  padding: 20px 12px 18px;
+  border-radius: 16px;
+  /* A quiet tint from the product's own colour, the same one its card uses
+     on the home page. */
+  background: color-mix(in srgb, var(--story-accent, #777) 11%, var(--bg-raised, #fff));
 }
 @container (min-width: 720px) {
   .s-canvas {
-    padding: 40px 36px 44px;
+    padding: 44px 44px 48px;
   }
 }
 .s-h {
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border: 1px solid #c9c6bb;
-  background: #fff;
-}
-.s-h.tl { top: -4px; left: -4px; }
-.s-h.tr { top: -4px; right: -4px; }
-.s-h.bl { bottom: -4px; left: -4px; }
-.s-h.br { bottom: -4px; right: -4px; }
-
-/* Dark site: the canvas dims with the page, so the light product windows
-   sit on it like lit screens instead of a bright slab. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .s-canvas {
-    --paper: #1b1a17;
-    --paper-line: #2c2b26;
-  }
-  :root:not([data-theme="light"]) .s-h {
-    border-color: #4a4840;
-    background: #121210;
-  }
-}
-:root[data-theme="dark"] .s-canvas {
-  --paper: #1b1a17;
-  --paper-line: #2c2b26;
-}
-:root[data-theme="dark"] .s-h {
-  border-color: #4a4840;
-  background: #121210;
+  display: none;
 }
 
 .s-win {

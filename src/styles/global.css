@@ -1,17 +1,17 @@
 :root {
-  --bg: #faf9f7;
+  --bg: #f5f5f3;
   --bg-raised: #ffffff;
-  --ink: #1a1a18;
-  --ink-secondary: #55534c;
-  --ink-muted: #75736b;
-  --rule: #e5e3dc;
-  --ink-tone2: #7c7a71;
-  --construct: #d9d6cc;
-  --accent-site: #2f4bd8;
-  --accent-warm: #e4572e;
-  --ok: #1f8a4c;
-  --warn: #b7791f;
-  --bg-sunk: #f1efea;
+  --ink: #111110;
+  --ink-secondary: #57564f;
+  --ink-muted: #75746d;
+  --rule: #e2e1dc;
+  --ink-tone2: #75746d;
+  --construct: #d6d5cf;
+  --accent-site: #111110;
+  --accent-warm: #111110;
+  --ok: #1f7a45;
+  --warn: #9a6412;
+  --bg-sunk: #ebebe7;
 
   --hh-global: #9c6b1f;
   --cookiya: #6b5b95;
@@ -22,11 +22,15 @@
   --landlord: #b5533c;
   --meal-wallet: #7a8c2e;
 
-  --font-display: "Instrument Sans Variable", "Instrument Sans", "Inter Variable", -apple-system, "Segoe UI", sans-serif;
-  --font-sans: "Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Two voices only: a book serif for what I say, a grotesk for everything
+     you use. */
+  --font-display: "Newsreader Variable", "Newsreader", Georgia, "Times New Roman", serif;
+  --font-sans: "Schibsted Grotesk Variable", "Schibsted Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Consolas, monospace;
-  --font-editorial: "Instrument Serif", Georgia, "Times New Roman", serif;
-  --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  /* The products keep their own voice: the UI face most software uses. */
+  --font-product: "Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-editorial: var(--font-display);
+  --font-hand: var(--font-display);
   --resume-accent: #7c3aed;
 
   --text-xs: 0.75rem;
@@ -36,8 +40,8 @@
   --text-xl: 1.375rem;
   --text-2xl: 1.75rem;
   --text-3xl: 2.5rem;
-  --text-hero: clamp(2.5rem, 7vw, 4.5rem);
-  --wide-width: 1080px;
+  --text-hero: clamp(2.75rem, 6.4vw, 5.25rem);
+  --wide-width: 1200px;
 
   /* Elevation: a hairline plus soft, layered light. Never one hard drop. */
   --lift-1: 0 0 0 1px rgb(20 18 12 / 0.06), 0 1px 2px rgb(20 18 12 / 0.05);
@@ -58,54 +62,54 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #121210;
-    --bg-raised: #1b1a17;
-    --ink: #f2f1ea;
-    --ink-secondary: #b8b6ac;
-    --ink-muted: #8c8a80;
-    --rule: #2a2924;
-    --ink-tone2: #85837a;
-    --construct: #2e2d28;
-    --accent-site: #8fa2ff;
-    --accent-warm: #ff7a50;
-  --ok: #4ecb86;
-  --warn: #e3b341;
-    --bg-sunk: #0c0c0a;
+    --bg: #0f0f0e;
+    --bg-raised: #181816;
+    --ink: #f2f2ee;
+    --ink-secondary: #adaca5;
+    --ink-muted: #8c8b84;
+    --rule: #262624;
+    --ink-tone2: #8c8b84;
+    --construct: #2c2c29;
+    --accent-site: #f2f2ee;
+    --accent-warm: #f2f2ee;
+    --ok: #4ecb86;
+    --warn: #e3b341;
+    --bg-sunk: #0a0a09;
     --resume-accent: #a78bfa;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #121210;
-  --bg-raised: #1b1a17;
-  --ink: #f2f1ea;
-  --ink-secondary: #b8b6ac;
-  --ink-muted: #8c8a80;
-  --rule: #2a2924;
-  --ink-tone2: #85837a;
-  --construct: #2e2d28;
-  --accent-site: #8fa2ff;
-  --accent-warm: #ff7a50;
+  --bg: #0f0f0e;
+  --bg-raised: #181816;
+  --ink: #f2f2ee;
+  --ink-secondary: #adaca5;
+  --ink-muted: #8c8b84;
+  --rule: #262624;
+  --ink-tone2: #8c8b84;
+  --construct: #2c2c29;
+  --accent-site: #f2f2ee;
+  --accent-warm: #f2f2ee;
   --ok: #4ecb86;
   --warn: #e3b341;
-  --bg-sunk: #0c0c0a;
+  --bg-sunk: #0a0a09;
   --resume-accent: #a78bfa;
   color-scheme: dark;
 }
 :root[data-theme="light"] {
-  --bg: #faf9f7;
+  --bg: #f5f5f3;
   --bg-raised: #ffffff;
-  --ink: #1a1a18;
-  --ink-secondary: #55534c;
-  --ink-muted: #75736b;
-  --rule: #e5e3dc;
-  --ink-tone2: #7c7a71;
-  --construct: #d9d6cc;
-  --accent-site: #2f4bd8;
-  --accent-warm: #e4572e;
-  --ok: #1f8a4c;
-  --warn: #b7791f;
-  --bg-sunk: #f1efea;
+  --ink: #111110;
+  --ink-secondary: #57564f;
+  --ink-muted: #75746d;
+  --rule: #e2e1dc;
+  --ink-tone2: #75746d;
+  --construct: #d6d5cf;
+  --accent-site: #111110;
+  --accent-warm: #111110;
+  --ok: #1f7a45;
+  --warn: #9a6412;
+  --bg-sunk: #ebebe7;
   --resume-accent: #7c3aed;
   color-scheme: light;
 }
@@ -142,7 +146,8 @@ body {
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: var(--text-base);
-  line-height: 1.7;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
   transition: background 0.2s ease, color 0.2s ease;
 }
 body > * {
@@ -182,14 +187,7 @@ a {
   margin-top: 0;
   margin-bottom: var(--space-3);
 }
-.section-label::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent-warm);
-  flex: none;
-}
+
 
 /* Shared layout and controls for the v2 pages. */
 .wrap-wide {
@@ -207,8 +205,9 @@ a {
   font: inherit;
   font-size: var(--text-sm);
   font-weight: 500;
-  padding: 10px 18px;
-  border-radius: 999px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 8px;
   border: 1px solid var(--ink);
   background: var(--ink);
   color: var(--bg);
@@ -217,7 +216,7 @@ a {
   transition: transform 0.15s ease, background 0.15s ease;
 }
 .btn:hover {
-  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--ink) 86%, var(--bg));
 }
 .btn.ghost {
   background: transparent;
@@ -225,7 +224,8 @@ a {
   border-color: color-mix(in srgb, var(--ink) 18%, transparent);
 }
 .btn.ghost:hover {
-  border-color: var(--ink);
+  background: var(--bg-raised);
+  border-color: color-mix(in srgb, var(--ink) 30%, transparent);
 }
 .surface {
   background: var(--bg-raised);
@@ -265,7 +265,7 @@ html.lenis body {
 }
 /* The name sits on the pill, not the header around it: a named element
    becomes a backdrop root, and the pill's glass blur would see nothing. */
-.site-header .pill {
+.site-header .bar {
   view-transition-name: site-header;
 }
 ::view-transition-old(root) {
