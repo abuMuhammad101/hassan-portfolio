@@ -100,8 +100,8 @@ const earlier = [
 
       <ul class="facts">
         <li>
-          <span class="f-top"><span class="live"><i aria-hidden="true"></i>Now at AST</span></span>
-          <p><b>Senior Product Designer</b> since June 2026, on healthcare compliance and AI agents.</p>
+          <span class="f-top"><b class="big">AST</b><em>since June 2026</em></span>
+          <p><b>Senior Product Designer</b>, on healthcare compliance and AI agents.</p>
         </li>
         <li>
           <span class="f-top"><b class="big"><span data-count="5">5</span>+</b><em>years</em></span>
@@ -531,7 +531,7 @@ const earlier = [
     height: auto;
   }
 
-  /* Three facts in ruled cells: a live status, two figures that count up. */
+  /* Three facts in ruled cells, each led by a large figure; two count up. */
   .facts {
     list-style: none;
     display: grid;
@@ -568,40 +568,6 @@ const earlier = [
     font-style: normal;
     font-size: 14px;
     color: var(--ink-muted);
-  }
-  .live {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    align-self: center;
-    padding: 6px 12px 6px 10px;
-    border-radius: 999px;
-    background: var(--bg-raised);
-    box-shadow: inset 0 0 0 1px var(--rule);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ink);
-  }
-  .live i {
-    position: relative;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #22a05b;
-  }
-  .live i::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: #22a05b;
-    animation: live 2s ease-out infinite;
-  }
-  @keyframes live {
-    to {
-      transform: scale(2.8);
-      opacity: 0;
-    }
   }
   .dots {
     display: inline-flex;
@@ -641,11 +607,6 @@ const earlier = [
     font-size: 12px;
     font-style: normal;
     color: var(--ink-secondary);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .live i::after {
-      animation: none;
-    }
   }
 
   @media (max-width: 900px) {
