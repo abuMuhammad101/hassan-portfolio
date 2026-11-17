@@ -57,7 +57,7 @@ export const stories: Record<string, Story> = {
   },
 
   "record-chain": {
-    accent: "#b07a12",
+    accent: "#4b4fd6",
     address: "app.strandhealth.example/patients/arthur-bell",
     reset: "[data-reset]",
     chapters: [

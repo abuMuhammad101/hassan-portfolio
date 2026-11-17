@@ -34,10 +34,11 @@ const Y0 = 2021;
 const Y1 = now.getFullYear() + 1;
 const pos = (y: number, m: number) => `${(((y - Y0) * 12 + m) / ((Y1 - Y0) * 12)) * 100}%`;
 const parse = (t: string, end: boolean): [number, number] => {
-  if (t === "Present") return [now.getFullYear(), now.getMonth() + 1];
+  if (t === "Present") return [now.getFullYear(), now.getMonth() + now.getDate() / 31];
   const [a, b] = t.split(" ");
   return b ? [Number(b), M.indexOf(a) + (end ? 1 : 0)] : [Number(a), end ? 12 : 0];
 };
+const nowAt = pos(now.getFullYear(), now.getMonth() + now.getDate() / 31);
 const years = Array.from({ length: Y1 - Y0 }, (_, i) => Y0 + i);
 const jobs = resume.experience.map((j) => {
   const s0 = parse(j.start, false);
@@ -220,7 +221,6 @@ const earlier = [
       <ol class="flow" data-live>
         {ways.map((w, i) => (
           <li data-live-item style={`--k:${i}`}>
-            <span class="flow-dot" aria-hidden="true"></span>
             <span class="flow-n">{String(i + 1).padStart(2, "0")}</span>
             <b>{w.title}</b>
             <span>{w.body}</span>
@@ -233,10 +233,13 @@ const earlier = [
     <section class="frame wrap-wide" aria-labelledby="exp-h">
       <div class="band">
         <h2 id="exp-h" class="band-title">Where I've worked.</h2>
-        <div class="gantt" style={`--yrs:${years.length}`}>
+        <div class="gantt" style={`--yrs:${years.length};--now:${nowAt}`}>
           <div class="g-axis" aria-hidden="true">
             <span></span>
-            <span class="g-years">{years.map((y) => <span style={`--x:${pos(y, 0)}`}>{y}</span>)}</span>
+            <span class="g-years">
+              {years.map((y) => <span>{y}</span>)}
+              <em class="g-now">Now</em>
+            </span>
             <span></span>
           </div>
           <ul class="g-rows">
@@ -404,9 +407,9 @@ const earlier = [
     height: clamp(300px, 36vw, 440px);
     margin: 0 calc(-1 * var(--rail) + 0px);
     overflow: hidden;
-    background-image: radial-gradient(circle, color-mix(in srgb, var(--ink) 13%, transparent) 1px, transparent 1.3px);
-    background-size: 14px 14px;
-    background-position: 7px 7px;
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--ink) 11%, transparent) 0.9px, transparent 1.6px);
+    background-size: 18px 18px;
+    background-position: 9px 9px;
   }
   .stage::after {
     content: "";
@@ -598,6 +601,7 @@ const earlier = [
   }
   .card-name {
     font-family: var(--font-display);
+    font-weight: 500;
     font-size: var(--text-xl);
     line-height: 1.2;
     margin-top: 6px;
@@ -621,7 +625,7 @@ const earlier = [
   }
   .mfold {
     position: relative;
-    height: 212px;
+    height: 200px;
     margin: 10px 0 0;
   }
   .mb,
@@ -632,7 +636,8 @@ const earlier = [
     border-radius: 14px;
   }
   .mb {
-    inset: 16px 0 0;
+    inset: 12px 0 0;
+    border-radius: 12px;
     background: var(--bg-sunk);
     box-shadow: inset 0 0 0 1px var(--rule);
   }
@@ -640,12 +645,12 @@ const earlier = [
     content: "";
     position: absolute;
     left: 0;
-    top: -12px;
-    width: 38%;
-    height: 26px;
-    border-radius: 12px 12px 0 0;
+    top: -10px;
+    width: 34%;
+    height: 22px;
+    border-radius: 10px 10px 0 0;
     background: inherit;
-    box-shadow: inset 0 1px 0 var(--rule), inset 1px 0 0 var(--rule), inset -1px 0 0 var(--rule);
+    box-shadow: inset 1px 1px 0 var(--rule), inset -1px 0 0 var(--rule);
   }
   .ms {
     position: absolute;
@@ -665,26 +670,27 @@ const earlier = [
     color: var(--ink);
     transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .ms0 { top: 34px; transform: translateX(-3%) rotate(-1.5deg); }
-  .ms1 { top: 60px; transform: translateX(2%) rotate(1deg); }
+  .ms0 { top: 34px; transform: translateX(-3%); }
+  .ms1 { top: 60px; transform: translateX(2%); }
   .ms2 { top: 86px; }
   .mf {
     bottom: 0;
-    height: 40%;
-    background: linear-gradient(180deg, color-mix(in srgb, var(--bg-sunk) 70%, var(--bg-raised)), var(--bg-sunk));
+    height: 34%;
+    border-radius: 12px;
+    background: var(--bg-raised);
     box-shadow:
       inset 0 0 0 1px var(--rule),
-      0 -6px 14px -10px rgb(0 0 0 / 0.18);
+      0 -10px 20px -16px rgb(20 18 12 / 0.28);
   }
   .mf .seam {
     position: absolute;
-    left: 16px;
-    right: 16px;
-    top: 12px;
+    left: 14px;
+    right: 14px;
+    top: 10px;
     border-top: 1px dashed var(--rule);
   }
-  .more:hover .ms0 { transform: translate(-6%, -14px) rotate(-4deg); }
-  .more:hover .ms1 { transform: translate(5%, -10px) rotate(3deg); }
+  .more:hover .ms0 { transform: translate(-3%, -12px); }
+  .more:hover .ms1 { transform: translate(2%, -8px); }
   .more:hover .ms2 { transform: translateY(-6px); }
   .more-links {
     list-style: none;
@@ -730,6 +736,7 @@ const earlier = [
   }
   .row-name {
     font-family: var(--font-display);
+    font-weight: 500;
     font-size: var(--text-lg);
   }
   .row-leader {
@@ -787,7 +794,7 @@ const earlier = [
   }
   .band-title {
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: 500;
     font-size: clamp(1.9rem, 3.6vw, 2.75rem);
     line-height: 1.08;
     letter-spacing: -0.025em;
@@ -829,15 +836,15 @@ const earlier = [
     border-left: 1px solid var(--rule);
   }
   .vig {
-    --dot: color-mix(in srgb, var(--ink) 12%, transparent);
+    --dot: color-mix(in srgb, var(--ink) 11%, transparent);
     position: relative;
     display: grid;
     place-items: center;
     height: 196px;
     border-bottom: 1px solid var(--rule);
-    background-image: radial-gradient(circle, var(--dot) 1px, transparent 1.3px);
-    background-size: 14px 14px;
-    background-position: 7px 7px;
+    background-image: radial-gradient(circle, var(--dot) 0.9px, transparent 1.6px);
+    background-size: 18px 18px;
+    background-position: 9px 9px;
     overflow: hidden;
   }
   .pr-body {
@@ -855,7 +862,7 @@ const earlier = [
     margin: 14px 0 10px;
     font-family: var(--font-display);
     font-size: 1.32rem;
-    font-weight: 400;
+    font-weight: 500;
     line-height: 1.2;
     letter-spacing: -0.015em;
     text-wrap: balance;
@@ -958,11 +965,10 @@ const earlier = [
     color: var(--ink-muted);
   }
   .v2-hd i {
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
-    background: var(--accent-warm);
-    transform: rotate(45deg);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent-site);
   }
   .v2-ln {
     height: 6px;
@@ -1017,8 +1023,8 @@ const earlier = [
     transform: translate(-92px, -34px);
   }
   li:is(:hover, .is-on) .v2-ok {
-    background: #1f7a45;
-    border-color: #1f7a45;
+    background: var(--accent-site);
+    border-color: var(--accent-site);
     transition-delay: 0.85s;
   }
   li:is(:hover, .is-on) .v2-ok em {
@@ -1052,10 +1058,10 @@ const earlier = [
   }
   .v3-in i:nth-child(2n) { left: 82px; }
   .v3-in i:nth-child(n + 3) { top: 56px; }
-  .v3-in i:nth-child(1) { transform: translate(-22px, -14px) rotate(-9deg); }
-  .v3-in i:nth-child(2) { transform: translate(18px, 10px) rotate(7deg); }
-  .v3-in i:nth-child(3) { transform: translate(10px, 8px) rotate(-4deg); }
-  .v3-in i:nth-child(4) { transform: translate(-16px, -8px) rotate(11deg); }
+  .v3-in i:nth-child(1) { transform: translate(-26px, -16px); }
+  .v3-in i:nth-child(2) { transform: translate(22px, 12px); }
+  .v3-in i:nth-child(3) { transform: translate(14px, 14px); }
+  .v3-in i:nth-child(4) { transform: translate(-20px, -10px); }
   .v3-in b {
     height: 5px;
     border-radius: 3px;
@@ -1088,7 +1094,7 @@ const earlier = [
     background: var(--rule);
   }
   .v4-in::after {
-    background: #1f7a45;
+    background: var(--accent-site);
     transform: scaleY(0);
     transform-origin: top;
     transition: transform 1s var(--ease);
@@ -1109,8 +1115,11 @@ const earlier = [
     box-shadow: inset 0 0 0 1.5px var(--ink-muted);
     transition: box-shadow 0.4s;
   }
-  .v4-row.warn i {
-    box-shadow: inset 0 0 0 4.5px #c4890f;
+  .v4-row:first-child i {
+    box-shadow: inset 0 0 0 4.5px var(--ink);
+  }
+  .v4-row.warn {
+    color: var(--ink-muted);
   }
   .v4-row.fix {
     color: var(--ink);
@@ -1120,7 +1129,7 @@ const earlier = [
     transform: scaleY(1);
   }
   li:is(:hover, .is-on) .v4-row.fix i {
-    box-shadow: inset 0 0 0 4.5px #1f7a45;
+    box-shadow: inset 0 0 0 4.5px var(--accent-site), 0 0 0 3px color-mix(in srgb, var(--accent-site) 16%, transparent);
     transition-delay: 0.8s;
   }
 
@@ -1162,41 +1171,19 @@ const earlier = [
     }
   }
 
-  /* Five moves, drawn as one line. */
+  /* Five moves, side by side in ruled columns. */
   .flow {
-    --t: 34px;
     list-style: none;
-    position: relative;
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     margin: 0 calc(-1 * var(--rail));
     padding: 0;
   }
-  .flow::before,
-  .flow::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: var(--t);
-    height: 1px;
-    background: var(--rule);
-  }
-  .flow::after {
-    background: var(--ink);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 1.6s cubic-bezier(0.65, 0, 0.35, 1);
-  }
-  .flow:has(.is-on)::after {
-    transform: scaleX(1);
-  }
   .flow li {
-    position: relative;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: calc(var(--t) + 26px) 22px 34px var(--rail);
+    padding: 30px 22px 36px var(--rail);
   }
   .flow li + li {
     padding-left: 22px;
@@ -1204,28 +1191,6 @@ const earlier = [
   }
   .flow li:last-child {
     padding-right: var(--rail);
-  }
-  .flow-dot {
-    position: absolute;
-    left: -5px;
-    top: calc(var(--t) - 4px);
-    z-index: 1;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--bg);
-    box-shadow: inset 0 0 0 1.5px var(--ink-muted);
-    transition: box-shadow 0.4s;
-    transition-delay: calc(var(--k) * 300ms + 200ms);
-  }
-  .flow li + li .flow-dot {
-    left: 18px;
-  }
-  .flow li:first-child .flow-dot {
-    left: calc(var(--rail) - 4px);
-  }
-  .flow:has(.is-on) .flow-dot {
-    box-shadow: inset 0 0 0 4.5px var(--ink);
   }
   .flow-n {
     font-family: var(--font-mono);
@@ -1235,7 +1200,7 @@ const earlier = [
   .flow b {
     font-family: var(--font-display);
     font-size: 1.2rem;
-    font-weight: 400;
+    font-weight: 500;
     line-height: 1.2;
     letter-spacing: -0.01em;
   }
@@ -1246,26 +1211,8 @@ const earlier = [
   }
   @media (max-width: 900px) {
     .flow {
-      --t: 0px;
       grid-template-columns: 1fr;
       margin: 0;
-      padding-left: 30px;
-    }
-    .flow::before,
-    .flow::after {
-      left: 4px;
-      right: auto;
-      top: 0;
-      bottom: 0;
-      width: 1px;
-      height: auto;
-    }
-    .flow::after {
-      transform: scaleY(0);
-      transform-origin: top;
-    }
-    .flow:has(.is-on)::after {
-      transform: scaleY(1);
     }
     .flow li,
     .flow li + li,
@@ -1276,41 +1223,54 @@ const earlier = [
     .flow li + li {
       border-top: 1px solid var(--rule);
     }
-    .flow-dot,
-    .flow li + li .flow-dot,
-    .flow li:first-child .flow-dot {
-      left: -30px;
-      top: 27px;
-    }
   }
 
-  /* Tenure on one axis. */
+  /* Tenure on one axis: year bands, one bar per role, a line for today. */
   .gantt {
-    margin-top: clamp(32px, 4vw, 48px);
     --who: minmax(0, 15rem);
     --when: 10.5rem;
+    --band: color-mix(in srgb, var(--bg-sunk) 70%, transparent);
+    margin-top: clamp(32px, 4vw, 48px);
   }
   .g-axis,
   .g-row {
     display: grid;
     grid-template-columns: var(--who) minmax(0, 1fr) var(--when);
-    gap: 24px;
+    gap: 0 28px;
     align-items: center;
   }
-  .g-axis {
-    height: 22px;
+  /* Every other year sits on a faint band, so the eye can count years
+     without gridlines. */
+  .g-years,
+  .g-track {
+    position: relative;
+    align-self: stretch;
+    background: linear-gradient(90deg, transparent 50%, var(--band) 50%) 0 0 / calc(200% / var(--yrs)) 100%;
   }
   .g-years {
-    position: relative;
-    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(var(--yrs), minmax(0, 1fr));
+    height: 34px;
   }
-  .g-years span {
-    position: absolute;
-    left: var(--x);
-    padding-left: 6px;
+  .g-years > span {
+    align-self: center;
+    padding-left: 10px;
     font-family: var(--font-mono);
     font-size: 11.5px;
     color: var(--ink-muted);
+  }
+  .g-now {
+    position: absolute;
+    left: var(--now);
+    top: 50%;
+    z-index: 2;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--accent-site);
+    color: var(--bg);
+    font: 500 10.5px/1.4 var(--font-mono);
+    font-style: normal;
+    transform: translate(-50%, -50%);
   }
   .g-rows {
     list-style: none;
@@ -1319,13 +1279,13 @@ const earlier = [
     border-top: 1px solid var(--rule);
   }
   .g-row {
-    min-height: 64px;
-    padding: 12px 0;
+    min-height: 68px;
     border-bottom: 1px solid var(--rule);
   }
   .g-who {
     display: grid;
-    gap: 2px;
+    gap: 3px;
+    padding: 14px 0;
   }
   .g-who b {
     font-weight: 500;
@@ -1337,43 +1297,48 @@ const earlier = [
   }
   .g-when {
     text-align: right;
+    font-variant-numeric: tabular-nums;
   }
-  .g-track {
-    position: relative;
-    align-self: stretch;
-    margin: -12px 0;
-    min-height: 24px;
-    background: repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px calc(100% / var(--yrs)));
+  .g-track::after {
+    content: "";
+    position: absolute;
+    left: var(--now);
+    top: 0;
+    bottom: -1px;
+    width: 1px;
+    background: var(--accent-site);
   }
   .g-track i {
     position: absolute;
     left: var(--a);
     top: 50%;
     width: calc(var(--b) - var(--a));
-    height: 6px;
-    margin-top: -3px;
-    border-radius: 3px;
-    background: color-mix(in srgb, var(--ink) 70%, transparent);
+    height: 10px;
+    margin-top: -5px;
+    border-radius: 5px;
+    background: color-mix(in srgb, var(--ink) 78%, transparent);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+    transition:
+      transform 1s cubic-bezier(0.22, 1, 0.36, 1),
+      background 0.2s;
   }
   .g-row.is-on .g-track i {
     transform: scaleX(1);
   }
-  .g-row.now .g-track i {
-    background: var(--accent-warm);
+  .g-row:hover .g-track i {
+    background: var(--ink);
   }
-  .g-row.now .g-track i::after {
-    content: "";
-    position: absolute;
-    right: -3px;
-    top: -3px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--accent-warm);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-warm) 20%, transparent);
+  .g-row:hover .g-when {
+    color: var(--ink);
+  }
+  .g-row.now .g-track i,
+  .g-row.now:hover .g-track i {
+    background: var(--accent-site);
+  }
+  .g-row.now .g-when {
+    color: var(--accent-site);
+    font-weight: 500;
   }
   @media (max-width: 760px) {
     .g-axis {
@@ -1381,17 +1346,23 @@ const earlier = [
     }
     .g-row {
       grid-template-columns: 1fr auto;
-      gap: 10px 16px;
-      padding: 16px 0;
+      gap: 0 16px;
+      padding-bottom: 16px;
+    }
+    .g-who {
+      padding: 16px 0 12px;
     }
     .g-track {
       grid-column: 1 / -1;
       grid-row: 2;
-      margin: 0;
-      min-height: 14px;
+      height: 14px;
+    }
+    .g-track::after {
+      bottom: 0;
     }
     .g-when {
       align-self: start;
+      padding-top: 16px;
     }
   }
 
@@ -1406,9 +1377,9 @@ const earlier = [
     margin: clamp(56px, 8vw, 96px) calc(-1 * var(--rail)) 0;
     padding: clamp(40px, 6vw, 72px) var(--rail);
     border-top: 1px solid var(--rule);
-    background-image: radial-gradient(circle, color-mix(in srgb, var(--ink) 13%, transparent) 1px, transparent 1.3px);
-    background-size: 14px 14px;
-    background-position: 7px 7px;
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--ink) 11%, transparent) 0.9px, transparent 1.6px);
+    background-size: 18px 18px;
+    background-position: 9px 9px;
   }
   .end-h {
     position: absolute;
@@ -1426,7 +1397,7 @@ const earlier = [
   .end-title {
     margin: 0;
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: 500;
     font-size: clamp(2.25rem, 4.6vw, 3.75rem);
     line-height: 1.04;
     letter-spacing: -0.03em;
@@ -1500,8 +1471,6 @@ const earlier = [
   }
   @media (prefers-reduced-motion: reduce) {
     .vig *,
-    .flow::after,
-    .flow-dot,
     .g-track i {
       transition: none !important;
     }

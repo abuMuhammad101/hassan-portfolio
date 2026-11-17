@@ -416,6 +416,7 @@ const slug = Astro.url.pathname.split("/").filter(Boolean).pop();
     gap: 10px;
     margin: 0 0 8px;
     font-family: var(--font-display);
+    font-weight: 500;
     font-size: clamp(3rem, 6vw, 4.25rem);
     line-height: 1;
     letter-spacing: -0.04em;
@@ -539,7 +540,8 @@ const slug = Astro.url.pathname.split("/").filter(Boolean).pop();
     background: rgb(214 202 176 / 0.55);
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
     transform: translateX(-50%) rotate(2.5deg);
-    backdrop-filter: blur(1px);
+    outline: 1px solid transparent;
+    backface-visibility: hidden;
   }
   .note-h {
     margin: 0 0 16px;
