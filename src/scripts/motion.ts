@@ -48,9 +48,8 @@ if (!reduced) {
   });
 
   // Headings: each word rises out of its own line as the heading arrives.
-  // Only headings below the first screen; the split is undone afterwards.
+  // Headings already on screen play straight away; the split is undone after.
   document.querySelectorAll<HTMLElement>(".band-title, .end-title, .sh em").forEach((el) => {
-    if (el.getBoundingClientRect().top < fold) return;
     SplitText.create(el, {
       type: "words",
       mask: "words",
@@ -95,31 +94,42 @@ if (!reduced) {
     });
   });
 
-  // First arrival: the opening screen sets itself, line by line. Only on the
-  // first page of a visit; after that, page-to-page transitions take over.
-  let first = true;
-  try {
-    first = !sessionStorage.getItem("arrived");
-    sessionStorage.setItem("arrived", "1");
-  } catch {}
-  if (first) {
-    const order = [
-      ".hero .crumbs, .early .crumbs",
-      ".top h1 .lead",
-      ".top h1 .rest",
-      ".hero .vt-title, .early h1",
-      ".hero .angle, .early .angle",
-      ".top .intro",
-      ".stage .w-mid",
-      ".stage .w-left",
-      ".stage .w-right",
-      ".hero .facts li, .early .facts",
-    ];
-    const els = order.flatMap((sel) => [...document.querySelectorAll<HTMLElement>(sel)]).filter((el) => el.getBoundingClientRect().top < window.innerHeight);
-    if (els.length) {
-      gsap.from(els, { opacity: 0, y: 16, duration: 0.8, ease: "power3.out", stagger: 0.08, delay: 0.05, clearProps: "opacity,transform" });
-    }
+  // Arrival, on every load: the headline rises word by word, then the
+  // words around it, the buttons, the screens and the facts settle in.
+  const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
+  const h1 = document.querySelector<HTMLElement>(".top h1, .hero h1, .early h1");
+  if (h1) {
+    const split = SplitText.create(h1, { type: "words", mask: "words", wordsClass: "sw" });
+    intro.from(split.words, { yPercent: 115, duration: 1, stagger: 0.06, ease: "expo.out", onComplete: () => split.revert() }, 0.05);
   }
+  const q = (sel: string) => [...document.querySelectorAll<HTMLElement>(sel)].filter((el) => el.getBoundingClientRect().top < window.innerHeight);
+  const add = (sel: string, vars: gsap.TweenVars, at: number) => {
+    const els = q(sel);
+    if (els.length) intro.from(els, { opacity: 0, clearProps: "opacity,transform,filter", ...vars }, at);
+  };
+  add(".hero .crumbs, .early .crumbs", { y: 10, duration: 0.6 }, 0.1);
+  add(".top .intro p, .hero .angle, .early .angle", { y: 16, duration: 0.8 }, 0.35);
+  add(".top .cta > *", { y: 12, scale: 0.94, duration: 0.7, stagger: 0.08, ease: "back.out(2)" }, 0.5);
+  add(".hero .meta, .early .facts", { y: 14, duration: 0.7 }, 0.55);
+  add(".stage .win", { y: 60, scale: 0.94, filter: "blur(6px)", duration: 1.2, stagger: 0.12, ease: "expo.out" }, 0.55);
+  add(".hero .facts li", { y: 18, duration: 0.8, stagger: 0.1 }, 0.95);
+
+  // Figures count up and the product dots pop in when they come into view.
+  document.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => {
+    const end = Number(el.dataset.count);
+    const o = { v: 0 };
+    gsap.to(o, {
+      v: end,
+      duration: 1.4,
+      delay: 0.9,
+      ease: "power2.out",
+      onUpdate: () => (el.textContent = String(Math.round(o.v))),
+      scrollTrigger: { trigger: el, start: "top 92%", once: true },
+    });
+  });
+  document.querySelectorAll<HTMLElement>(".dots").forEach((d) => {
+    gsap.from(d.children, { scale: 0, duration: 0.45, stagger: 0.06, delay: 1.2, ease: "back.out(3)", scrollTrigger: { trigger: d, start: "top 92%", once: true } });
+  });
 
   // Hero construction lines: draw the lines, then pop the handles.
   document.querySelectorAll<HTMLElement>("[data-construct]").forEach((box) => {

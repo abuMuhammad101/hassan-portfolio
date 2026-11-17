@@ -1,5 +1,5 @@
 :root {
-  --bg: #fefefe;
+  --bg: #ffffff;
   --bg-raised: #ffffff;
   --ink: #1a1a18;
   --ink-secondary: #55534c;
@@ -93,7 +93,7 @@
   color-scheme: dark;
 }
 :root[data-theme="light"] {
-  --bg: #fefefe;
+  --bg: #ffffff;
   --bg-raised: #ffffff;
   --ink: #1a1a18;
   --ink-secondary: #55534c;
