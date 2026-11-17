@@ -290,7 +290,7 @@
    window's tabs as the chapters. Shared by every story.
    --------------------------------------------------------------------- */
 .s-canvas {
-  --paper: #f8f8f6;
+  --paper: #f9f9f8;
   --paper-line: #e8e7e3;
   position: relative;
   padding: 22px 12px 18px;

@@ -184,13 +184,6 @@ export const stories: Record<string, Story> = {
         steps: [{ tab: true }, { run: '[data-k="home"]' }],
       },
       {
-        tab: "Walkthrough",
-        icon: "film-strip",
-        title: "Browse like a buyer",
-        note: "A real recording: hero, category browse, then a product with its variants.",
-        steps: [{ tab: true }, { run: '[data-k="walk"]' }],
-      },
-      {
         tab: "Catalogue",
         icon: "squares-four",
         title: "A trade catalogue",
