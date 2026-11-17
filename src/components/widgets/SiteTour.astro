@@ -1,11 +1,9 @@
 ---
-/* HH Global, the live site: screens captured from hhglobalcompany.com, plus a
-   recorded walkthrough and the phone view. */
-import BrowserFrame from "../BrowserFrame.astro";
-import PhoneFrame from "../PhoneFrame.astro";
+/* HH Global, the live site: screens captured from hhglobalcompany.com and
+   the phone view, side by side on the canvas. */
+import PhoneShell from "../hero/PhoneShell.astro";
 const screens = [
   { key: "home", title: "Home", src: "/media/hh/home.webp", note: "One promise, one way in: view the collection or ask for a quote." },
-  { key: "walk", title: "Walkthrough", src: "/media/hh-global-walkthrough.gif", note: "A real recording of the live site: hero, category browse, product detail with variants." },
   { key: "catalogue", title: "Catalogue", src: "/media/hh/catalogue.webp", note: "Products by catalogue number, with style counts and material, read like a trade catalogue." },
   { key: "about", title: "Proof", src: "/media/hh/about.webp", note: "The numbers a wholesale buyer checks first, on the home page instead of a buried about page." },
   { key: "process", title: "How it works", src: "/media/hh/process.webp", note: "Spec to shipped in four steps, so a first-time buyer knows what happens after they ask." },
@@ -18,53 +16,157 @@ const screens = [
     {screens.map((s, i) => <button type="button" data-k={s.key} aria-pressed={i === 0 ? "true" : "false"}>{s.title}</button>)}
   </div>
   <div class="row">
-    <div class="desk">
-      <BrowserFrame address="hhglobalcompany.com" label="HH Global, live site">
+    <figure class="desk">
+      <span class="bar" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="shots">
         {screens.map((s, i) => (
-          <img data-shot={s.key} hidden={i !== 0} src={s.src} alt={`HH Global, ${s.title}`} width="1600" height="1000" loading={i === 0 ? "eager" : "lazy"} decoding="async" />
+          <img data-hh={s.key} class:list={[{ on: i === 0 }]} src={s.src} alt={`HH Global, ${s.title}`} width="1600" height="1000" loading={i === 0 ? "eager" : "lazy"} decoding="async" />
         ))}
-      </BrowserFrame>
-      {screens.map((s, i) => <p class="note sr-only" data-note={s.key} hidden={i !== 0}><b>{s.title}.</b> {s.note}</p>)}
-    </div>
+      </span>
+      {screens.map((s, i) => <figcaption class="sr-only" data-note={s.key} hidden={i !== 0}><b>{s.title}.</b> {s.note}</figcaption>)}
+    </figure>
     <div class="phone">
-      <PhoneFrame label="HH Global on a phone">
-        <img src="/media/hh/mobile.webp" alt="HH Global home page on a phone" width="375" height="812" loading="lazy" decoding="async" />
-      </PhoneFrame>
+      <PhoneShell src="/media/hh/mobile.webp" alt="HH Global home page on a phone" />
     </div>
   </div>
-  <a class="live" href="https://www.hhglobalcompany.com" target="_blank" rel="noopener">Visit the live site ↗</a>
+  <a class="live" href="https://www.hhglobalcompany.com" target="_blank" rel="noopener">hhglobalcompany.com ↗</a>
 </div>
 
 <script>
   document.querySelectorAll<HTMLElement>("[data-st]").forEach((root) => {
     const chips = [...root.querySelectorAll<HTMLButtonElement>("[data-k]")];
-    chips.forEach((c) => c.addEventListener("click", () => {
-      chips.forEach((x) => x.setAttribute("aria-pressed", String(x === c)));
-      root.querySelectorAll<HTMLElement>("[data-shot]").forEach((s) => (s.hidden = s.dataset.shot !== c.dataset.k));
-      root.querySelectorAll<HTMLElement>("[data-note]").forEach((s) => (s.hidden = s.dataset.note !== c.dataset.k));
-    }));
+    chips.forEach((c) =>
+      c.addEventListener("click", () => {
+        chips.forEach((x) => x.setAttribute("aria-pressed", String(x === c)));
+        root.querySelectorAll<HTMLElement>("[data-hh]").forEach((s) => s.classList.toggle("on", s.dataset.hh === c.dataset.k));
+        root.querySelectorAll<HTMLElement>("[data-note]").forEach((s) => (s.hidden = s.dataset.note !== c.dataset.k));
+      }),
+    );
   });
 </script>
 
 <style>
-  .st { container-type: inline-size; }
-  .chips { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; scrollbar-width: none; }
-  .chips::-webkit-scrollbar { display: none; }
-  .chips button { flex: none; border: 1px solid var(--rule); background: transparent; font: inherit; font-size: 13px; padding: 5px 12px; border-radius: 999px; color: var(--ink-secondary); cursor: pointer; }
-  .chips [aria-pressed="true"] { border-color: #b8913a; color: var(--ink); background: color-mix(in srgb, #c9a24a 14%, transparent); }
-  .chips button:focus-visible { outline: 2px solid #b8913a; outline-offset: 2px; }
-  .row { display: grid; grid-template-columns: 1fr 210px; gap: 20px; align-items: start; }
-  .desk img { display: block; width: 100%; height: auto; }
-  [hidden] { display: none !important; }
-  .phone img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
-  .phone :global(.screen) { overflow: hidden; scrollbar-width: none; }
-  .note { margin: 12px 0 0; color: var(--ink-secondary); font-size: var(--text-sm); }
-  /* The story player under the stage carries these captions now. */
-  .note.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .note b { color: var(--ink); font-weight: 600; }
-  .live { display: inline-block; margin-top: 10px; font-size: var(--text-sm); font-weight: 500; color: var(--ink); }
+  .st {
+    container-type: inline-size;
+    padding: 32px 28px 22px;
+    background: #f5f5f3;
+  }
+  .chips {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .chips::-webkit-scrollbar {
+    display: none;
+  }
+  .chips button {
+    flex: none;
+    padding: 5px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: transparent;
+    font: inherit;
+    font-size: 13px;
+    color: var(--ink-secondary);
+    cursor: pointer;
+  }
+  .chips [aria-pressed="true"] {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 190px;
+    gap: 28px;
+    align-items: center;
+  }
+  .desk {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: var(--lift-3);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border-bottom: 1px solid #ebeae6;
+    background: #f7f7f5;
+  }
+  .bar i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #dcdad4;
+  }
+  .bar em {
+    margin: 0 auto;
+    padding-right: 38px;
+    font-size: 11px;
+    font-style: normal;
+    color: #9a978f;
+  }
+  /* Screens cross-fade in one box, so the frame never changes height. */
+  .shots {
+    display: grid;
+  }
+  .shots img {
+    grid-area: 1 / 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .shots img.on {
+    opacity: 1;
+  }
+  .phone :global(.ps-scr img) {
+    aspect-ratio: 375 / 720;
+    object-fit: cover;
+    object-position: top;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .live {
+    display: inline-block;
+    margin-top: 18px;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    text-decoration: none;
+  }
+  .live:hover {
+    color: var(--ink);
+  }
   @container (max-width: 640px) {
-    .row { grid-template-columns: 1fr; }
-    .phone { width: 62%; margin: 0 auto; }
+    .st {
+      padding: 20px 14px 16px;
+    }
+    .row {
+      grid-template-columns: 1fr;
+      justify-items: center;
+    }
+    .desk {
+      width: 100%;
+    }
+    .phone {
+      width: 52%;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .shots img {
+      transition: none;
+    }
   }
 </style>

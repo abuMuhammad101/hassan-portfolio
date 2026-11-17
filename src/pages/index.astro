@@ -240,14 +240,15 @@ const earlier = [
               {years.map((y) => <span>{y}</span>)}
               <em class="g-now">Now</em>
             </span>
-            <span></span>
           </div>
           <ul class="g-rows">
             {jobs.map((j) => (
               <li class:list={["g-row", { now: j.now }]} data-live-item>
-                <span class="g-who"><b>{j.role}</b><span>{j.company}</span></span>
+                <span class="g-who">
+                  <b>{j.role}</b>
+                  <span>{j.company}<em>{j.start} – {j.end}</em></span>
+                </span>
                 <span class="g-track" aria-hidden="true"><i style={`--a:${j.a};--b:${j.b}`}></i></span>
-                <span class="g-when tabular-nums">{j.start} – {j.end}</span>
               </li>
             ))}
           </ul>
@@ -331,7 +332,12 @@ const earlier = [
      hairlines across, a + where they meet. Title and intro side by side,
      then the work itself, then three facts. */
   .hero {
-    overflow: clip;
+    overflow-x: clip;
+  }
+  /* The rails run up to the very top, past the header. */
+  .hero .frame::before,
+  .hero .frame::after {
+    top: -120px;
   }
   .frame {
     position: relative;
@@ -386,6 +392,7 @@ const earlier = [
   }
   .top :global(h1) {
     font-size: clamp(2.5rem, 4.8vw, 3.9rem);
+    font-weight: 400;
     line-height: 1.04;
   }
   .intro p {
@@ -430,11 +437,20 @@ const earlier = [
       transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
       opacity 0.3s;
   }
-  .stage:hover .win:not(:hover) {
-    opacity: 0.55;
-  }
+  /* Hover reads like selecting a frame in a design file: the frame gets
+     a blue edge and its name turns blue. Nothing else moves. */
   .win:hover {
-    transform: translateY(-6px);
+    transform: translateY(-4px);
+  }
+  .screen,
+  .win :global(.ps) {
+    outline: 1.5px solid transparent;
+    outline-offset: 4px;
+    transition: outline-color 0.25s;
+  }
+  .win:hover .screen,
+  .win:hover :global(.ps) {
+    outline-color: var(--accent-site);
   }
   .w-left {
     left: 4%;
@@ -453,23 +469,27 @@ const earlier = [
     width: 15.5%;
     z-index: 3;
   }
+  /* Frame names, as a design file labels its frames. */
   .chip {
     display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 26px;
-    padding: 0 10px;
-    border-radius: 999px;
-    background: var(--bg-raised);
-    box-shadow: var(--lift-1);
-    font-family: var(--font-mono);
-    font-size: 11.5px;
+    align-items: baseline;
+    gap: 8px;
+    padding-left: 2px;
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    line-height: 1.2;
     color: var(--ink-muted);
     white-space: nowrap;
+    transition: color 0.25s;
   }
   .chip b {
     font-weight: 500;
     color: var(--ink);
+    transition: color 0.25s;
+  }
+  .win:hover .chip,
+  .win:hover .chip b {
+    color: var(--accent-site);
   }
   .screen {
     display: block;
@@ -625,7 +645,7 @@ const earlier = [
   }
   .mfold {
     position: relative;
-    height: 200px;
+    height: 212px;
     margin: 10px 0 0;
   }
   .mb,
@@ -636,21 +656,19 @@ const earlier = [
     border-radius: 14px;
   }
   .mb {
-    inset: 12px 0 0;
-    border-radius: 12px;
-    background: var(--bg-sunk);
-    box-shadow: inset 0 0 0 1px var(--rule);
+    inset: 16px 0 0;
+    border-radius: 14px;
+    background: #26272c;
   }
   .mb::before {
     content: "";
     position: absolute;
     left: 0;
-    top: -10px;
-    width: 34%;
-    height: 22px;
-    border-radius: 10px 10px 0 0;
+    top: -12px;
+    width: 38%;
+    height: 26px;
+    border-radius: 12px 12px 0 0;
     background: inherit;
-    box-shadow: inset 1px 1px 0 var(--rule), inset -1px 0 0 var(--rule);
   }
   .ms {
     position: absolute;
@@ -659,35 +677,36 @@ const earlier = [
     height: 120px;
     padding: 6px 12px;
     border-radius: 9px;
-    background: var(--bg-raised);
-    box-shadow: var(--lift-2);
+    background: #fff;
+    color: #1a1a18;
+    box-shadow: 0 10px 24px -10px rgb(0 0 0 / 0.55);
     font-family: var(--font-mono);
     font-size: 11.5px;
     line-height: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: var(--ink);
     transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .ms0 { top: 34px; transform: translateX(-3%); }
-  .ms1 { top: 60px; transform: translateX(2%); }
-  .ms2 { top: 86px; }
+  .ms0 { top: 30px; transform: translateX(-3%); background: #4a4c54; color: rgb(255 255 255 / 0.7); box-shadow: none; }
+  .ms1 { top: 54px; transform: translateX(2%); background: #e9e8e4; }
+  .ms2 { top: 78px; }
   .mf {
     bottom: 0;
-    height: 34%;
-    border-radius: 12px;
-    background: var(--bg-raised);
+    height: 40%;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #3b3d45 0%, #2b2d33 100%);
     box-shadow:
-      inset 0 0 0 1px var(--rule),
-      0 -10px 20px -16px rgb(20 18 12 / 0.28);
+      0 1px 0 rgb(255 255 255 / 0.12) inset,
+      0 -6px 14px -10px rgb(0 0 0 / 0.45),
+      0 16px 20px -12px rgb(20 20 24 / 0.3);
   }
   .mf .seam {
     position: absolute;
     left: 14px;
     right: 14px;
-    top: 10px;
-    border-top: 1px dashed var(--rule);
+    top: 12px;
+    border-top: 1px solid rgb(255 255 255 / 0.08);
   }
   .more:hover .ms0 { transform: translate(-3%, -12px); }
   .more:hover .ms1 { transform: translate(2%, -8px); }
@@ -1225,38 +1244,37 @@ const earlier = [
     }
   }
 
-  /* Tenure on one axis: year bands, one bar per role, a line for today. */
+  /* Tenure on one axis: hairline years, one bar per role, a line for today. */
   .gantt {
-    --who: minmax(0, 15rem);
-    --when: 10.5rem;
-    --band: color-mix(in srgb, var(--bg-sunk) 70%, transparent);
+    --who: minmax(0, 17rem);
+    --yl: color-mix(in srgb, var(--rule) 80%, transparent);
     margin-top: clamp(32px, 4vw, 48px);
   }
   .g-axis,
   .g-row {
     display: grid;
-    grid-template-columns: var(--who) minmax(0, 1fr) var(--when);
-    gap: 0 28px;
+    grid-template-columns: var(--who) minmax(0, 1fr);
+    gap: 0 32px;
     align-items: center;
   }
-  /* Every other year sits on a faint band, so the eye can count years
-     without gridlines. */
   .g-years,
   .g-track {
     position: relative;
     align-self: stretch;
-    background: linear-gradient(90deg, transparent 50%, var(--band) 50%) 0 0 / calc(200% / var(--yrs)) 100%;
+    /* A hairline at the start of every year. */
+    background: linear-gradient(90deg, var(--yl) 1px, transparent 1px) 0 0 / calc(100% / var(--yrs)) 100%;
+    box-shadow: inset -1px 0 0 var(--yl);
   }
   .g-years {
     display: grid;
     grid-template-columns: repeat(var(--yrs), minmax(0, 1fr));
-    height: 34px;
+    height: 30px;
   }
   .g-years > span {
     align-self: center;
-    padding-left: 10px;
+    padding-left: 8px;
     font-family: var(--font-mono);
-    font-size: 11.5px;
+    font-size: 11px;
     color: var(--ink-muted);
   }
   .g-now {
@@ -1264,13 +1282,14 @@ const earlier = [
     left: var(--now);
     top: 50%;
     z-index: 2;
-    padding: 2px 7px;
+    padding: 1px 7px 2px;
     border-radius: 999px;
     background: var(--accent-site);
-    color: var(--bg);
-    font: 500 10.5px/1.4 var(--font-mono);
+    color: #fff;
+    font: 500 10.5px/1.4 var(--font-sans);
     font-style: normal;
-    transform: translate(-50%, -50%);
+    /* Sits just left of today's line, so it never runs past the chart. */
+    transform: translate(calc(-100% + 6px), -50%);
   }
   .g-rows {
     list-style: none;
@@ -1279,44 +1298,55 @@ const earlier = [
     border-top: 1px solid var(--rule);
   }
   .g-row {
-    min-height: 68px;
+    position: relative;
     border-bottom: 1px solid var(--rule);
+    transition: background 0.2s;
+  }
+  .g-row:hover {
+    background: color-mix(in srgb, var(--bg-sunk) 60%, transparent);
   }
   .g-who {
     display: grid;
-    gap: 3px;
-    padding: 14px 0;
+    gap: 4px;
+    padding: 16px 0 16px 0;
   }
   .g-who b {
     font-weight: 500;
   }
-  .g-who span,
-  .g-when {
+  .g-who > span {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 10px;
     font-size: var(--text-sm);
     color: var(--ink-muted);
   }
-  .g-when {
-    text-align: right;
+  .g-who em {
+    font-style: normal;
     font-variant-numeric: tabular-nums;
+    color: color-mix(in srgb, var(--ink-muted) 80%, transparent);
   }
+  .g-row.now .g-who em {
+    color: var(--accent-site);
+  }
+  /* Today: one dashed line through every row. */
   .g-track::after {
     content: "";
     position: absolute;
     left: var(--now);
     top: 0;
     bottom: -1px;
-    width: 1px;
-    background: var(--accent-site);
+    width: 0;
+    border-left: 1px dashed var(--accent-site);
   }
   .g-track i {
     position: absolute;
     left: var(--a);
     top: 50%;
     width: calc(var(--b) - var(--a));
-    height: 10px;
-    margin-top: -5px;
-    border-radius: 5px;
-    background: color-mix(in srgb, var(--ink) 78%, transparent);
+    height: 8px;
+    margin-top: -4px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--ink) 72%, transparent);
     transform: scaleX(0);
     transform-origin: left;
     transition:
@@ -1329,40 +1359,23 @@ const earlier = [
   .g-row:hover .g-track i {
     background: var(--ink);
   }
-  .g-row:hover .g-when {
-    color: var(--ink);
-  }
   .g-row.now .g-track i,
   .g-row.now:hover .g-track i {
     background: var(--accent-site);
-  }
-  .g-row.now .g-when {
-    color: var(--accent-site);
-    font-weight: 500;
   }
   @media (max-width: 760px) {
     .g-axis {
       display: none;
     }
     .g-row {
-      grid-template-columns: 1fr auto;
-      gap: 0 16px;
-      padding-bottom: 16px;
+      grid-template-columns: 1fr;
+      padding-bottom: 18px;
     }
     .g-who {
       padding: 16px 0 12px;
     }
     .g-track {
-      grid-column: 1 / -1;
-      grid-row: 2;
-      height: 14px;
-    }
-    .g-track::after {
-      bottom: 0;
-    }
-    .g-when {
-      align-self: start;
-      padding-top: 16px;
+      height: 16px;
     }
   }
 
