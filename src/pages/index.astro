@@ -562,25 +562,24 @@ const earlier = [
     .rule::after {
       display: none;
     }
+    /* On a phone: Clicker large and bleeding off the left edge, the
+       isTyme phone in front of it, both big enough to read. */
     .stage {
-      height: 280px;
+      height: 360px;
       margin: 0 calc(-1 * var(--space-3));
     }
     .w-left {
       display: none;
     }
     .w-mid {
-      left: 5%;
-      width: 84%;
-      top: 10%;
-    }
-    .w-mid {
-      width: 82%;
+      left: -8%;
+      width: 104%;
+      top: 9%;
     }
     .w-right {
       right: 4%;
-      width: 29%;
-      top: 22%;
+      width: 38%;
+      top: 15%;
     }
     .chip {
       display: none;
@@ -1374,8 +1373,15 @@ const earlier = [
     .g-who {
       padding: 16px 0 12px;
     }
+    /* No year lines on a phone: one quiet rail per role, the bar on it. */
     .g-track {
-      height: 16px;
+      height: 8px;
+      border-radius: 4px;
+      background: var(--bg-sunk);
+      box-shadow: none;
+    }
+    .g-track::after {
+      display: none;
     }
   }
 
