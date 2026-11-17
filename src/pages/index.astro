@@ -12,11 +12,6 @@ import { resume } from "../data/resume";
 const nameOf = (id: string) => workIndex.find((w) => w.id === id)?.name ?? id;
 const featured = workIndex.filter((w) => w.page);
 const rest = workIndex.filter((w) => !featured.includes(w));
-const markets = [
-  { name: "United States" },
-  { name: "GCC" },
-  { name: "Pakistan", home: true },
-];
 const ways = [
   { icon: "user", title: "Start with the person", body: "And the rules they live under, before any screen." },
   { icon: "list-checks", title: "Map what nobody asked for", body: "Empty, error, partial failure and the edge cases." },
@@ -58,17 +53,12 @@ const earlier = [
             <a class="btn ghost" href="/resume/">Resume</a>
           </div>
         </div>
-        <aside class="ledger" aria-label="At a glance">
-          <p class="figs">
-            <span><b>8</b> products featured here</span>
-            <span><b>5+</b> years in SaaS and mobile</span>
-          </p>
-          <ol class="route" aria-label="Markets: United States, GCC, Pakistan">
-            {markets.map((m) => (
-              <li class={m.home ? "home" : ""}><i aria-hidden="true"></i><span>{m.name}</span>{m.home && <em>Based here</em>}</li>
-            ))}
-          </ol>
-        </aside>
+        <dl class="sheet" aria-label="At a glance">
+          <div><dt>Now</dt><dd>Senior Product Designer at AST</dd></div>
+          <div><dt>Experience</dt><dd>5+ years in SaaS and mobile</dd></div>
+          <div><dt>On this site</dt><dd>8 products, 5 of them under NDA</dd></div>
+          <div><dt>Shipped for</dt><dd>Teams in the US, the GCC and Pakistan</dd></div>
+        </dl>
       </div>
     </div>
   </section>
@@ -76,7 +66,6 @@ const earlier = [
   <main>
     <section class="wrap-wide band" aria-labelledby="beliefs-h">
       <div class="band-head">
-        <p class="section-label">What I believe</p>
         <h2 id="beliefs-h" class="band-title">Four things I don't trade away.</h2>
       </div>
       <ol class="beliefs">
@@ -98,7 +87,6 @@ const earlier = [
 
     <section class="wrap-wide band" id="work" aria-labelledby="work-h">
       <div class="band-head">
-        <p class="section-label">Selected work</p>
         <h2 id="work-h" class="band-title">Eight products, one way of working.</h2>
       </div>
       <div class="cards">
@@ -134,7 +122,6 @@ const earlier = [
 
     <section class="wrap-wide band split" aria-labelledby="how-h">
       <div class="band-head">
-        <p class="section-label">How I work</p>
         <h2 id="how-h" class="band-title">The same five moves, every time.</h2>
         <p class="tools">Tools change. Right now: Figma, Claude Code, Framer, Webflow and GitHub.</p>
       </div>
@@ -151,7 +138,6 @@ const earlier = [
 
     <section class="wrap-wide band split" aria-labelledby="exp-h">
       <div class="band-head">
-        <p class="section-label">Experience</p>
         <h2 id="exp-h" class="band-title">Where I've worked.</h2>
       </div>
       <ul class="jobs">
@@ -173,7 +159,6 @@ const earlier = [
 
     <section class="wrap-wide band" id="contact" aria-labelledby="contact-h">
       <div class="contact">
-        <p class="section-label">Contact</p>
         <TwoToneHeading as="h2" size="3xl" lead="Have a product that needs an owner?" rest="Let's talk." />
         <div class="cta">
           <a class="btn" href="mailto:hassank.uiux@gmail.com"><Icon name="envelope-simple" size={16} /> hassank.uiux@gmail.com</a>
@@ -218,73 +203,33 @@ const earlier = [
     flex-wrap: wrap;
     gap: 10px;
   }
-  .ledger {
-    display: grid;
-    gap: 26px;
-    align-content: start;
-  }
-  .figs {
+  /* At a glance: a spec sheet beside the intro, ruled like the
+     construction lines above it. The label tells you what the line is. */
+  .sheet {
     margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 36px;
-    color: var(--ink-secondary);
+    border-top: 1px solid var(--rule);
+  }
+  .sheet div {
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    gap: 16px;
+    padding: 11px 0 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .sheet dt {
     font-size: var(--text-sm);
-  }
-  .figs span {
-    display: grid;
-    gap: 2px;
-  }
-  .figs b {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(2.6rem, 5vw, 3.4rem);
-    line-height: 1;
-    letter-spacing: -0.03em;
-    color: var(--ink);
-  }
-  .route {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    position: relative;
-  }
-  .route::before {
-    content: "";
-    position: absolute;
-    left: 4px;
-    right: calc(33.333% - 4px);
-    top: 4px;
-    border-top: 1px dashed color-mix(in srgb, var(--ink) 35%, transparent);
-  }
-  .route li {
-    position: relative;
-    display: grid;
-    gap: 2px;
-    padding-top: 20px;
-    font-size: var(--text-sm);
-    color: var(--ink);
-  }
-  .route i {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--bg);
-    box-shadow: inset 0 0 0 1.5px var(--ink);
-  }
-  .route .home i {
-    background: var(--accent-warm);
-    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent-warm) 16%, transparent);
-  }
-  .route em {
-    font-style: normal;
-    font-size: 12px;
     color: var(--ink-muted);
+  }
+  .sheet dd {
+    margin: 0;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  @media (max-width: 480px) {
+    .sheet div {
+      grid-template-columns: 92px 1fr;
+      gap: 12px;
+    }
   }
   @media (min-width: 900px) {
     .hero-grid {
@@ -663,8 +608,5 @@ const earlier = [
     padding: clamp(24px, 6vw, 64px);
     display: grid;
     gap: var(--space-3);
-  }
-  .contact .section-label {
-    margin: 0;
   }
 </style>

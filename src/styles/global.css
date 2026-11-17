@@ -182,14 +182,7 @@ a {
   margin-top: 0;
   margin-bottom: var(--space-3);
 }
-.section-label::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent-warm);
-  flex: none;
-}
+
 
 /* Shared layout and controls for the v2 pages. */
 .wrap-wide {
