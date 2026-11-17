@@ -3,7 +3,6 @@ import Base from "../layouts/Base.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import TwoToneHeading from "../components/TwoToneHeading.astro";
-import ConstructionLines from "../components/ConstructionLines.astro";
 import CaseThumb from "../components/CaseThumb.astro";
 import Icon from "../components/Icon.astro";
 import { beliefs, workIndex } from "../data/work-index";
@@ -11,6 +10,12 @@ import { resume } from "../data/resume";
 
 const nameOf = (id: string) => workIndex.find((w) => w.id === id)?.name ?? id;
 const featured = workIndex.filter((w) => w.page);
+// The hero shows the work: three products, as they look in use.
+const stage = [
+  { id: "hh-global", name: "HH Global", what: "Wholesale e-commerce", src: "/media/hh/home.webp", cls: "w-left" },
+  { id: "clicker", name: "Clicker", what: "ERP, my own product", src: "/media/clicker/w-aging-light.webp", cls: "w-mid" },
+  { id: "istyme", name: "isTyme", what: "Local marketplace", src: "/media/istyme/en-offers.webp", cls: "w-right", phone: true },
+];
 const rest = workIndex.filter((w) => !featured.includes(w));
 const ways = [
   { icon: "user", title: "Start with the person", body: "And the rules they live under, before any screen." },
@@ -36,12 +41,9 @@ const earlier = [
   <Header />
 
   <section class="hero">
-    <div class="hero-inner wrap-wide">
-      <div class="headline">
-        <ConstructionLines />
-        <TwoToneHeading as="h1" size="hero" lead="Less noise." rest="Real products. Owned end to end." />
-      </div>
-      <div class="hero-grid">
+    <div class="frame wrap-wide">
+      <div class="top">
+        <TwoToneHeading as="h1" size="hero" lead="Less noise." rest="Real products, owned end to end." />
         <div class="intro">
           <p>
             I'm Hassan, a senior product designer in Karachi. Healthcare compliance, AI copilots, dense business
@@ -53,13 +55,31 @@ const earlier = [
             <a class="btn ghost" href="/resume/">Resume</a>
           </div>
         </div>
-        <dl class="sheet" aria-label="At a glance">
-          <div><dt>Now</dt><dd>Senior Product Designer at AST</dd></div>
-          <div><dt>Experience</dt><dd>5+ years in SaaS and mobile</dd></div>
-          <div><dt>On this site</dt><dd>8 products, 5 of them under NDA</dd></div>
-          <div><dt>Shipped for</dt><dd>Teams in the US, the GCC and Pakistan</dd></div>
-        </dl>
       </div>
+
+      <span class="rule" aria-hidden="true"></span>
+
+      <figure class="stage" aria-label="Three of the products">
+        {stage.map((w) => (
+          <a class={`win ${w.cls}`} href={`/work/${w.id}/`} aria-label={`${w.name}, ${w.what}`}>
+            <span class="chip"><b>{w.name}</b>{w.what}</span>
+            <span class:list={["screen", { phone: w.phone }]}>
+              {!w.phone && <span class="bar" aria-hidden="true"><i></i><i></i><i></i></span>}
+              <img src={w.src} alt="" loading="eager" decoding="async" />
+            </span>
+          </a>
+        ))}
+      </figure>
+
+      <span class="rule" aria-hidden="true"></span>
+
+      <ol class="facts">
+        <li><span>01 — Now</span><p><b>Senior Product Designer</b> at AST since June 2026, on healthcare compliance and AI agents.</p></li>
+        <li><span>02 — Experience</span><p><b>5+ years</b> in SaaS and mobile, research to production, for teams in the US, the GCC and Pakistan.</p></li>
+        <li><span>03 — On this site</span><p><b>8 products,</b> 5 of them under NDA and re-created with stand-in names and data.</p></li>
+      </ol>
+
+      <span class="rule" aria-hidden="true"></span>
     </div>
   </section>
 
@@ -176,65 +196,254 @@ const earlier = [
 </Base>
 
 <style>
+  /* Hero ------------------------------------------------------------------
+     A ruled frame, like a page in a design file: two rails down the sides,
+     hairlines across, a + where they meet. Title and intro side by side,
+     then the work itself, then three facts. */
   .hero {
     overflow: clip;
   }
-  .hero-inner {
-    padding-top: var(--space-4);
-    padding-bottom: var(--space-6);
-  }
-  .headline {
+  .frame {
     position: relative;
-    padding: var(--space-6) 0 var(--space-6);
+    --rail: 32px;
   }
-  .hero-grid {
+  .frame::before,
+  .frame::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid var(--rule);
+  }
+  .frame::before {
+    left: calc(var(--space-3) - var(--rail));
+  }
+  .frame::after {
+    right: calc(var(--space-3) - var(--rail));
+  }
+  .rule {
+    position: relative;
+    display: block;
+    height: 1px;
+    margin: 0 -100vw;
+    background: var(--rule);
+  }
+  /* The + marks where a hairline crosses a rail. */
+  .rule::before,
+  .rule::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    width: 11px;
+    height: 11px;
+    background:
+      linear-gradient(var(--ink-muted), var(--ink-muted)) center / 11px 1px no-repeat,
+      linear-gradient(var(--ink-muted), var(--ink-muted)) center / 1px 11px no-repeat;
+  }
+  .rule::before {
+    left: calc(100vw - var(--rail) - 5px);
+  }
+  .rule::after {
+    right: calc(100vw - var(--rail) - 5px);
+  }
+
+  .top {
     display: grid;
-    gap: var(--space-6);
-    padding-top: var(--space-6);
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 32px 64px;
+    align-items: end;
+    padding: clamp(48px, 7vw, 96px) 0 clamp(36px, 4vw, 48px);
+  }
+  .top :global(h1) {
+    font-size: clamp(2.5rem, 4.8vw, 3.9rem);
+    line-height: 1.04;
   }
   .intro p {
-    font-size: var(--text-lg);
+    max-width: 46ch;
+    margin: 0 0 24px;
+    font-size: var(--text-base);
+    line-height: 1.6;
     color: var(--ink-secondary);
-    margin: 0 0 var(--space-3);
-    max-width: 52ch;
   }
   .cta {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
   }
-  /* At a glance: a spec sheet beside the intro, ruled like the
-     construction lines above it. The label tells you what the line is. */
-  .sheet {
-    margin: 0;
-    border-top: 1px solid var(--rule);
+
+  /* The work, on a dotted board. */
+  .stage {
+    position: relative;
+    height: clamp(300px, 36vw, 440px);
+    margin: 0 calc(-1 * var(--rail) + 0px);
+    overflow: hidden;
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--ink) 13%, transparent) 1px, transparent 1.3px);
+    background-size: 14px 14px;
+    background-position: 7px 7px;
   }
-  .sheet div {
+  .stage::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 56px;
+    background: linear-gradient(transparent, var(--bg));
+    pointer-events: none;
+  }
+  .win {
+    position: absolute;
     display: grid;
-    grid-template-columns: 112px 1fr;
-    gap: 16px;
-    padding: 11px 0 12px;
-    border-bottom: 1px solid var(--rule);
+    gap: 10px;
+    justify-items: start;
+    color: inherit;
+    text-decoration: none;
+    transition:
+      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.3s;
   }
-  .sheet dt {
-    font-size: var(--text-sm);
+  .stage:hover .win:not(:hover) {
+    opacity: 0.55;
+  }
+  .win:hover {
+    transform: translateY(-6px);
+  }
+  .w-left {
+    left: 4%;
+    top: 22%;
+    width: 40%;
+  }
+  .w-mid {
+    left: 25%;
+    top: 12%;
+    width: 52%;
+    z-index: 2;
+  }
+  .w-right {
+    right: 5%;
+    top: 17%;
+    width: 15%;
+    z-index: 3;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 26px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: var(--bg-raised);
+    box-shadow: var(--lift-1);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
     color: var(--ink-muted);
+    white-space: nowrap;
   }
-  .sheet dd {
-    margin: 0;
-    font-size: 15px;
+  .chip b {
+    font-weight: 500;
     color: var(--ink);
   }
-  @media (max-width: 480px) {
-    .sheet div {
-      grid-template-columns: 92px 1fr;
-      gap: 12px;
+  .screen {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: var(--lift-3);
+  }
+  .screen .bar {
+    display: flex;
+    gap: 5px;
+    padding: 8px 10px;
+    background: #f3f2ef;
+    border-bottom: 1px solid #e7e5df;
+  }
+  .screen .bar i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #d6d3cb;
+  }
+  .screen img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .screen.phone {
+    border-radius: 22px;
+    padding: 5px;
+    background: #1c1c1e;
+  }
+  .screen.phone img {
+    border-radius: 17px;
+  }
+
+  /* Three facts, read like a numbered list. */
+  .facts {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px 48px;
+    margin: 0;
+    padding: 28px 0 32px;
+  }
+  .facts span {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .facts p {
+    margin: 0;
+    max-width: 34ch;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-secondary);
+  }
+  .facts b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  @media (max-width: 900px) {
+    .top {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+    .facts {
+      grid-template-columns: 1fr;
+      gap: 20px;
     }
   }
-  @media (min-width: 900px) {
-    .hero-grid {
-      grid-template-columns: 1.1fr 1fr;
-      align-items: start;
+  @media (max-width: 760px) {
+    .frame::before,
+    .frame::after,
+    .rule::before,
+    .rule::after {
+      display: none;
+    }
+    .stage {
+      height: 280px;
+      margin: 0 calc(-1 * var(--space-3));
+    }
+    .w-left {
+      display: none;
+    }
+    .w-mid {
+      left: 5%;
+      width: 84%;
+      top: 10%;
+    }
+    .w-right {
+      right: 4%;
+      width: 32%;
+      top: 26%;
+    }
+    .chip {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .win {
+      transition: none;
     }
   }
 

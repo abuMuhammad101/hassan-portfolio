@@ -50,7 +50,6 @@ import Icon from "../Icon.astro";
             <h4>Arthur Bell <span class="pill live">Active</span></h4>
             <p>78 · Male · Room 214 · Admitted 3 March</p>
           </div>
-          <span class="seg" aria-hidden="true"><b>PT</b><span>OT</span><span>ST</span><span>RT</span></span>
         </header>
 
         <div class="tabs" aria-hidden="true"><b>Record chain</b><span>Sessions <em>0</em></span><span>Goals <em>3</em></span><span>Files</span></div>
@@ -228,7 +227,7 @@ import Icon from "../Icon.astro";
   .side nav span { display: flex; align-items: center; gap: 9px; padding: 6px 8px; border-radius: 7px; color: var(--ink2); font-weight: 500; }
   .side nav .on { background: var(--panel); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 0 0 1px var(--line); }
   .side nav em { margin-left: auto; font-style: normal; font-size: 11px; color: var(--mute); }
-  .side .dot i { width: 8px; height: 8px; border-radius: 3px; background: var(--d); margin: 0 4px; }
+  .side .dot i { width: 6px; height: 6px; border-radius: 50%; background: #c9c8c3; margin: 0 5px; }
   .group { margin: 14px 8px 2px; font-size: 11px; font-weight: 600; color: var(--mute); }
   .me { margin-top: auto; display: flex; align-items: center; gap: 9px; padding: 8px 6px 0; border-top: 1px solid var(--line); }
   .me span:last-child { display: grid; line-height: 1.2; }
@@ -293,7 +292,7 @@ import Icon from "../Icon.astro";
   .card { padding: 11px 14px; border-radius: 12px; background: var(--panel); box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / 0.04); }
   .card.flat { background: none; box-shadow: 0 0 0 1px var(--line) inset; border: 0; padding: 9px 14px; color: var(--mute); }
   .card.flat b { color: var(--ink2); font-weight: 500; }
-  .notes .card { background: repeating-linear-gradient(-45deg, #fafaf9 0 6px, #f6f6f4 6px 12px); box-shadow: 0 0 0 1px var(--line2) inset; }
+  .notes .card { background: #fafaf9; box-shadow: 0 0 0 1px var(--line2) inset; }
   .tc:is([data-state="done"], [data-state="draft"]) .notes .card { background: var(--panel); box-shadow: 0 0 0 1px #d9dbf8, 0 0 0 4px var(--acc-soft); }
   .row { display: flex; align-items: center; gap: 8px; }
   .row b { font-weight: 600; }

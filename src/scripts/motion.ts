@@ -109,13 +109,15 @@ if (!reduced) {
   if (first) {
     const order = [
       ".hero .crumbs, .early .crumbs",
-      ".headline h1 .lead",
-      ".headline h1 .rest",
+      ".top h1 .lead",
+      ".top h1 .rest",
       ".hero .vt-title, .early h1",
       ".hero .angle, .early .angle",
-      ".hero-grid .intro",
-      ".hero-grid .ledger",
-      ".hero .facts, .early .facts",
+      ".top .intro",
+      ".stage .w-mid",
+      ".stage .w-left",
+      ".stage .w-right",
+      ".hero .facts li, .early .facts",
     ];
     const els = order.flatMap((sel) => [...document.querySelectorAll<HTMLElement>(sel)]).filter((el) => el.getBoundingClientRect().top < window.innerHeight);
     if (els.length) {
